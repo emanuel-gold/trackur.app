@@ -1,0 +1,16 @@
+export const INDUSTRIES = [
+  'Technology / Software',
+  'Finance / Banking',
+  'Healthcare',
+  'Education',
+  'Marketing / Advertising',
+  'Consulting',
+  'Manufacturing',
+  'Retail / E-commerce',
+  'Government / Public Sector',
+  'Nonprofit',
+  'Media / Entertainment',
+  'Real Estate',
+  'Legal',
+  'Energy / Utilities',
+];

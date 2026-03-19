@@ -1,0 +1,357 @@
+import { useState, useMemo, useCallback } from 'react';
+import { ArrowDownTrayIcon, ArrowUpTrayIcon, PlusIcon, EllipsisVerticalIcon } from '@heroicons/react/24/outline';
+import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react';
+import useJobs from './hooks/useJobs.js';
+import useToast from './hooks/useToast.js';
+import useDarkMode from './hooks/useDarkMode.js';
+import useAuth from './hooks/useAuth.js';
+import { exportJobsToCsv } from './services/csvService.js';
+import { STAGES } from './constants.js';
+import { Button, Select } from './components/catalyst';
+import Layout from './components/Layout.jsx';
+import FilterBar from './components/FilterBar.jsx';
+import ViewToggle from './components/ViewToggle.jsx';
+import AddJobForm from './components/AddJobForm.jsx';
+import KanbanBoard from './components/KanbanBoard.jsx';
+import TableView from './components/TableView.jsx';
+import ImportModal from './components/ImportModal.jsx';
+import ConfirmModal from './components/ConfirmModal.jsx';
+import EditJobModal from './components/EditJobModal.jsx';
+import ToastContainer from './components/ToastContainer.jsx';
+import LoginScreen from './components/LoginScreen.jsx';
+import SignUpScreen from './components/SignUpScreen.jsx';
+import EmailVerificationScreen from './components/EmailVerificationScreen.jsx';
+import AccountSetupScreen from './components/AccountSetupScreen.jsx';
+
+function App() {
+  const auth = useAuth();
+  const { jobs, loading, addJob, updateJob, deleteJob, importJobs, replaceAllJobs } = useJobs();
+  const { toasts, showToast, dismissToast } = useToast();
+  const { dark, toggle: toggleDark } = useDarkMode();
+
+  const [authScreen, setAuthScreen] = useState('login'); // 'login' | 'signup' | 'verify'
+  const [pendingEmail, setPendingEmail] = useState('');
+
+  const [view, setView] = useState(() => localStorage.getItem('viewPreference') || 'board');
+  const [search, setSearch] = useState('');
+  const [stageFilter, setStageFilter] = useState('');
+  const [sortKey, setSortKey] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('tableSortPreference'))?.key || 'dateApplied'; }
+    catch { return 'dateApplied'; }
+  });
+  const [sortDir, setSortDir] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('tableSortPreference'))?.dir || 'desc'; }
+    catch { return 'desc'; }
+  });
+
+  const handleViewChange = useCallback((v) => {
+    setView(v);
+    localStorage.setItem('viewPreference', v);
+  }, []);
+
+  const handleSort = useCallback((key) => {
+    setSortKey((prevKey) => {
+      const newDir = prevKey === key ? (sortDir === 'asc' ? 'desc' : 'asc') : 'asc';
+      const newKey = key;
+      setSortDir(newDir);
+      localStorage.setItem('tableSortPreference', JSON.stringify({ key: newKey, dir: newDir }));
+      return newKey;
+    });
+  }, [sortDir]);
+  const [addJobOpen, setAddJobOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [editingJobId, setEditingJobId] = useState(null);
+
+  const filteredJobs = useMemo(() => {
+    let result = jobs;
+    if (stageFilter) {
+      result = result.filter((j) => j.stage === stageFilter);
+    }
+    if (search) {
+      const q = search.toLowerCase();
+      result = result.filter(
+        (j) =>
+          j.company?.toLowerCase().includes(q) ||
+          j.role?.toLowerCase().includes(q)
+      );
+    }
+    return result;
+  }, [jobs, search, stageFilter]);
+
+  const handleAdd = useCallback(async (job) => {
+    try {
+      await addJob(job);
+      showToast('Job added');
+    } catch (err) {
+      showToast('Failed to add job: ' + err.message);
+    }
+  }, [addJob, showToast]);
+
+  const handleUpdate = useCallback(async (id, updates) => {
+    try {
+      await updateJob(id, updates);
+      showToast('Job updated');
+    } catch (err) {
+      showToast('Failed to update job: ' + err.message);
+    }
+  }, [updateJob, showToast]);
+
+  const handleUpdateStage = useCallback(async (id, stage) => {
+    try {
+      await updateJob(id, { stage });
+      showToast('Job moved to ' + stage);
+    } catch (err) {
+      showToast('Failed to move job: ' + err.message);
+    }
+  }, [updateJob, showToast]);
+
+  const handleDeleteRequest = useCallback((id) => {
+    setDeleteConfirm(id);
+  }, []);
+
+  const handleEditRequest = useCallback((id) => {
+    setEditingJobId(id);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (deleteConfirm != null) {
+      try {
+        await deleteJob(deleteConfirm);
+        setDeleteConfirm(null);
+        showToast('Job deleted');
+      } catch (err) {
+        showToast('Failed to delete job: ' + err.message);
+      }
+    }
+  }, [deleteConfirm, deleteJob, showToast]);
+
+  const handleExport = useCallback(() => {
+    exportJobsToCsv(jobs);
+    showToast('CSV exported');
+  }, [jobs, showToast]);
+
+  const handleImport = useCallback(async (newJobs) => {
+    try {
+      const total = await importJobs(newJobs);
+      showToast(`Merged ${newJobs.length} job${newJobs.length !== 1 ? 's' : ''} (${total} total)`);
+    } catch (err) {
+      showToast('Failed to import jobs: ' + err.message);
+    }
+  }, [importJobs, showToast]);
+
+  const handleReplace = useCallback(async (newJobs) => {
+    try {
+      await replaceAllJobs(newJobs);
+      showToast(`Replaced with ${newJobs.length} job${newJobs.length !== 1 ? 's' : ''}`);
+    } catch (err) {
+      showToast('Failed to replace jobs: ' + err.message);
+    }
+  }, [replaceAllJobs, showToast]);
+
+  // Auth loading
+  if (auth.loading) {
+    return (
+      <div className="flex items-center justify-center min-h-svh bg-zinc-200 dark:bg-zinc-950">
+        <p className="text-zinc-500 dark:text-zinc-400">Loading...</p>
+      </div>
+    );
+  }
+
+  // Not signed in — show auth screens
+  if (!auth.session) {
+    if (authScreen === 'signup') {
+      return (
+        <SignUpScreen
+          signUpWithEmail={auth.signUpWithEmail}
+          signInWithGoogle={auth.signInWithGoogle}
+          onBack={() => setAuthScreen('login')}
+          onSignUpSuccess={(email) => {
+            setPendingEmail(email);
+            setAuthScreen('verify');
+          }}
+        />
+      );
+    }
+    if (authScreen === 'verify') {
+      return (
+        <EmailVerificationScreen
+          email={pendingEmail}
+          onBack={() => setAuthScreen('login')}
+        />
+      );
+    }
+    return (
+      <LoginScreen
+        signInWithEmail={auth.signInWithEmail}
+        signInWithGoogle={auth.signInWithGoogle}
+        onCreateAccount={() => setAuthScreen('signup')}
+      />
+    );
+  }
+
+  // Profile loading
+  if (!auth.profileLoaded) {
+    return (
+      <div className="flex items-center justify-center min-h-svh bg-zinc-200 dark:bg-zinc-950">
+        <p className="text-zinc-500 dark:text-zinc-400">Loading...</p>
+      </div>
+    );
+  }
+
+  // Profile setup required
+  if (!auth.profile?.setupComplete) {
+    return (
+      <AccountSetupScreen
+        user={auth.user}
+        onComplete={auth.refreshProfile}
+      />
+    );
+  }
+
+  // Jobs loading
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-svh bg-zinc-200 dark:bg-zinc-950">
+        <p className="text-zinc-500 dark:text-zinc-400">Loading...</p>
+      </div>
+    );
+  }
+
+  return (
+    <Layout dark={dark} onToggleDark={toggleDark} user={auth.user} profile={auth.profile} onSignOut={auth.signOut}>
+      {/* Toolbar */}
+      <div className="mb-4 md:mb-6 flex flex-wrap items-center gap-3">
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          stageFilter={stageFilter}
+          onStageFilterChange={setStageFilter}
+          hideStageFilter={view === 'board'}
+          hideMobileExtras
+        />
+
+        {/* Mobile overflow menu */}
+        <Popover className="relative md:hidden">
+          <PopoverButton as={Button} plain title="More actions">
+            <EllipsisVerticalIcon data-slot="icon" />
+          </PopoverButton>
+          <PopoverPanel
+            anchor="bottom end"
+            transition
+            className="z-50 mt-2 w-56 rounded-lg bg-white p-3 shadow-lg ring-1 ring-zinc-950/10 dark:bg-zinc-800 dark:ring-white/10 transition duration-100 data-closed:opacity-0 data-closed:scale-95"
+          >
+            {({ close }) => (
+              <div className="flex flex-col gap-3">
+                {view === 'table' && (
+                  <div>
+                    <p className="text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">Filter Stage</p>
+                    <Select
+                      value={stageFilter}
+                      onChange={(e) => setStageFilter(e.target.value)}
+                      className="w-full"
+                    >
+                      <option value="">All Stages</option>
+                      {STAGES.map((s) => (
+                        <option key={s} value={s}>{s}</option>
+                      ))}
+                    </Select>
+                  </div>
+                )}
+                <div>
+                  <p className="text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">View</p>
+                  <ViewToggle view={view} onViewChange={(v) => { handleViewChange(v); close(); }} />
+                </div>
+                <div className="border-t border-zinc-950/5 dark:border-white/5 pt-2 flex flex-col gap-1">
+                  <button
+                    type="button"
+                    onClick={() => { handleExport(); close(); }}
+                    className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-zinc-700 hover:bg-zinc-950/5 dark:text-zinc-300 dark:hover:bg-white/5 transition-colors"
+                  >
+                    <ArrowDownTrayIcon className="size-4" />
+                    Export CSV
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setImportOpen(true); close(); }}
+                    className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-zinc-700 hover:bg-zinc-950/5 dark:text-zinc-300 dark:hover:bg-white/5 transition-colors"
+                  >
+                    <ArrowUpTrayIcon className="size-4" />
+                    Import CSV
+                  </button>
+                </div>
+              </div>
+            )}
+          </PopoverPanel>
+        </Popover>
+
+        {/* Desktop actions */}
+        <div className="hidden md:flex items-center gap-2 ml-auto">
+          <ViewToggle view={view} onViewChange={handleViewChange} />
+          <Button plain onClick={handleExport} title="Export CSV">
+            <ArrowDownTrayIcon data-slot="icon" />
+          </Button>
+          <Button plain onClick={() => setImportOpen(true)} title="Import CSV">
+            <ArrowUpTrayIcon data-slot="icon" />
+          </Button>
+          <Button color="violet" onClick={() => setAddJobOpen(true)}>
+            <PlusIcon data-slot="icon" />
+            Add Job
+          </Button>
+        </div>
+      </div>
+
+      {/* Mobile FAB — only shows when add dialog is closed */}
+      {!addJobOpen && (
+        <button
+          type="button"
+          onClick={() => setAddJobOpen(true)}
+          className="fixed bottom-6 right-6 z-40 md:hidden flex items-center justify-center size-14 rounded-full bg-violet-600 text-white shadow-lg hover:bg-violet-700 active:bg-violet-800 dark:bg-violet-400 dark:text-violet-950 dark:hover:bg-violet-300 dark:active:bg-violet-500 transition-colors"
+        >
+          <PlusIcon className="size-7" />
+        </button>
+      )}
+
+      {filteredJobs.length === 0 && jobs.length === 0 ? (
+        <div className="text-center py-16">
+          <p className="text-zinc-400 dark:text-zinc-500 text-lg">No jobs yet. Click "Add Job" to get started.</p>
+        </div>
+      ) : view === 'board' ? (
+        <KanbanBoard jobs={filteredJobs} onUpdate={handleUpdate} onDelete={handleDeleteRequest} onEdit={handleEditRequest} onUpdateStage={handleUpdateStage} />
+      ) : (
+        <TableView jobs={filteredJobs} onUpdate={handleUpdate} onDelete={handleDeleteRequest} onEdit={handleEditRequest} sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+      )}
+
+      <AddJobForm open={addJobOpen} onClose={() => setAddJobOpen(false)} onAdd={handleAdd} />
+
+      {editingJobId && (
+        <EditJobModal
+          job={jobs.find((j) => j.id === editingJobId)}
+          onUpdate={handleUpdate}
+          onDelete={handleDeleteRequest}
+          onClose={() => setEditingJobId(null)}
+        />
+      )}
+
+      <ImportModal
+        open={importOpen}
+        onClose={() => setImportOpen(false)}
+        onImport={handleImport}
+        onReplace={handleReplace}
+      />
+
+      <ConfirmModal
+        open={deleteConfirm != null}
+        title="Delete Job"
+        message="Are you sure you want to delete this job? This action cannot be undone."
+        confirmLabel="Delete"
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setDeleteConfirm(null)}
+      />
+
+      <ToastContainer toasts={toasts} onDismiss={dismissToast} />
+    </Layout>
+  );
+}
+
+export default App;
