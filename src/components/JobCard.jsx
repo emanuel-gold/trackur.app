@@ -24,7 +24,7 @@ export default function JobCard({ job, onUpdate, onDelete, onEdit, onDragStart, 
     <div
       draggable={!!onDragStart && !isEditing}
       onDragStart={onDragStart}
-      className={`flex-1 flex flex-col rounded-lg bg-zinc-50 dark:bg-zinc-800 p-4 shadow-sm ring-1 ring-zinc-950/5 dark:ring-white/10 hover:ring-zinc-950/10 dark:hover:ring-white/15 transition-all ${!isEditing && onDragStart ? 'cursor-grab active:cursor-grabbing' : ''}`}
+      className={`flex-1 flex flex-col m-px rounded-lg bg-zinc-50 dark:bg-zinc-800 p-4 shadow-sm ring-1 ring-zinc-950/5 dark:ring-white/10 hover:ring-zinc-950/10 dark:hover:ring-white/15 transition-all ${!isEditing && onDragStart ? 'cursor-grab active:cursor-grabbing' : ''}`}
     >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1 space-y-0.5">
