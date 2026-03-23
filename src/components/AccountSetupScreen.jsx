@@ -167,7 +167,7 @@ export default function AccountSetupScreen({ user, onComplete }) {
             )}
 
             <Button
-              color="mauve"
+              color="violet"
               className="mt-6 w-full"
               onClick={handleNext}
             >
@@ -208,7 +208,7 @@ export default function AccountSetupScreen({ user, onComplete }) {
                 Back
               </Button>
               <Button
-                color="mauve"
+                color="violet"
                 className="flex-1"
                 onClick={handleComplete}
                 disabled={submitting}

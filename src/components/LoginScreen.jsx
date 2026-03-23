@@ -92,7 +92,7 @@ export default function LoginScreen({ signInWithEmail, signInWithGoogle, onCreat
 
           <Button
             type="submit"
-            color="mauve"
+            color="violet"
             className="mt-5 w-full"
             disabled={submitting}
           >

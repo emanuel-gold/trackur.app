@@ -143,7 +143,7 @@ export default function SignUpScreen({ signUpWithEmail, signInWithGoogle, onBack
 
           <Button
             type="submit"
-            color="mauve"
+            color="violet"
             className="mt-5 w-full"
             disabled={submitting}
           >
