@@ -8,8 +8,7 @@ function toApp(row) {
     role: row.role,
     stage: row.stage,
     dateApplied: row.date_applied ?? '',
-    nextAction: row.next_action ?? '',
-    nextActionDate: row.next_action_date ?? '',
+    todos: row.todos ?? [],
     notes: row.notes ?? '',
   };
 }
@@ -21,8 +20,7 @@ function toDb(job) {
     role: job.role,
     stage: job.stage,
     date_applied: job.dateApplied || null,
-    next_action: job.nextAction || null,
-    next_action_date: job.nextActionDate || null,
+    todos: job.todos ?? [],
     notes: job.notes || null,
   };
   if (job.id) row.id = job.id;

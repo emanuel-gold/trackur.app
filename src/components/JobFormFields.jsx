@@ -37,13 +37,13 @@ export default function JobFormFields({ values, onChange }) {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Field>
-          <Label>Next Action</Label>
-          <Input type="text" placeholder="e.g. Follow up with recruiter" {...field('nextAction')} />
+          <Label>First Step</Label>
+          <Input type="text" placeholder="e.g. Follow up with recruiter" {...field('firstStep')} />
         </Field>
 
         <Field>
-          <Label>Next Action Date</Label>
-          <Input type="date" {...field('nextActionDate')} />
+          <Label>Due Date</Label>
+          <Input type="date" {...field('firstStepDate')} />
         </Field>
       </div>
 

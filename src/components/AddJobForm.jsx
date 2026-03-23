@@ -8,8 +8,8 @@ const EMPTY = {
   role: '',
   dateApplied: '',
   stage: 'Applied',
-  nextAction: '',
-  nextActionDate: '',
+  firstStep: '',
+  firstStepDate: '',
   notes: '',
 };
 
@@ -22,7 +22,19 @@ export default function AddJobForm({ onAdd, open, onClose }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onAdd({ ...values });
+    const { firstStep, firstStepDate, ...jobData } = values;
+    const todos = [];
+    if (firstStep.trim()) {
+      todos.push({
+        id: crypto.randomUUID(),
+        text: firstStep.trim(),
+        dueDate: firstStepDate || null,
+        completed: false,
+        completedAt: null,
+        createdAt: new Date().toISOString(),
+      });
+    }
+    onAdd({ ...jobData, todos });
     setValues({ ...EMPTY });
     onClose();
   };

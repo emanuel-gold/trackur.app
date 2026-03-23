@@ -4,7 +4,9 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 import { STAGES, STAGE_COLORS } from '../constants.js';
 import { Badge, Button } from './catalyst';
 import useInlineEdit from '../hooks/useInlineEdit.js';
+import useTodos from '../hooks/useTodos.js';
 import InlineEditableField from './InlineEditableField.jsx';
+import TodoList from './TodoList.jsx';
 import { formatDate } from '../utils/formatDate.js';
 
 const FIELD_CONFIG = [
@@ -12,13 +14,12 @@ const FIELD_CONFIG = [
   { key: 'role', label: 'Role', required: true, placeholder: 'Job title' },
   { key: 'stage', label: 'Stage', inputType: 'select', selectOptions: STAGES },
   { key: 'dateApplied', label: 'Date Applied', inputType: 'date', placeholder: 'Set date' },
-  { key: 'nextAction', label: 'Next Action', placeholder: 'e.g. Follow up, Prepare for interview' },
-  { key: 'nextActionDate', label: 'Action Date', inputType: 'date', placeholder: 'Set date' },
   { key: 'notes', label: 'Notes', inputType: 'textarea', placeholder: 'Add notes...' },
 ];
 
 export default function EditJobModal({ job, onUpdate, onDelete, onClose }) {
   const { editingField, draftValue, startEdit, updateDraft, cancel, save } = useInlineEdit();
+  const { todos, addTodo, toggleTodo, removeTodo, updateTodo } = useTodos(job, onUpdate);
 
   if (!job) return null;
 
@@ -133,7 +134,25 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose }) {
                     {/* Scrollable body */}
                     <div className="flex-1 overflow-y-auto px-5 py-5">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-5">
-                        {FIELD_CONFIG.map(renderField)}
+                        {FIELD_CONFIG.filter((c) => c.key !== 'notes').map(renderField)}
+
+                        {/* Next Steps (todo list) */}
+                        <div className="col-span-full">
+                          <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">
+                            Next Steps
+                          </div>
+                          <div className="rounded-lg bg-zinc-50 dark:bg-zinc-800/50 ring-1 ring-zinc-950/5 dark:ring-white/5 px-3 py-2">
+                            <TodoList
+                              todos={todos}
+                              onAdd={addTodo}
+                              onToggle={toggleTodo}
+                              onRemove={removeTodo}
+                              onUpdate={updateTodo}
+                            />
+                          </div>
+                        </div>
+
+                        {FIELD_CONFIG.filter((c) => c.key === 'notes').map(renderField)}
                       </div>
                     </div>
 

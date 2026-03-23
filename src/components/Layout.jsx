@@ -3,7 +3,7 @@ import { Switch } from './catalyst';
 import UserMenu from './UserMenu.jsx';
 import TrackurWordmark from './TrackurWordmark.jsx';
 
-export default function Layout({ dark, onToggleDark, user, profile, onSignOut, children }) {
+export default function Layout({ dark, onToggleDark, user, profile, onSignOut, onSettings, children }) {
   return (
     <div className="flex min-h-svh flex-col bg-zinc-200 dark:bg-zinc-950">
       {/* Header — full-width, separate from content */}
@@ -12,7 +12,7 @@ export default function Layout({ dark, onToggleDark, user, profile, onSignOut, c
           <TrackurWordmark size="sm" />
         </div>
         <div className="flex items-center gap-3">
-          {user && <UserMenu user={user} profile={profile} onSignOut={onSignOut} />}
+          {user && <UserMenu user={user} profile={profile} onSignOut={onSignOut} onSettings={onSettings} />}
           <div className="flex items-center gap-2">
             <SunIcon className="size-4 text-zinc-500 dark:text-zinc-400" />
             <Switch color="violet" checked={dark} onChange={onToggleDark} />

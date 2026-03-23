@@ -10,8 +10,7 @@ const COLUMNS = [
   { key: 'role', label: 'Role' },
   { key: 'stage', label: 'Stage' },
   { key: 'dateApplied', label: 'Date Applied' },
-  { key: 'nextAction', label: 'Next Action' },
-  { key: 'nextActionDate', label: 'Action Date' },
+  { key: 'nextStep', label: 'Next Step' },
 ];
 
 export default function TableView({ jobs, onUpdate, onDelete, onEdit, sortKey, sortDir, onSort }) {
@@ -44,8 +43,16 @@ export default function TableView({ jobs, onUpdate, onDelete, onEdit, sortKey, s
   }, [editingField, draftValue, onUpdate, cancel]);
 
   const sorted = [...jobs].sort((a, b) => {
-    const valA = (a[sortKey] || '').toLowerCase();
-    const valB = (b[sortKey] || '').toLowerCase();
+    let valA, valB;
+    if (sortKey === 'nextStep') {
+      const todosA = (a.todos ?? []).filter((t) => !t.completed);
+      const todosB = (b.todos ?? []).filter((t) => !t.completed);
+      valA = (todosA[0]?.text || '').toLowerCase();
+      valB = (todosB[0]?.text || '').toLowerCase();
+    } else {
+      valA = (a[sortKey] || '').toLowerCase();
+      valB = (b[sortKey] || '').toLowerCase();
+    }
     const cmp = valA < valB ? -1 : valA > valB ? 1 : 0;
     return sortDir === 'asc' ? cmp : -cmp;
   });
@@ -81,7 +88,7 @@ export default function TableView({ jobs, onUpdate, onDelete, onEdit, sortKey, s
       );
     }
 
-    if (colKey === 'dateApplied' || colKey === 'nextActionDate') {
+    if (colKey === 'dateApplied') {
       return (
         <InlineEditableField
           {...cellProps}
@@ -92,13 +99,22 @@ export default function TableView({ jobs, onUpdate, onDelete, onEdit, sortKey, s
       );
     }
 
-    if (colKey === 'nextAction') {
+    if (colKey === 'nextStep') {
+      const todos = job.todos ?? [];
+      const uncompleted = todos.filter((t) => !t.completed);
+      const completed = todos.filter((t) => t.completed);
+      if (todos.length === 0) {
+        return <span className="text-zinc-400 dark:text-zinc-500">&mdash;</span>;
+      }
       return (
-        <InlineEditableField
-          {...cellProps}
-          placeholder="Add action"
-          displayRender={(val) => val || <span className="text-zinc-400 dark:text-zinc-500">&mdash;</span>}
-        />
+        <button type="button" onClick={() => onEdit(job.id)} className="text-left">
+          <span className="truncate block max-w-48">
+            {uncompleted.length > 0 ? uncompleted[0].text : <span className="text-emerald-600 dark:text-emerald-400">All done</span>}
+          </span>
+          <Badge color="zinc" className="mt-0.5 text-[10px]">
+            {completed.length}/{todos.length}
+          </Badge>
+        </button>
       );
     }
 
@@ -132,6 +148,20 @@ export default function TableView({ jobs, onUpdate, onDelete, onEdit, sortKey, s
             {job.dateApplied && (
               <p className="mt-1.5 text-xs text-zinc-400 dark:text-zinc-500">Applied {formatDate(job.dateApplied)}</p>
             )}
+            {(() => {
+              const todos = job.todos ?? [];
+              const uncompleted = todos.filter((t) => !t.completed);
+              if (todos.length === 0) return null;
+              return (
+                <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400 truncate">
+                  {uncompleted.length > 0
+                    ? <>Next: {uncompleted[0].text}</>
+                    : <span className="text-emerald-600 dark:text-emerald-400">All steps done</span>
+                  }
+                  {' '}<span className="text-zinc-400 dark:text-zinc-500">({todos.filter((t) => t.completed).length}/{todos.length})</span>
+                </p>
+              );
+            })()}
           </button>
         ))}
       </div>
@@ -180,11 +210,8 @@ export default function TableView({ jobs, onUpdate, onDelete, onEdit, sortKey, s
                 <td className="px-4 py-3 text-sm text-zinc-500 dark:text-zinc-400 whitespace-nowrap">
                   {renderCell(job, 'dateApplied')}
                 </td>
-                <td className="px-4 py-3 text-sm text-zinc-500 dark:text-zinc-400 max-w-50">
-                  {renderCell(job, 'nextAction')}
-                </td>
-                <td className="px-4 py-3 text-sm text-zinc-500 dark:text-zinc-400 whitespace-nowrap">
-                  {renderCell(job, 'nextActionDate')}
+                <td className="px-4 py-3 text-sm text-zinc-500 dark:text-zinc-400 max-w-56">
+                  {renderCell(job, 'nextStep')}
                 </td>
                 <td className="px-4 py-3 text-right whitespace-nowrap">
                   <span className="inline-flex gap-1">

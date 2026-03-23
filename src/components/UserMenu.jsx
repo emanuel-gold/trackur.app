@@ -1,7 +1,7 @@
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/react';
-import { ChevronDownIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/react/24/outline';
+import { ChevronDownIcon, ArrowRightStartOnRectangleIcon, Cog6ToothIcon } from '@heroicons/react/24/outline';
 
-export default function UserMenu({ user, profile, onSignOut }) {
+export default function UserMenu({ user, profile, onSignOut, onSettings }) {
   const email = user?.email ?? '';
   const displayName = profile?.firstName || email.split('@')[0];
 
@@ -22,6 +22,17 @@ export default function UserMenu({ user, profile, onSignOut }) {
           <p className="text-xs text-zinc-500 dark:text-zinc-400">Signed in as</p>
           <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300 truncate">{email}</p>
         </div>
+
+        <MenuItem>
+          <button
+            type="button"
+            onClick={onSettings}
+            className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-zinc-700 data-focus:bg-zinc-950/5 dark:text-zinc-300 dark:data-focus:bg-white/5 transition-colors"
+          >
+            <Cog6ToothIcon className="size-4" />
+            Settings
+          </button>
+        </MenuItem>
 
         <MenuItem>
           <button

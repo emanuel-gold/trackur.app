@@ -12,6 +12,9 @@ function toApp(row) {
     industries: row.industries ?? [],
     jobTitles: row.job_titles ?? [],
     setupComplete: row.setup_complete,
+    notifyDueToday: row.notify_due_today ?? true,
+    notifyOverdue: row.notify_overdue ?? true,
+    notifyDueTomorrow: row.notify_due_tomorrow ?? true,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -29,6 +32,9 @@ function toDb(profile) {
   if (profile.industries !== undefined) row.industries = profile.industries;
   if (profile.jobTitles !== undefined) row.job_titles = profile.jobTitles;
   if (profile.setupComplete !== undefined) row.setup_complete = profile.setupComplete;
+  if (profile.notifyDueToday !== undefined) row.notify_due_today = profile.notifyDueToday;
+  if (profile.notifyOverdue !== undefined) row.notify_overdue = profile.notifyOverdue;
+  if (profile.notifyDueTomorrow !== undefined) row.notify_due_tomorrow = profile.notifyDueTomorrow;
   return row;
 }
 

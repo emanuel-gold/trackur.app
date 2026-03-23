@@ -1,11 +1,47 @@
-const CSV_HEADERS = ['id', 'company', 'role', 'stage', 'dateApplied', 'nextAction', 'nextActionDate', 'notes'];
+const CSV_HEADERS = ['id', 'company', 'role', 'stage', 'dateApplied', 'todos', 'notes'];
+
+// Legacy headers for backward-compatible import
+const LEGACY_NEXT_ACTION = 'nextAction';
+const LEGACY_NEXT_ACTION_DATE = 'nextActionDate';
 
 function escapeCsvField(value) {
   const str = String(value ?? '');
-  if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+  if (str.includes(',') || str.includes('"') || str.includes('\n') || str.includes(';')) {
     return '"' + str.replace(/"/g, '""') + '"';
   }
   return str;
+}
+
+function serializeTodos(todos) {
+  if (!Array.isArray(todos) || todos.length === 0) return '';
+  return todos
+    .map((t) => {
+      let s = t.completed ? '[x] ' : '[ ] ';
+      s += t.text || '';
+      if (t.dueDate) s += ` (${t.dueDate})`;
+      return s;
+    })
+    .join('; ');
+}
+
+function parseTodosFromCsv(str) {
+  if (!str || !str.trim()) return [];
+  return str.split(';').map((item) => {
+    const trimmed = item.trim();
+    const completed = trimmed.startsWith('[x]');
+    const withoutCheck = trimmed.replace(/^\[[ x]\]\s*/, '');
+    const dateMatch = withoutCheck.match(/\((\d{4}-\d{2}-\d{2})\)\s*$/);
+    const dueDate = dateMatch ? dateMatch[1] : null;
+    const text = dueDate ? withoutCheck.replace(/\s*\(\d{4}-\d{2}-\d{2}\)\s*$/, '') : withoutCheck;
+    return {
+      id: crypto.randomUUID(),
+      text: text.trim(),
+      dueDate,
+      completed,
+      completedAt: completed ? new Date().toISOString() : null,
+      createdAt: new Date().toISOString(),
+    };
+  }).filter((t) => t.text);
 }
 
 function parseCsvLine(line) {
@@ -42,7 +78,10 @@ function parseCsvLine(line) {
 export function exportJobsToCsv(jobs) {
   const header = CSV_HEADERS.join(',');
   const rows = jobs.map((job) =>
-    CSV_HEADERS.map((key) => escapeCsvField(job[key])).join(',')
+    CSV_HEADERS.map((key) => {
+      if (key === 'todos') return escapeCsvField(serializeTodos(job.todos));
+      return escapeCsvField(job[key]);
+    }).join(',')
   );
   const csv = [header, ...rows].join('\n');
 
@@ -77,8 +116,32 @@ export function parseCsvFile(file) {
             const key = header.trim();
             job[key] = values[idx]?.trim() ?? '';
           });
-          // Ensure id is a number
-          job.id = job.id ? Number(job.id) : Date.now() + i;
+
+          // Handle todos column
+          if (job.todos !== undefined) {
+            job.todos = parseTodosFromCsv(job.todos);
+          } else if (job[LEGACY_NEXT_ACTION] || job[LEGACY_NEXT_ACTION_DATE]) {
+            // Backward compatible: convert legacy nextAction/nextActionDate to a single todo
+            const todos = [];
+            if (job[LEGACY_NEXT_ACTION]) {
+              todos.push({
+                id: crypto.randomUUID(),
+                text: job[LEGACY_NEXT_ACTION],
+                dueDate: job[LEGACY_NEXT_ACTION_DATE] || null,
+                completed: false,
+                completedAt: null,
+                createdAt: new Date().toISOString(),
+              });
+            }
+            job.todos = todos;
+            delete job[LEGACY_NEXT_ACTION];
+            delete job[LEGACY_NEXT_ACTION_DATE];
+          } else {
+            job.todos = [];
+          }
+
+          // Ensure id is a string UUID for imported jobs
+          job.id = job.id || crypto.randomUUID();
           if (job.company || job.role) {
             jobs.push(job);
           }

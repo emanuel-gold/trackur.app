@@ -1,3 +1,5 @@
+export const MAX_TODOS = 10;
+
 export const STAGES = [
   'Applied',
   'Screening',

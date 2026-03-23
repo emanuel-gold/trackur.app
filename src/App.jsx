@@ -5,6 +5,7 @@ import useJobs from './hooks/useJobs.js';
 import useToast from './hooks/useToast.js';
 import useDarkMode from './hooks/useDarkMode.js';
 import useAuth from './hooks/useAuth.js';
+import useNotifications from './hooks/useNotifications.js';
 import { exportJobsToCsv } from './services/csvService.js';
 import { STAGES } from './constants.js';
 import { Button, Select } from './components/catalyst';
@@ -22,6 +23,7 @@ import LoginScreen from './components/LoginScreen.jsx';
 import SignUpScreen from './components/SignUpScreen.jsx';
 import EmailVerificationScreen from './components/EmailVerificationScreen.jsx';
 import AccountSetupScreen from './components/AccountSetupScreen.jsx';
+import SettingsModal from './components/SettingsModal.jsx';
 
 function App() {
   const auth = useAuth();
@@ -62,6 +64,9 @@ function App() {
   const [importOpen, setImportOpen] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [editingJobId, setEditingJobId] = useState(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+
+  const { notificationsSupported, permissionState, requestPermission } = useNotifications(jobs, auth.profile);
 
   const filteredJobs = useMemo(() => {
     let result = jobs;
@@ -219,7 +224,7 @@ function App() {
   }
 
   return (
-    <Layout dark={dark} onToggleDark={toggleDark} user={auth.user} profile={auth.profile} onSignOut={auth.signOut}>
+    <Layout dark={dark} onToggleDark={toggleDark} user={auth.user} profile={auth.profile} onSignOut={auth.signOut} onSettings={() => setSettingsOpen(true)}>
       {/* Toolbar */}
       <div className="mb-4 md:mb-6 flex flex-wrap items-center gap-3">
         <FilterBar
@@ -347,6 +352,17 @@ function App() {
         confirmLabel="Delete"
         onConfirm={handleDeleteConfirm}
         onCancel={() => setDeleteConfirm(null)}
+      />
+
+      <SettingsModal
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        user={auth.user}
+        profile={auth.profile}
+        refreshProfile={auth.refreshProfile}
+        notificationsSupported={notificationsSupported}
+        permissionState={permissionState}
+        requestPermission={requestPermission}
       />
 
       <ToastContainer toasts={toasts} onDismiss={dismissToast} />
