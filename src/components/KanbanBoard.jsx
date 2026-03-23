@@ -1,9 +1,23 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
+import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 import { STAGES, STAGE_COLORS } from '../constants.js';
 import { Badge } from './catalyst';
 import JobCard from './JobCard.jsx';
 
-function MobileStageRow({ stage, stageJobs, onUpdate, onDelete, onEdit, onUpdateStage }) {
+const COLLAPSED_KEY = 'kanbanCollapsedStages';
+
+function loadCollapsed() {
+  try {
+    const raw = localStorage.getItem(COLLAPSED_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch { return {}; }
+}
+
+function saveCollapsed(collapsed) {
+  localStorage.setItem(COLLAPSED_KEY, JSON.stringify(collapsed));
+}
+
+function MobileStageRow({ stage, stageJobs, onUpdate, onDelete, onEdit, onUpdateStage, collapsed, onToggleCollapse }) {
   const scrollRef = useRef(null);
   const [activeCard, setActiveCard] = useState(0);
 
@@ -34,48 +48,60 @@ function MobileStageRow({ stage, stageJobs, onUpdate, onDelete, onEdit, onUpdate
 
   return (
     <div>
-      <div className="flex items-center justify-between px-1 mb-2">
-        <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">{stage}</h3>
+      <button
+        type="button"
+        onClick={onToggleCollapse}
+        className="flex items-center justify-between w-full px-1 mb-2 group cursor-pointer"
+      >
+        <div className="flex items-center gap-1.5">
+          {collapsed
+            ? <ChevronDownIcon className="size-4 text-zinc-400 dark:text-zinc-500" />
+            : <ChevronUpIcon className="size-4 text-zinc-400 dark:text-zinc-500" />
+          }
+          <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">{stage}</h3>
+        </div>
         <Badge color={STAGE_COLORS[stage].badge}>{stageJobs.length}</Badge>
-      </div>
+      </button>
 
-      {stageJobs.length === 0 ? (
-        <p className="px-2 py-4 text-center text-xs text-zinc-400 dark:text-zinc-500 bg-mauve-200/50 dark:bg-mauve-950/20 rounded-lg">
-          No jobs
-        </p>
-      ) : (
-        <>
-          <div
-            ref={scrollRef}
-            className="flex items-stretch gap-3 overflow-x-auto snap-x snap-mandatory pb-1"
-          >
-            {stageJobs.map((job) => (
-              <div key={job.id} className="shrink-0 w-[80%] snap-start flex">
-                <JobCard
-                  job={job}
-                  onUpdate={onUpdate}
-                  onDelete={onDelete}
-                  onEdit={onEdit}
-                  onStageChange={onUpdateStage}
-                  compact
-                />
-              </div>
-            ))}
-          </div>
-          {stageJobs.length > 1 && (
-            <div className="flex justify-center gap-1.5 pt-1.5">
-              {stageJobs.map((job, i) => (
-                <button
-                  key={job.id}
-                  type="button"
-                  onClick={() => scrollToCard(i)}
-                  aria-label={`Card ${i + 1}`}
-                  className={`size-1.5 rounded-full transition-colors ${i === activeCard ? 'bg-mauve-500' : 'bg-zinc-300 dark:bg-zinc-600'}`}
-                />
+      {!collapsed && (
+        stageJobs.length === 0 ? (
+          <p className="px-2 py-4 text-center text-xs text-zinc-400 dark:text-zinc-500 bg-mauve-200/50 dark:bg-mauve-950/20 rounded-lg">
+            No jobs
+          </p>
+        ) : (
+          <>
+            <div
+              ref={scrollRef}
+              className="flex items-stretch gap-3 overflow-x-auto snap-x snap-mandatory pb-1"
+            >
+              {stageJobs.map((job) => (
+                <div key={job.id} className="shrink-0 w-[80%] snap-start flex">
+                  <JobCard
+                    job={job}
+                    onUpdate={onUpdate}
+                    onDelete={onDelete}
+                    onEdit={onEdit}
+                    onStageChange={onUpdateStage}
+                    compact
+                  />
+                </div>
               ))}
             </div>
-          )}
-        </>
+            {stageJobs.length > 1 && (
+              <div className="flex justify-center gap-1.5 pt-1.5">
+                {stageJobs.map((job, i) => (
+                  <button
+                    key={job.id}
+                    type="button"
+                    onClick={() => scrollToCard(i)}
+                    aria-label={`Card ${i + 1}`}
+                    className={`size-1.5 rounded-full transition-colors ${i === activeCard ? 'bg-mauve-500' : 'bg-zinc-300 dark:bg-zinc-600'}`}
+                  />
+                ))}
+              </div>
+            )}
+          </>
+        )
       )}
     </div>
   );
@@ -83,6 +109,15 @@ function MobileStageRow({ stage, stageJobs, onUpdate, onDelete, onEdit, onUpdate
 
 export default function KanbanBoard({ jobs, onUpdate, onDelete, onEdit, onUpdateStage }) {
   const [dragOverStage, setDragOverStage] = useState(null);
+  const [collapsedStages, setCollapsedStages] = useState(loadCollapsed);
+
+  function toggleCollapse(stage) {
+    setCollapsedStages((prev) => {
+      const next = { ...prev, [stage]: !prev[stage] };
+      saveCollapsed(next);
+      return next;
+    });
+  }
 
   const jobsByStage = {};
   STAGES.forEach((stage) => {
@@ -128,6 +163,8 @@ export default function KanbanBoard({ jobs, onUpdate, onDelete, onEdit, onUpdate
             onDelete={onDelete}
             onEdit={onEdit}
             onUpdateStage={onUpdateStage}
+            collapsed={!!collapsedStages[stage]}
+            onToggleCollapse={() => toggleCollapse(stage)}
           />
         ))}
       </div>
@@ -137,6 +174,27 @@ export default function KanbanBoard({ jobs, onUpdate, onDelete, onEdit, onUpdate
         {STAGES.map((stage) => {
           const stageJobs = jobsByStage[stage];
           const isDragOver = dragOverStage === stage;
+          const isCollapsed = !!collapsedStages[stage];
+
+          if (isCollapsed) {
+            return (
+              <button
+                key={stage}
+                type="button"
+                onClick={() => toggleCollapse(stage)}
+                onDragOver={(e) => handleDragOver(e, stage)}
+                onDragLeave={(e) => handleDragLeave(e, stage)}
+                onDrop={(e) => handleDrop(e, stage)}
+                className={`shrink-0 w-10 rounded-lg bg-mauve-200 dark:bg-mauve-950/40 transition-all cursor-pointer flex flex-col items-center py-3 gap-2 hover:bg-mauve-300/60 dark:hover:bg-mauve-900/40 ${isDragOver ? 'ring-2 ring-mauve-400 dark:ring-mauve-500' : 'ring-1 ring-mauve-300/50 dark:ring-mauve-800/30'}`}
+              >
+                <ChevronRightIcon className="size-4 text-zinc-400 dark:text-zinc-500 shrink-0" aria-hidden="true" />
+                <Badge color={STAGE_COLORS[stage].badge}>{stageJobs.length}</Badge>
+                <span className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 [writing-mode:vertical-lr] rotate-180">
+                  {stage}
+                </span>
+              </button>
+            );
+          }
 
           return (
             <div
@@ -146,10 +204,17 @@ export default function KanbanBoard({ jobs, onUpdate, onDelete, onEdit, onUpdate
               onDragLeave={(e) => handleDragLeave(e, stage)}
               onDrop={(e) => handleDrop(e, stage)}
             >
-              <div className="flex items-center justify-between px-3 py-2 border-b border-mauve-300/50 dark:border-mauve-800/30">
-                <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">{stage}</h3>
+              <button
+                type="button"
+                onClick={() => toggleCollapse(stage)}
+                className="flex items-center justify-between w-full px-3 py-2 border-b border-mauve-300/50 dark:border-mauve-800/30 cursor-pointer group"
+              >
+                <div className="flex items-center gap-1.5">
+                  <ChevronLeftIcon className="size-4 text-zinc-400 dark:text-zinc-500" />
+                  <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">{stage}</h3>
+                </div>
                 <Badge color={STAGE_COLORS[stage].badge}>{stageJobs.length}</Badge>
-              </div>
+              </button>
 
               <div className="p-2 space-y-2 max-h-[calc(100vh-16rem)] overflow-y-auto">
                 {stageJobs.length === 0 ? (
