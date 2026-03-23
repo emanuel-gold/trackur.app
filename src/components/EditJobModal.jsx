@@ -5,6 +5,7 @@ import { STAGES, STAGE_COLORS } from '../constants.js';
 import { Badge, Button } from './catalyst';
 import useInlineEdit from '../hooks/useInlineEdit.js';
 import InlineEditableField from './InlineEditableField.jsx';
+import { formatDate } from '../utils/formatDate.js';
 
 const FIELD_CONFIG = [
   { key: 'company', label: 'Company', required: true, placeholder: 'Company name' },
@@ -41,9 +42,12 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose }) {
     const { key, label, inputType, selectOptions, placeholder, required } = config;
     const isStage = key === 'stage';
 
+    const isDate = inputType === 'date';
     const displayRender = isStage
       ? (val) => <Badge color={STAGE_COLORS[val]?.badge || 'zinc'}>{val || 'Not set'}</Badge>
-      : undefined;
+      : isDate
+        ? (val) => val ? formatDate(val) : undefined
+        : undefined;
 
     return (
       <div key={key} className={key === 'notes' ? 'col-span-full' : ''}>

@@ -3,6 +3,7 @@ import { TrashIcon, PencilSquareIcon, ChevronUpIcon, ChevronDownIcon } from '@he
 import { STAGES, STAGE_COLORS } from '../constants.js';
 import { Badge } from './catalyst';
 import InlineEditableField from './InlineEditableField.jsx';
+import { formatDate } from '../utils/formatDate.js';
 
 const COLUMNS = [
   { key: 'company', label: 'Company' },
@@ -86,7 +87,7 @@ export default function TableView({ jobs, onUpdate, onDelete, onEdit, sortKey, s
           {...cellProps}
           inputType="date"
           placeholder="Set date"
-          displayRender={(val) => val || <span className="text-zinc-400 dark:text-zinc-500">&mdash;</span>}
+          displayRender={(val) => val ? formatDate(val) : <span className="text-zinc-400 dark:text-zinc-500">&mdash;</span>}
         />
       );
     }
@@ -129,7 +130,7 @@ export default function TableView({ jobs, onUpdate, onDelete, onEdit, sortKey, s
               <Badge color={STAGE_COLORS[job.stage]?.badge || 'zinc'}>{job.stage}</Badge>
             </div>
             {job.dateApplied && (
-              <p className="mt-1.5 text-xs text-zinc-400 dark:text-zinc-500">Applied {job.dateApplied}</p>
+              <p className="mt-1.5 text-xs text-zinc-400 dark:text-zinc-500">Applied {formatDate(job.dateApplied)}</p>
             )}
           </button>
         ))}

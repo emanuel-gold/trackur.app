@@ -3,6 +3,7 @@ import { STAGES, STAGE_COLORS } from '../constants.js';
 import { Badge } from './catalyst';
 import useInlineEdit from '../hooks/useInlineEdit.js';
 import InlineEditableField from './InlineEditableField.jsx';
+import { formatDate } from '../utils/formatDate.js';
 
 export default function JobCard({ job, onUpdate, onDelete, onEdit, onDragStart, compact, onStageChange }) {
   const { editingField, draftValue, startEdit, updateDraft, cancel, save } = useInlineEdit();
@@ -97,7 +98,7 @@ export default function JobCard({ job, onUpdate, onDelete, onEdit, onDragStart, 
         onCancel={cancel}
         inputType="date"
         placeholder="Set applied date"
-        displayRender={(val) => val ? <span>Applied {val}</span> : null}
+        displayRender={(val) => val ? <span>Applied {formatDate(val)}</span> : null}
         className="mt-2 text-xs text-zinc-500 dark:text-zinc-400"
       />
       
@@ -131,8 +132,8 @@ export default function JobCard({ job, onUpdate, onDelete, onEdit, onDragStart, 
               onCancel={cancel}
               inputType="date"
               placeholder="Set action date"
-              displayRender={(val) => val ? 
-              <span className="inline-flex items-center gap-1"><CalendarIcon className="h-3.5 w-3.5" /> {val}</span> : null}
+              displayRender={(val) => val ?
+              <span className="inline-flex items-center gap-1"><CalendarIcon className="h-3.5 w-3.5" /> {formatDate(val)}</span> : null}
             />
           </div>
         )}
