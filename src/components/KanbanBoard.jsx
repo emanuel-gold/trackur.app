@@ -135,31 +135,31 @@ export default function KanbanBoard({ jobs, onUpdate, onDelete, onEdit, onUpdate
     return grouped;
   }, [jobs]);
 
-  function handleDragStart(e, jobId) {
+  const handleDragStart = useCallback((e, jobId) => {
     e.dataTransfer.setData('text/plain', String(jobId));
     e.dataTransfer.effectAllowed = 'move';
-  }
+  }, []);
 
-  function handleDragOver(e, stage) {
+  const handleDragOver = useCallback((e, stage) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
     setDragOverStage(stage);
-  }
+  }, []);
 
-  function handleDragLeave(e, stage) {
+  const handleDragLeave = useCallback((e) => {
     if (!e.currentTarget.contains(e.relatedTarget)) {
       setDragOverStage(null);
     }
-  }
+  }, []);
 
-  function handleDrop(e, stage) {
+  const handleDrop = useCallback((e, stage) => {
     e.preventDefault();
     setDragOverStage(null);
     const jobId = e.dataTransfer.getData('text/plain');
     if (jobId && onUpdateStage) {
       onUpdateStage(jobId, stage);
     }
-  }
+  }, [onUpdateStage]);
 
   return (
     <div>
