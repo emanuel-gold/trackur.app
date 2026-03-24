@@ -181,7 +181,7 @@ export default function KanbanBoard({ jobs, onUpdate, onDelete, onEdit, onUpdate
       </div>
 
       {/* Desktop: original horizontal columns */}
-      <div className="hidden md:flex gap-4 overflow-x-auto pb-4 min-h-[75vh]">
+      <div className="hidden md:flex gap-4 overflow-x-auto pt-2 pb-4 min-h-[77vh]">
         {STAGES.map((stage) => {
           const stageJobs = jobsByStage[stage];
           const isDragOver = dragOverStage === stage;

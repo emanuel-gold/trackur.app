@@ -231,7 +231,7 @@ function App() {
   return (
     <Layout dark={dark} onToggleDark={toggleDark} user={auth.user} profile={auth.profile} onSignOut={auth.signOut} onSettings={() => setSettingsOpen(true)}>
       {/* Toolbar */}
-      <div className="mb-4 md:mb-6 flex flex-wrap items-center gap-3">
+      <div className="mb-4 flex flex-wrap items-center gap-3">
         <FilterBar
           search={search}
           onSearchChange={setSearch}

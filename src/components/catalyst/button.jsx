@@ -92,7 +92,7 @@ const styles = {
       '[--btn-icon:var(--color-mauve-300)] data-active:[--btn-icon:var(--color-mauve-200)] data-hover:[--btn-icon:var(--color-mauve-200)]',
     ],
     red: [
-      'text-white [--btn-hover-overlay:var(--color-white)]/10 [--btn-bg:var(--color-red-600)] [--btn-border:var(--color-red-700)]/90',
+      'text-white [--btn-hover-overlay:var(--color-red-900)]/15 [--btn-bg:var(--color-red-600)] [--btn-border:var(--color-red-700)]/90',
       '[--btn-icon:var(--color-red-300)] data-active:[--btn-icon:var(--color-red-200)] data-hover:[--btn-icon:var(--color-red-200)]',
     ],
     orange: [
