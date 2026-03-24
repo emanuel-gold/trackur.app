@@ -1,3 +1,4 @@
+import { memo, useMemo, useCallback } from 'react';
 import { TrashIcon, PencilSquareIcon, ChevronUpDownIcon, CalendarIcon } from '@heroicons/react/24/outline';
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
 import { STAGES, STAGE_COLORS } from '../constants.js';
@@ -6,7 +7,7 @@ import useInlineEdit from '../hooks/useInlineEdit.js';
 import InlineEditableField from './InlineEditableField.jsx';
 import { formatDate } from '../utils/formatDate.js';
 
-export default function JobCard({ job, onUpdate, onDelete, onEdit, onDragStart, compact, onStageChange }) {
+export default memo(function JobCard({ job, onUpdate, onDelete, onEdit, onDragStart, compact, onStageChange }) {
   const { editingField, draftValue, startEdit, updateDraft, cancel, save } = useInlineEdit();
 
   const handleSave = () => {
@@ -19,6 +20,36 @@ export default function JobCard({ job, onUpdate, onDelete, onEdit, onDragStart, 
   };
 
   const isEditing = editingField !== null;
+
+  const todos = job.todos ?? [];
+  const { uncompleted, completed, shown, remaining } = useMemo(() => {
+    const uncompleted = todos.filter((t) => !t.completed);
+    const completed = todos.filter((t) => t.completed);
+    const shown = uncompleted.slice(0, 3);
+    const remaining = uncompleted.length - shown.length;
+    return { uncompleted, completed, shown, remaining };
+  }, [todos]);
+
+  const handleToggleTodo = useCallback((e, todoId) => {
+    e.stopPropagation();
+    onUpdate(job.id, {
+      todos: todos.map((t) =>
+        t.id === todoId
+          ? { ...t, completed: true, completedAt: new Date().toISOString() }
+          : t
+      ),
+    });
+  }, [todos, onUpdate, job.id]);
+
+  const handleSaveTodoText = useCallback((todoId) => {
+    const { field, value } = save();
+    if (!field || !value.trim()) { cancel(); return; }
+    onUpdate(job.id, {
+      todos: todos.map((t) =>
+        t.id === todoId ? { ...t, text: value.trim() } : t
+      ),
+    });
+  }, [todos, onUpdate, job.id, save, cancel]);
 
   return (
     <div
@@ -106,117 +137,84 @@ export default function JobCard({ job, onUpdate, onDelete, onEdit, onDragStart, 
       />
       
       {/* Next steps todo summary */}
-      {(() => {
-        const todos = job.todos ?? [];
-        const uncompleted = todos.filter((t) => !t.completed);
-        const completed = todos.filter((t) => t.completed);
-        const shown = uncompleted.slice(0, 3);
-        const remaining = uncompleted.length - shown.length;
+      {todos.length === 0 ? (
+        <button
+          type="button"
+          onClick={() => onEdit(job.id)}
+          className="mt-2 rounded -mx-1.5 px-1.5 py-1 text-xs text-zinc-400 dark:text-zinc-500 italic hover:bg-mauve-50 dark:hover:bg-mauve-950/30 transition-colors w-full text-left"
+        >
+          Add next step...
+        </button>
+      ) : (
+        <div className="rounded mt-2 shadow-md -mx-1.5 px-1.5 py-1.5 text-xs border border-mauve-300 bg-mauve-200 dark:border-mauve-800 dark:bg-mauve-700">
+          {uncompleted.length === 0 && todos.length > 0 ? (
+            <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium">
+              <CheckCircleIcon className="size-3.5" />
+              All steps done
+            </span>
+          ) : (
+            <div className="space-y-0.5">
+              {shown.map((todo) => {
+                const todoFieldName = `todo_text_${todo.id}`;
+                const isEditingTodo = editingField === todoFieldName;
 
-        const handleToggleTodo = (e, todoId) => {
-          e.stopPropagation();
-          onUpdate(job.id, {
-            todos: todos.map((t) =>
-              t.id === todoId
-                ? { ...t, completed: true, completedAt: new Date().toISOString() }
-                : t
-            ),
-          });
-        };
+                return (
+                  <div key={todo.id} className="group/todo flex items-center gap-1.5 text-zinc-600 dark:text-zinc-300">
+                    {/* Checkbox */}
+                    <button
+                      type="button"
+                      onClick={(e) => handleToggleTodo(e, todo.id)}
+                      className="shrink-0"
+                    >
+                      <span className="block size-3.5 rounded-full border-[1.5px] border-zinc-400 dark:border-zinc-500 hover:border-violet-400 dark:hover:border-violet-500 transition-colors" />
+                    </button>
 
-        const handleSaveTodoText = (todoId) => {
-          const { field, value } = save();
-          if (!field || !value.trim()) { cancel(); return; }
-          onUpdate(job.id, {
-            todos: todos.map((t) =>
-              t.id === todoId ? { ...t, text: value.trim() } : t
-            ),
-          });
-        };
+                    {/* Inline-editable text */}
+                    <InlineEditableField
+                      value={todo.text}
+                      fieldName={todoFieldName}
+                      isEditing={isEditingTodo}
+                      draftValue={draftValue}
+                      onStartEdit={startEdit}
+                      onDraftChange={updateDraft}
+                      onSave={() => handleSaveTodoText(todo.id)}
+                      onCancel={cancel}
+                      placeholder="Step text"
+                      className="flex-1 min-w-0 text-xs"
+                    />
 
-        if (todos.length === 0) {
-          return (
-            <button
-              type="button"
-              onClick={() => onEdit(job.id)}
-              className="mt-2 rounded -mx-1.5 px-1.5 py-1 text-xs text-zinc-400 dark:text-zinc-500 italic hover:bg-mauve-50 dark:hover:bg-mauve-950/30 transition-colors w-full text-left"
-            >
-              Add next step...
-            </button>
-          );
-        }
+                    {/* Due date chip */}
+                    {todo.dueDate && !isEditingTodo && (
+                      <span className="shrink-0 inline-flex items-center gap-0.5 text-zinc-500 dark:text-zinc-400">
+                        <CalendarIcon className="size-3" />
+                        {formatDate(todo.dueDate)}
+                      </span>
+                    )}
 
-        return (
-          <div className="rounded mt-2 shadow-md -mx-1.5 px-1.5 py-1.5 text-xs border border-mauve-300 bg-mauve-200 dark:border-mauve-800 dark:bg-mauve-700">
-            {uncompleted.length === 0 && todos.length > 0 ? (
-              <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium">
-                <CheckCircleIcon className="size-3.5" />
-                All steps done
-              </span>
-            ) : (
-              <div className="space-y-0.5">
-                {shown.map((todo) => {
-                  const todoFieldName = `todo_text_${todo.id}`;
-                  const isEditingTodo = editingField === todoFieldName;
-
-                  return (
-                    <div key={todo.id} className="group/todo flex items-center gap-1.5 text-zinc-600 dark:text-zinc-300">
-                      {/* Checkbox */}
+                    {/* Open in edit modal */}
+                    {!isEditingTodo && (
                       <button
                         type="button"
-                        onClick={(e) => handleToggleTodo(e, todo.id)}
-                        className="shrink-0"
+                        onClick={(e) => { e.stopPropagation(); onEdit(job.id); }}
+                        className="shrink-0 p-0.5 rounded text-zinc-400 dark:text-zinc-500 opacity-0 group-hover/todo:opacity-100 hover:text-mauve-600 hover:bg-mauve-50 dark:hover:text-mauve-400 dark:hover:bg-mauve-950/50 transition-all"
+                        title="Edit details"
                       >
-                        <span className="block size-3.5 rounded-full border-[1.5px] border-zinc-400 dark:border-zinc-500 hover:border-violet-400 dark:hover:border-violet-500 transition-colors" />
+                        <PencilSquareIcon className="size-3" />
                       </button>
-
-                      {/* Inline-editable text */}
-                      <InlineEditableField
-                        value={todo.text}
-                        fieldName={todoFieldName}
-                        isEditing={isEditingTodo}
-                        draftValue={draftValue}
-                        onStartEdit={startEdit}
-                        onDraftChange={updateDraft}
-                        onSave={() => handleSaveTodoText(todo.id)}
-                        onCancel={cancel}
-                        placeholder="Step text"
-                        className="flex-1 min-w-0 text-xs"
-                      />
-
-                      {/* Due date chip */}
-                      {todo.dueDate && !isEditingTodo && (
-                        <span className="shrink-0 inline-flex items-center gap-0.5 text-zinc-500 dark:text-zinc-400">
-                          <CalendarIcon className="size-3" />
-                          {formatDate(todo.dueDate)}
-                        </span>
-                      )}
-
-                      {/* Open in edit modal */}
-                      {!isEditingTodo && (
-                        <button
-                          type="button"
-                          onClick={(e) => { e.stopPropagation(); onEdit(job.id); }}
-                          className="shrink-0 p-0.5 rounded text-zinc-400 dark:text-zinc-500 opacity-0 group-hover/todo:opacity-100 hover:text-mauve-600 hover:bg-mauve-50 dark:hover:text-mauve-400 dark:hover:bg-mauve-950/50 transition-all"
-                          title="Edit details"
-                        >
-                          <PencilSquareIcon className="size-3" />
-                        </button>
-                      )}
-                    </div>
-                  );
-                })}
-                {remaining > 0 && (
-                  <p className="text-zinc-500 dark:text-zinc-400 pl-5">+{remaining} more</p>
-                )}
-                {completed.length > 0 && (
-                  <p className="text-zinc-500 dark:text-zinc-400 pl-5">{completed.length} done</p>
-                )}
-              </div>
-            )}
-          </div>
-        );
-      })()}
+                    )}
+                  </div>
+                );
+              })}
+              {remaining > 0 && (
+                <p className="text-zinc-500 dark:text-zinc-400 pl-5">+{remaining} more</p>
+              )}
+              {completed.length > 0 && (
+                <p className="text-zinc-500 dark:text-zinc-400 pl-5">{completed.length} done</p>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
         <InlineEditableField
@@ -254,4 +252,4 @@ export default function JobCard({ job, onUpdate, onDelete, onEdit, onDragStart, 
       </div>
     </div>
   );
-}
+});

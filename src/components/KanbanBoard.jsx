@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 import { STAGES, STAGE_COLORS } from '../constants.js';
 import { Badge } from './catalyst';
@@ -127,36 +127,39 @@ export default function KanbanBoard({ jobs, onUpdate, onDelete, onEdit, onUpdate
     });
   }
 
-  const jobsByStage = {};
-  STAGES.forEach((stage) => {
-    jobsByStage[stage] = jobs.filter((j) => j.stage === stage);
-  });
+  const jobsByStage = useMemo(() => {
+    const grouped = {};
+    STAGES.forEach((stage) => {
+      grouped[stage] = jobs.filter((j) => j.stage === stage);
+    });
+    return grouped;
+  }, [jobs]);
 
-  function handleDragStart(e, jobId) {
+  const handleDragStart = useCallback((e, jobId) => {
     e.dataTransfer.setData('text/plain', String(jobId));
     e.dataTransfer.effectAllowed = 'move';
-  }
+  }, []);
 
-  function handleDragOver(e, stage) {
+  const handleDragOver = useCallback((e, stage) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
     setDragOverStage(stage);
-  }
+  }, []);
 
-  function handleDragLeave(e, stage) {
+  const handleDragLeave = useCallback((e) => {
     if (!e.currentTarget.contains(e.relatedTarget)) {
       setDragOverStage(null);
     }
-  }
+  }, []);
 
-  function handleDrop(e, stage) {
+  const handleDrop = useCallback((e, stage) => {
     e.preventDefault();
     setDragOverStage(null);
-    const jobId = Number(e.dataTransfer.getData('text/plain'));
+    const jobId = e.dataTransfer.getData('text/plain');
     if (jobId && onUpdateStage) {
       onUpdateStage(jobId, stage);
     }
-  }
+  }, [onUpdateStage]);
 
   return (
     <div>
@@ -224,7 +227,7 @@ export default function KanbanBoard({ jobs, onUpdate, onDelete, onEdit, onUpdate
                 <Badge color={STAGE_COLORS[stage].badge}>{stageJobs.length}</Badge>
               </button>
 
-              <div className="p-2 space-y-2 max-h-[calc(100vh-16rem)] overflow-y-auto">
+              <div className="flex flex-col gap-2 p-2 space-y-2 max-h-[calc(100vh-16rem)] overflow-y-auto">
                 {stageJobs.length === 0 ? (
                   <p className="px-2 py-4 text-center text-xs text-zinc-400 dark:text-zinc-500">No jobs</p>
                 ) : (
