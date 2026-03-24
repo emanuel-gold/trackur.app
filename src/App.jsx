@@ -324,7 +324,7 @@ function App() {
 
       {filteredJobs.length === 0 && jobs.length === 0 ? (
         <div className="text-center py-16">
-          <p className="text-zinc-400 dark:text-zinc-500 text-lg">No jobs yet. Click "Add Job" to get started.</p>
+          <p className="text-zinc-400 dark:text-zinc-500 text-lg">Click "Add Job" to get started.</p>
         </div>
       ) : view === 'board' ? (
         <KanbanBoard jobs={filteredJobs} onUpdate={handleUpdate} onDelete={handleDeleteRequest} onEdit={handleEditRequest} onUpdateStage={handleUpdateStage} />
