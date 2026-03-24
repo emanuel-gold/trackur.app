@@ -6,11 +6,19 @@ import JobCard from './JobCard.jsx';
 
 const COLLAPSED_KEY = 'kanbanCollapsedStages';
 
+const DEFAULT_COLLAPSED = { Opportunity: true };
+
 function loadCollapsed() {
   try {
     const raw = localStorage.getItem(COLLAPSED_KEY);
-    return raw ? JSON.parse(raw) : {};
-  } catch { return {}; }
+    if (!raw) return { ...DEFAULT_COLLAPSED };
+    const parsed = JSON.parse(raw);
+    // Ensure defaults for stages that have never been toggled
+    for (const [stage, val] of Object.entries(DEFAULT_COLLAPSED)) {
+      if (!(stage in parsed)) parsed[stage] = val;
+    }
+    return parsed;
+  } catch { return { ...DEFAULT_COLLAPSED }; }
 }
 
 function saveCollapsed(collapsed) {
