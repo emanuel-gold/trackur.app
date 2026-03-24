@@ -55,7 +55,7 @@ function MobileStageRow({ stage, stageJobs, onUpdate, onDelete, onEdit, onUpdate
   }, []);
 
   return (
-    <div>
+    <div className="rounded-lg p-4 bg-mauve-200 dark:bg-mauve-950/40 transition-all ring-1 ring-mauve-300/50 dark:ring-mauve-800/30">
       <button
         type="button"
         onClick={onToggleCollapse}
@@ -66,7 +66,7 @@ function MobileStageRow({ stage, stageJobs, onUpdate, onDelete, onEdit, onUpdate
             ? <ChevronDownIcon className="size-4 text-zinc-400 dark:text-zinc-500" />
             : <ChevronUpIcon className="size-4 text-zinc-400 dark:text-zinc-500" />
           }
-          <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">{stage}</h3>
+          <h3 className="text-lg font-semibold text-zinc-700 dark:text-zinc-300">{stage}</h3>
         </div>
         <Badge color={STAGE_COLORS[stage].badge}>{stageJobs.length}</Badge>
       </button>
@@ -222,7 +222,7 @@ export default function KanbanBoard({ jobs, onUpdate, onDelete, onEdit, onUpdate
               >
                 <div className="flex items-center gap-1.5">
                   <ChevronLeftIcon className="size-4 text-zinc-400 dark:text-zinc-500" />
-                  <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">{stage}</h3>
+                  <h3 className="text-lg font-semibold text-zinc-700 dark:text-zinc-300">{stage}</h3>
                 </div>
                 <Badge color={STAGE_COLORS[stage].badge}>{stageJobs.length}</Badge>
               </button>

@@ -244,7 +244,7 @@ function App() {
         {/* Mobile overflow menu */}
         <Popover className="relative md:hidden">
           <PopoverButton as={Button} plain title="More actions">
-            <EllipsisVerticalIcon data-slot="icon" />
+            <EllipsisVerticalIcon data-slot="icon" className="size-7!" />
           </PopoverButton>
           <PopoverPanel
             anchor="bottom end"
