@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 import { STAGES, STAGE_COLORS } from '../constants.js';
 import { Badge } from './catalyst';
@@ -127,10 +127,13 @@ export default function KanbanBoard({ jobs, onUpdate, onDelete, onEdit, onUpdate
     });
   }
 
-  const jobsByStage = {};
-  STAGES.forEach((stage) => {
-    jobsByStage[stage] = jobs.filter((j) => j.stage === stage);
-  });
+  const jobsByStage = useMemo(() => {
+    const grouped = {};
+    STAGES.forEach((stage) => {
+      grouped[stage] = jobs.filter((j) => j.stage === stage);
+    });
+    return grouped;
+  }, [jobs]);
 
   function handleDragStart(e, jobId) {
     e.dataTransfer.setData('text/plain', String(jobId));
@@ -152,7 +155,7 @@ export default function KanbanBoard({ jobs, onUpdate, onDelete, onEdit, onUpdate
   function handleDrop(e, stage) {
     e.preventDefault();
     setDragOverStage(null);
-    const jobId = Number(e.dataTransfer.getData('text/plain'));
+    const jobId = e.dataTransfer.getData('text/plain');
     if (jobId && onUpdateStage) {
       onUpdateStage(jobId, stage);
     }

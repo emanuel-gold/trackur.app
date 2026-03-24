@@ -84,6 +84,11 @@ function App() {
     return result;
   }, [jobs, search, stageFilter]);
 
+  const editingJob = useMemo(
+    () => editingJobId ? jobs.find((j) => j.id === editingJobId) : null,
+    [jobs, editingJobId]
+  );
+
   const handleAdd = useCallback(async (job) => {
     try {
       await addJob(job);
@@ -329,9 +334,9 @@ function App() {
 
       <AddJobForm open={addJobOpen} onClose={() => setAddJobOpen(false)} onAdd={handleAdd} />
 
-      {editingJobId && (
+      {editingJob && (
         <EditJobModal
-          job={jobs.find((j) => j.id === editingJobId)}
+          job={editingJob}
           onUpdate={handleUpdate}
           onDelete={handleDeleteRequest}
           onClose={() => setEditingJobId(null)}

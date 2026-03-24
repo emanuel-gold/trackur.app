@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { TrashIcon, PencilSquareIcon, ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import { STAGES, STAGE_COLORS } from '../constants.js';
 import { Badge } from './catalyst';
@@ -42,7 +42,7 @@ export default function TableView({ jobs, onUpdate, onDelete, onEdit, sortKey, s
     setDraftValue('');
   }, [editingField, draftValue, onUpdate, cancel]);
 
-  const sorted = [...jobs].sort((a, b) => {
+  const sorted = useMemo(() => [...jobs].sort((a, b) => {
     let valA, valB;
     if (sortKey === 'nextStep') {
       const todosA = (a.todos ?? []).filter((t) => !t.completed);
@@ -55,7 +55,7 @@ export default function TableView({ jobs, onUpdate, onDelete, onEdit, sortKey, s
     }
     const cmp = valA < valB ? -1 : valA > valB ? 1 : 0;
     return sortDir === 'asc' ? cmp : -cmp;
-  });
+  }), [jobs, sortKey, sortDir]);
 
   if (jobs.length === 0) {
     return (
