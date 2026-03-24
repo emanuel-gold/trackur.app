@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { TrashIcon, PencilSquareIcon, ChevronUpDownIcon, CalendarIcon } from '@heroicons/react/24/outline';
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
 import { STAGES, STAGE_COLORS } from '../constants.js';
@@ -6,7 +7,7 @@ import useInlineEdit from '../hooks/useInlineEdit.js';
 import InlineEditableField from './InlineEditableField.jsx';
 import { formatDate } from '../utils/formatDate.js';
 
-export default function JobCard({ job, onUpdate, onDelete, onEdit, onDragStart, compact, onStageChange }) {
+export default memo(function JobCard({ job, onUpdate, onDelete, onEdit, onDragStart, compact, onStageChange }) {
   const { editingField, draftValue, startEdit, updateDraft, cancel, save } = useInlineEdit();
 
   const handleSave = () => {
@@ -254,4 +255,4 @@ export default function JobCard({ job, onUpdate, onDelete, onEdit, onDragStart, 
       </div>
     </div>
   );
-}
+});

@@ -1,8 +1,8 @@
-import { useRef, useEffect } from 'react';
+import { memo, useRef, useEffect } from 'react';
 import { PencilIcon } from '@heroicons/react/24/outline';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/24/solid';
 
-export default function InlineEditableField({
+export default memo(function InlineEditableField({
   value,
   fieldName,
   label,
@@ -149,4 +149,4 @@ export default function InlineEditableField({
       <PencilIcon className="h-3 w-3 shrink-0 text-zinc-400 opacity-0 group-hover/field:opacity-100 dark:text-zinc-500 transition-opacity" />
     </div>
   );
-}
+});
