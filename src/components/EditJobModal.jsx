@@ -93,7 +93,8 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose }) {
         </TransitionChild>
 
         {/* Panel */}
-        <div className="fixed inset-0 overflow-hidden">
+        {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+        <div className="fixed inset-0 overflow-hidden" onClick={onClose}>
           <div className="absolute inset-0 overflow-hidden">
             <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full md:pl-16">
               <TransitionChild
@@ -105,7 +106,7 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose }) {
                 leaveFrom="translate-x-0"
                 leaveTo="translate-x-full"
               >
-                <div className="pointer-events-auto w-screen max-w-full md:max-w-md">
+                <div className="pointer-events-auto w-screen max-w-full md:max-w-md" onClick={(e) => e.stopPropagation()}>
                   <div className="flex h-full flex-col bg-white dark:bg-zinc-900 shadow-xl ring-1 ring-zinc-950/10 dark:ring-white/10">
                     {/* Header */}
                     <div className="px-5 py-4 border-b border-zinc-950/5 dark:border-white/5">
@@ -158,7 +159,7 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose }) {
 
                     {/* Footer */}
                     <div className="border-t border-zinc-950/5 dark:border-white/5 px-5 py-4">
-                      <Button color="red" className="w-full" onClick={handleDelete}>
+                      <Button color="red" className="w-full hover:bg-red-700" onClick={handleDelete}>
                         Delete Job
                       </Button>
                     </div>
