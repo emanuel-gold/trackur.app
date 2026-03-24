@@ -55,10 +55,45 @@ export default memo(function JobCard({ job, onUpdate, onDelete, onEdit, onDragSt
     <div
       draggable={!!onDragStart && !isEditing}
       onDragStart={onDragStart}
-      className={`flex-1 flex flex-col m-px rounded-lg bg-zinc-50 dark:bg-zinc-800 p-4 shadow-sm ring-1 ring-zinc-950/5 dark:ring-white/10 hover:ring-zinc-950/10 dark:hover:ring-white/15 transition-all ${!isEditing && onDragStart ? 'cursor-grab active:cursor-grabbing' : ''}`}
+      className={`flex-1 min-w-0 flex flex-col m-px rounded-lg bg-zinc-50 dark:bg-zinc-800 p-4 pt-2.5 shadow-sm ring-1 ring-zinc-950/5 dark:ring-white/10 hover:ring-zinc-950/10 dark:hover:ring-white/15 transition-all ${!isEditing && onDragStart ? 'cursor-grab active:cursor-grabbing' : ''}`}
     >
-      <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0 flex-1 space-y-0.5">
+      <div className="flex items-start justify-end gap-2">
+        {!compact && !onStageChange && (
+          <InlineEditableField
+            value={job.stage}
+            fieldName="stage"
+            isEditing={editingField === 'stage'}
+            draftValue={draftValue}
+            onStartEdit={startEdit}
+            onDraftChange={updateDraft}
+            onSave={handleSave}
+            onCancel={cancel}
+            inputType="select"
+            selectOptions={STAGES}
+            displayRender={(val) => <Badge color={STAGE_COLORS[val]?.badge || 'zinc'}>{val}</Badge>}
+            className="shrink-0"
+          />
+        )}
+        {onStageChange && (
+          <div className="relative shrink-0 inline-flex items-center">
+            <Badge color={STAGE_COLORS[job.stage]?.badge || 'zinc'} className="text-xs">
+              {job.stage}
+              <ChevronUpDownIcon className="inline size-4 opacity-50" />
+            </Badge>
+            <select
+              value={job.stage}
+              onChange={(e) => onStageChange(job.id, e.target.value)}
+              className="absolute inset-0 opacity-0 cursor-pointer"
+            >
+              {STAGES.map((s) => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </select>
+          </div>
+        )}
+      </div>
+      
+      <div className="min-w-0 flex-1 space-y-0.5">
           <InlineEditableField
             value={job.company}
             fieldName="company"
@@ -83,43 +118,9 @@ export default memo(function JobCard({ job, onUpdate, onDelete, onEdit, onDragSt
             onCancel={cancel}
             required
             placeholder="Role"
-            className="text-sm text-zinc-500 dark:text-zinc-400"
+            className="text-xs text-zinc-500 dark:text-zinc-400"
           />
         </div>
-        {!compact && !onStageChange && (
-          <InlineEditableField
-            value={job.stage}
-            fieldName="stage"
-            isEditing={editingField === 'stage'}
-            draftValue={draftValue}
-            onStartEdit={startEdit}
-            onDraftChange={updateDraft}
-            onSave={handleSave}
-            onCancel={cancel}
-            inputType="select"
-            selectOptions={STAGES}
-            displayRender={(val) => <Badge color={STAGE_COLORS[val]?.badge || 'zinc'}>{val}</Badge>}
-            className="shrink-0"
-          />
-        )}
-        {onStageChange && (
-          <div className="relative shrink-0 inline-flex items-center">
-            <Badge color={STAGE_COLORS[job.stage]?.badge || 'zinc'}>
-              {job.stage}
-              <ChevronUpDownIcon className="inline size-5 opacity-50" />
-            </Badge>
-            <select
-              value={job.stage}
-              onChange={(e) => onStageChange(job.id, e.target.value)}
-              className="absolute inset-0 opacity-0 cursor-pointer"
-            >
-              {STAGES.map((s) => (
-                <option key={s} value={s}>{s}</option>
-              ))}
-            </select>
-          </div>
-        )}
-      </div>
 
       <InlineEditableField
         value={job.dateApplied}
