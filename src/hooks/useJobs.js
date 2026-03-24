@@ -1,9 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import jobRepository from '../services/jobRepository.js';
 
 export default function useJobs() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const jobs_ref = useRef(jobs);
+  jobs_ref.current = jobs;
 
   useEffect(() => {
     jobRepository.getAll().then((data) => {
@@ -19,12 +21,12 @@ export default function useJobs() {
   }, []);
 
   const updateJob = useCallback(async (id, updates) => {
-    const current = jobs.find((j) => j.id === id);
+    const current = jobs_ref.current.find((j) => j.id === id);
     if (!current) return;
     const updated = { ...current, ...updates };
     await jobRepository.save(updated);
     setJobs((prev) => prev.map((j) => (j.id === id ? updated : j)));
-  }, [jobs]);
+  }, []);
 
   const deleteJob = useCallback(async (id) => {
     await jobRepository.remove(id);
