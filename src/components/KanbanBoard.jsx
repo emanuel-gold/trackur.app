@@ -227,7 +227,7 @@ export default function KanbanBoard({ jobs, onUpdate, onDelete, onEdit, onUpdate
                 <Badge color={STAGE_COLORS[stage].badge}>{stageJobs.length}</Badge>
               </button>
 
-              <div className="p-2 space-y-2 max-h-[calc(100vh-16rem)] overflow-y-auto">
+              <div className="flex flex-col gap-2 p-2 space-y-2 max-h-[calc(100vh-16rem)] overflow-y-auto">
                 {stageJobs.length === 0 ? (
                   <p className="px-2 py-4 text-center text-xs text-zinc-400 dark:text-zinc-500">No jobs</p>
                 ) : (
