@@ -8,7 +8,7 @@ export default function Layout({ dark, onToggleDark, user, profile, onSignOut, o
     <div className="flex min-h-svh flex-col bg-zinc-200 dark:bg-zinc-950">
       {/* Header — full-width, separate from content */}
       <header className="flex items-center justify-between px-4 py-3 sm:px-6">
-        <TrackurWordmark size="sm" />
+        <TrackurWordmark size="lg" />
         <div className="flex items-center gap-3">
           {user && <UserMenu user={user} profile={profile} onSignOut={onSignOut} onSettings={onSettings} dark={dark} onToggleDark={onToggleDark} />}
           <div className="hidden md:flex items-center gap-2">
