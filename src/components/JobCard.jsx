@@ -235,10 +235,10 @@ export default memo(function JobCard({ job, onUpdate, onDelete, onEdit, onDragSt
           onBlur={handleSave}
           inputType="textarea"
           placeholder="Add notes"
+          multiline
           displayRender={(val) => val ? <span className="line-clamp-2">{val}</span> : null}
         />
       </div>
-      {/* TODO: fix line-clamp-2 not working correctly */}
 
       <div className="mt-auto flex gap-1 border-t border-zinc-950/5 dark:border-white/5 pt-2">
         <button

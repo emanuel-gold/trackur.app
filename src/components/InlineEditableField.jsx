@@ -18,6 +18,7 @@ export default memo(function InlineEditableField({
   displayRender,
   placeholder,
   required,
+  multiline,
   className = '',
 }) {
   const inputRef = useRef(null);
@@ -141,11 +142,11 @@ export default memo(function InlineEditableField({
 
   return (
     <div
-      className={`group/field flex items-center gap-1 min-w-0 cursor-pointer border-b border-transparent hover:border-mauve-400 dark:hover:border-mauve-500 transition-colors ${className}`}
+      className={`group/field flex ${multiline ? 'items-start' : 'items-center'} gap-1 min-w-0 cursor-pointer border-b border-transparent hover:border-mauve-400 dark:hover:border-mauve-500 transition-colors ${className}`}
       onClick={() => onStartEdit(fieldName, value ?? '')}
       title={`Edit ${displayLabel}`}
     >
-      <span className="truncate min-w-0 flex-1">{displayContent}</span>
+      <span className={`min-w-0 flex-1 ${multiline ? '' : 'truncate'}`}>{displayContent}</span>
       <PencilIcon className="h-3 w-3 shrink-0 text-zinc-400 opacity-0 group-hover/field:opacity-100 dark:text-zinc-500 transition-opacity" />
     </div>
   );
