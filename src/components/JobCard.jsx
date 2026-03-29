@@ -68,6 +68,7 @@ export default memo(function JobCard({ job, onUpdate, onDelete, onEdit, onDragSt
             onDraftChange={updateDraft}
             onSave={handleSave}
             onCancel={cancel}
+            onBlur={handleSave}
             inputType="select"
             selectOptions={STAGES}
             displayRender={(val) => <Badge color={STAGE_COLORS[val]?.badge || 'zinc'}>{val}</Badge>}
@@ -103,6 +104,7 @@ export default memo(function JobCard({ job, onUpdate, onDelete, onEdit, onDragSt
             onDraftChange={updateDraft}
             onSave={handleSave}
             onCancel={cancel}
+            onBlur={handleSave}
             required
             placeholder="Company name"
             className="text-base font-bold text-zinc-950 dark:text-white"
@@ -116,6 +118,7 @@ export default memo(function JobCard({ job, onUpdate, onDelete, onEdit, onDragSt
             onDraftChange={updateDraft}
             onSave={handleSave}
             onCancel={cancel}
+            onBlur={handleSave}
             required
             placeholder="Role"
             className="text-sm text-zinc-950 dark:text-white"
@@ -131,6 +134,7 @@ export default memo(function JobCard({ job, onUpdate, onDelete, onEdit, onDragSt
         onDraftChange={updateDraft}
         onSave={handleSave}
         onCancel={cancel}
+        onBlur={handleSave}
         inputType="date"
         placeholder="Set applied date"
         displayRender={(val) => val ? <span>Applied {formatDate(val)}</span> : null}
@@ -180,6 +184,7 @@ export default memo(function JobCard({ job, onUpdate, onDelete, onEdit, onDragSt
                       onDraftChange={updateDraft}
                       onSave={() => handleSaveTodoText(todo.id)}
                       onCancel={cancel}
+                      onBlur={() => handleSaveTodoText(todo.id)}
                       placeholder="Step text"
                       className="flex-1 min-w-0 text-xs"
                     />
@@ -227,6 +232,7 @@ export default memo(function JobCard({ job, onUpdate, onDelete, onEdit, onDragSt
           onDraftChange={updateDraft}
           onSave={handleSave}
           onCancel={cancel}
+          onBlur={handleSave}
           inputType="textarea"
           placeholder="Add notes"
           displayRender={(val) => val ? <span className="line-clamp-2">{val}</span> : null}
