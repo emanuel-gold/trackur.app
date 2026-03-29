@@ -27,7 +27,7 @@ import SettingsModal from './components/SettingsModal.jsx';
 
 function App() {
   const auth = useAuth();
-  const { jobs, loading, addJob, updateJob, deleteJob, importJobs, replaceAllJobs } = useJobs();
+  const { jobs, loading, addJob, updateJob, deleteJob, importJobs, replaceAllJobs } = useJobs(auth.user?.id);
   const { toasts, showToast, dismissToast } = useToast();
   const { dark, toggle: toggleDark } = useDarkMode();
 

@@ -1,18 +1,24 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import jobRepository from '../services/jobRepository.js';
 
-export default function useJobs() {
+export default function useJobs(userId) {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const jobs_ref = useRef(jobs);
   jobs_ref.current = jobs;
 
   useEffect(() => {
+    if (!userId) {
+      setJobs([]);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
     jobRepository.getAll().then((data) => {
       setJobs(data);
       setLoading(false);
     });
-  }, []);
+  }, [userId]);
 
   const addJob = useCallback(async (job) => {
     const saved = await jobRepository.save(job);
