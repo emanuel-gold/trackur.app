@@ -222,7 +222,7 @@ export default function KanbanBoard({ jobs, onUpdate, onDelete, onEdit, onUpdate
               >
                 <div className="flex items-center gap-1.5">
                   <ChevronLeftIcon className="size-4 text-zinc-400 dark:text-zinc-500" />
-                  <h3 className="text-lg font-semibold text-zinc-700 dark:text-zinc-300">{stage}</h3>
+                  <h3 className="text-xs font-semibold tracking-wide text-zinc-700 dark:text-zinc-300">{stage}</h3>
                 </div>
                 <Badge color={STAGE_COLORS[stage].badge}>{stageJobs.length}</Badge>
               </button>

@@ -69,7 +69,7 @@ export default memo(function InlineEditableField({
   );
 
   if (isEditing) {
-    const inputClasses = 'w-full rounded-sm border border-zinc-950/10 dark:border-white/10 bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white px-1.5 py-0.5 text-sm focus:border-mauve-500 focus:ring-1 focus:ring-mauve-500 outline-none';
+    const inputClasses = 'w-full rounded-sm border border-zinc-950/30 dark:border-white/30 bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white px-1.5 py-0.5 text-sm focus:border-mauve-500 focus:ring-1 focus:ring-mauve-500 outline-none';
 
     let input;
     if (inputType === 'select') {

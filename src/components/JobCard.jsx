@@ -105,7 +105,7 @@ export default memo(function JobCard({ job, onUpdate, onDelete, onEdit, onDragSt
             onCancel={cancel}
             required
             placeholder="Company name"
-            className="font-semibold text-zinc-950 dark:text-white"
+            className="text-base font-bold text-zinc-950 dark:text-white"
           />
           <InlineEditableField
             value={job.role}
@@ -118,7 +118,7 @@ export default memo(function JobCard({ job, onUpdate, onDelete, onEdit, onDragSt
             onCancel={cancel}
             required
             placeholder="Role"
-            className="text-xs text-zinc-500 dark:text-zinc-400"
+            className="text-sm text-zinc-950 dark:text-white"
           />
         </div>
 
@@ -232,6 +232,7 @@ export default memo(function JobCard({ job, onUpdate, onDelete, onEdit, onDragSt
           displayRender={(val) => val ? <span className="line-clamp-2">{val}</span> : null}
         />
       </div>
+      {/* TODO: fix line-clamp-2 not working correctly */}
 
       <div className="mt-auto flex gap-1 border-t border-zinc-950/5 dark:border-white/5 pt-2">
         <button
