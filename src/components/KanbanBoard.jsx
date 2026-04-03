@@ -103,8 +103,10 @@ function MobileStageRow({ stage, stageJobs, onUpdate, onDelete, onEdit, onUpdate
                     type="button"
                     onClick={() => scrollToCard(i)}
                     aria-label={`Card ${i + 1}`}
-                    className={`size-1.5 rounded-full transition-colors ${i === activeCard ? 'bg-mauve-500' : 'bg-zinc-300 dark:bg-zinc-600'}`}
-                  />
+                    className="p-2"
+                  >
+                    <span className={`block size-1.5 rounded-full transition-colors ${i === activeCard ? 'bg-mauve-500' : 'bg-zinc-300 dark:bg-zinc-600'}`} />
+                  </button>
                 ))}
               </div>
             )}

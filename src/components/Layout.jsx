@@ -13,7 +13,7 @@ export default function Layout({ dark, onToggleDark, user, profile, onSignOut, o
           {user && <UserMenu user={user} profile={profile} onSignOut={onSignOut} onSettings={onSettings} dark={dark} onToggleDark={onToggleDark} />}
           <div className="hidden md:flex items-center gap-2">
             <SunIcon className="size-4 text-zinc-500 dark:text-zinc-400" />
-            <Switch color="violet" checked={dark} onChange={onToggleDark} />
+            <Switch color="violet" checked={dark} onChange={onToggleDark} aria-label="Toggle dark mode" />
             <MoonIcon className="size-4 text-zinc-500 dark:text-zinc-400" />
           </div>
         </div>
