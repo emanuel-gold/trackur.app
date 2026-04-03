@@ -81,6 +81,7 @@ export default memo(function InlineEditableField({
           onChange={(e) => onDraftChange(e.target.value)}
           onKeyDown={handleKeyDown}
           onBlur={onBlur}
+          aria-label={label || `Select ${fieldName}`}
           className={inputClasses}
         >
           {selectOptions.map((opt) => (

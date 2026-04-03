@@ -84,6 +84,7 @@ export default memo(function JobCard({ job, onUpdate, onDelete, onEdit, onDragSt
             <select
               value={job.stage}
               onChange={(e) => onStageChange(job.id, e.target.value)}
+              aria-label="Change stage"
               className="absolute inset-0 opacity-0 cursor-pointer"
             >
               {STAGES.map((s) => (
@@ -169,7 +170,8 @@ export default memo(function JobCard({ job, onUpdate, onDelete, onEdit, onDragSt
                     <button
                       type="button"
                       onClick={(e) => handleToggleTodo(e, todo.id)}
-                      className="shrink-0"
+                      aria-label={`Mark "${todo.text}" as complete`}
+                      className="shrink-0 min-w-6 min-h-6 flex items-center justify-center"
                     >
                       <span className="block size-3.5 rounded-full border-[1.5px] border-zinc-400 dark:border-zinc-500 hover:border-violet-400 dark:hover:border-violet-500 transition-colors" />
                     </button>

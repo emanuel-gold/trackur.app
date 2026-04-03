@@ -50,7 +50,7 @@ export default function UserMenu({ user, profile, onSignOut, onSettings, dark, o
 
       {/* Mobile: gear icon with everything inside */}
       <Menu as="div" className="relative md:hidden">
-        <MenuButton className="rounded-md p-2 text-zinc-600 hover:bg-zinc-950/5 dark:text-zinc-400 dark:hover:bg-white/5 transition-colors">
+        <MenuButton className="rounded-md p-2 text-zinc-600 hover:bg-zinc-950/5 dark:text-zinc-400 dark:hover:bg-white/5 transition-colors" aria-label="Settings">
           <Cog6ToothIcon className="size-6" />
         </MenuButton>
 
