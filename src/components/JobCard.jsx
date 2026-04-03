@@ -147,14 +147,14 @@ export default memo(function JobCard({ job, onUpdate, onDelete, onEdit, onDragSt
         <button
           type="button"
           onClick={() => onEdit(job.id)}
-          className="mt-2 rounded -mx-1.5 px-1.5 py-1 text-xs text-zinc-400 dark:text-zinc-500 italic hover:bg-mauve-50 dark:hover:bg-mauve-950/30 transition-colors w-full text-left"
+          className="mt-2 rounded -mx-1.5 px-1.5 py-1 text-xs text-zinc-500 dark:text-zinc-400 italic hover:bg-mauve-50 dark:hover:bg-mauve-950/30 transition-colors w-full text-left"
         >
           Add next step...
         </button>
       ) : (
         <div className="rounded mt-2 shadow-md -mx-1.5 px-1.5 py-1.5 text-xs border border-mauve-300 bg-mauve-200 dark:border-mauve-800 dark:bg-mauve-700">
           {uncompleted.length === 0 && todos.length > 0 ? (
-            <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium">
+            <span className="inline-flex items-center gap-1 text-emerald-700 dark:text-emerald-400 font-medium">
               <CheckCircleIcon className="size-3.5" />
               All steps done
             </span>
@@ -193,7 +193,7 @@ export default memo(function JobCard({ job, onUpdate, onDelete, onEdit, onDragSt
 
                     {/* Due date chip */}
                     {todo.dueDate && !isEditingTodo && (
-                      <span className="shrink-0 inline-flex items-center gap-0.5 text-zinc-500 dark:text-zinc-400">
+                      <span className="shrink-0 inline-flex items-center gap-0.5 text-zinc-600 dark:text-zinc-400">
                         <CalendarIcon className="size-3" />
                         {formatDate(todo.dueDate)}
                       </span>
@@ -214,10 +214,10 @@ export default memo(function JobCard({ job, onUpdate, onDelete, onEdit, onDragSt
                 );
               })}
               {remaining > 0 && (
-                <p className="text-zinc-500 dark:text-zinc-400 pl-5">+{remaining} more</p>
+                <p className="text-zinc-600 dark:text-zinc-400 pl-5">+{remaining} more</p>
               )}
               {completed.length > 0 && (
-                <p className="text-zinc-500 dark:text-zinc-400 pl-5">{completed.length} done</p>
+                <p className="text-zinc-600 dark:text-zinc-400 pl-5">{completed.length} done</p>
               )}
             </div>
           )}
