@@ -316,6 +316,7 @@ function App() {
         <button
           type="button"
           onClick={() => setAddJobOpen(true)}
+          aria-label="Add job"
           className="fixed bottom-6 right-6 z-40 md:hidden flex items-center justify-center size-14 rounded-full bg-violet-600 text-white shadow-lg hover:bg-violet-700 active:bg-violet-800 dark:bg-violet-400 dark:text-violet-950 dark:hover:bg-violet-300 dark:active:bg-violet-500 transition-colors"
         >
           <PlusIcon className="size-7" />
