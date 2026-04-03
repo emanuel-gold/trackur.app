@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, lazy, Suspense } from 'react';
 import { ArrowDownTrayIcon, ArrowUpTrayIcon, PlusIcon, EllipsisVerticalIcon } from '@heroicons/react/24/outline';
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react';
 import useJobs from './hooks/useJobs.js';
@@ -12,18 +12,19 @@ import { Button, Select } from './components/catalyst';
 import Layout from './components/Layout.jsx';
 import FilterBar from './components/FilterBar.jsx';
 import ViewToggle from './components/ViewToggle.jsx';
-import AddJobForm from './components/AddJobForm.jsx';
 import KanbanBoard from './components/KanbanBoard.jsx';
 import TableView from './components/TableView.jsx';
-import ImportModal from './components/ImportModal.jsx';
-import ConfirmModal from './components/ConfirmModal.jsx';
-import EditJobModal from './components/EditJobModal.jsx';
 import ToastContainer from './components/ToastContainer.jsx';
 import LoginScreen from './components/LoginScreen.jsx';
 import SignUpScreen from './components/SignUpScreen.jsx';
 import EmailVerificationScreen from './components/EmailVerificationScreen.jsx';
 import AccountSetupScreen from './components/AccountSetupScreen.jsx';
-import SettingsModal from './components/SettingsModal.jsx';
+
+const AddJobForm = lazy(() => import('./components/AddJobForm.jsx'));
+const EditJobModal = lazy(() => import('./components/EditJobModal.jsx'));
+const ImportModal = lazy(() => import('./components/ImportModal.jsx'));
+const ConfirmModal = lazy(() => import('./components/ConfirmModal.jsx'));
+const SettingsModal = lazy(() => import('./components/SettingsModal.jsx'));
 
 function App() {
   const auth = useAuth();
@@ -333,43 +334,45 @@ function App() {
         <TableView jobs={filteredJobs} onUpdate={handleUpdate} onDelete={handleDeleteRequest} onEdit={handleEditRequest} sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
       )}
 
-      <AddJobForm open={addJobOpen} onClose={() => setAddJobOpen(false)} onAdd={handleAdd} />
+      <Suspense fallback={null}>
+        <AddJobForm open={addJobOpen} onClose={() => setAddJobOpen(false)} onAdd={handleAdd} />
 
-      {editingJob && (
-        <EditJobModal
-          job={editingJob}
-          onUpdate={handleUpdate}
-          onDelete={handleDeleteRequest}
-          onClose={() => setEditingJobId(null)}
+        {editingJob && (
+          <EditJobModal
+            job={editingJob}
+            onUpdate={handleUpdate}
+            onDelete={handleDeleteRequest}
+            onClose={() => setEditingJobId(null)}
+          />
+        )}
+
+        <ImportModal
+          open={importOpen}
+          onClose={() => setImportOpen(false)}
+          onImport={handleImport}
+          onReplace={handleReplace}
         />
-      )}
 
-      <ImportModal
-        open={importOpen}
-        onClose={() => setImportOpen(false)}
-        onImport={handleImport}
-        onReplace={handleReplace}
-      />
+        <ConfirmModal
+          open={deleteConfirm != null}
+          title="Delete Job"
+          message="Are you sure you want to delete this job? This action cannot be undone."
+          confirmLabel="Delete"
+          onConfirm={handleDeleteConfirm}
+          onCancel={() => setDeleteConfirm(null)}
+        />
 
-      <ConfirmModal
-        open={deleteConfirm != null}
-        title="Delete Job"
-        message="Are you sure you want to delete this job? This action cannot be undone."
-        confirmLabel="Delete"
-        onConfirm={handleDeleteConfirm}
-        onCancel={() => setDeleteConfirm(null)}
-      />
-
-      <SettingsModal
-        open={settingsOpen}
-        onClose={() => setSettingsOpen(false)}
-        user={auth.user}
-        profile={auth.profile}
-        refreshProfile={auth.refreshProfile}
-        notificationsSupported={notificationsSupported}
-        permissionState={permissionState}
-        requestPermission={requestPermission}
-      />
+        <SettingsModal
+          open={settingsOpen}
+          onClose={() => setSettingsOpen(false)}
+          user={auth.user}
+          profile={auth.profile}
+          refreshProfile={auth.refreshProfile}
+          notificationsSupported={notificationsSupported}
+          permissionState={permissionState}
+          requestPermission={requestPermission}
+        />
+      </Suspense>
 
       <ToastContainer toasts={toasts} onDismiss={dismissToast} />
     </Layout>
