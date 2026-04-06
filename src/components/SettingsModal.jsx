@@ -1,22 +1,12 @@
-import { Fragment, useState, useCallback, useRef } from 'react';
+import { Fragment, useState, useCallback } from 'react';
 import { Dialog, DialogBackdrop, Transition, TransitionChild } from '@headlessui/react';
-import { XMarkIcon, BellIcon, BellSlashIcon, DocumentTextIcon, PencilIcon, TrashIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, BellIcon, BellSlashIcon } from '@heroicons/react/24/outline';
 import { Switch, SwitchField } from './catalyst';
 import { Button } from './catalyst';
 import profileService from '../services/profileService.js';
 
-function formatFileSize(bytes) {
-  if (bytes < 1024) return bytes + ' B';
-  return Math.round(bytes / 1024) + ' KB';
-}
-
-export default function SettingsModal({ open, onClose, user, profile, refreshProfile, notificationsSupported, permissionState, requestPermission, resumes = [], onUploadResume, onRenameResume, onDeleteResume }) {
+export default function SettingsModal({ open, onClose, user, profile, refreshProfile, notificationsSupported, permissionState, requestPermission }) {
   const [saving, setSaving] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const [uploadError, setUploadError] = useState(null);
-  const [editingLabelId, setEditingLabelId] = useState(null);
-  const [editingLabelValue, setEditingLabelValue] = useState('');
-  const fileInputRef = useRef(null);
 
   const updatePref = useCallback(async (key, value) => {
     if (!profile) return;
@@ -46,41 +36,6 @@ export default function SettingsModal({ open, onClose, user, profile, refreshPro
       }
     }
   };
-
-  const handleFileSelect = useCallback(async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploadError(null);
-    setUploading(true);
-    try {
-      await onUploadResume(file, '');
-    } catch (err) {
-      setUploadError(err.message);
-    } finally {
-      setUploading(false);
-      e.target.value = '';
-    }
-  }, [onUploadResume]);
-
-  const handleRenameSubmit = useCallback(async () => {
-    if (!editingLabelId) return;
-    try {
-      await onRenameResume(editingLabelId, editingLabelValue.trim());
-    } catch {
-      // silently fail — label will reset on next load
-    }
-    setEditingLabelId(null);
-    setEditingLabelValue('');
-  }, [editingLabelId, editingLabelValue, onRenameResume]);
-
-  const handleDeleteResumeClick = useCallback(async (id) => {
-    if (!window.confirm('Delete this resume? Jobs using it will be unlinked.')) return;
-    try {
-      await onDeleteResume(id);
-    } catch {
-      // silently fail
-    }
-  }, [onDeleteResume]);
 
   return (
     <Transition show={open} as={Fragment}>
@@ -148,105 +103,6 @@ export default function SettingsModal({ open, onClose, user, profile, refreshPro
                             <p className="text-sm text-zinc-950 dark:text-white">{user?.email}</p>
                           </div>
                         </div>
-                      </section>
-
-                      {/* Resumes section */}
-                      <section>
-                        <div className="flex items-center justify-between mb-3">
-                          <h3 className="text-[11px] font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-                            Resumes
-                          </h3>
-                          <span className="text-[11px] text-zinc-400 dark:text-zinc-500">
-                            {resumes.length} of 10 used
-                          </span>
-                        </div>
-
-                        {resumes.length > 0 && (
-                          <div className="space-y-2 mb-3">
-                            {resumes.map((r) => (
-                              <div
-                                key={r.id}
-                                className="rounded-lg bg-zinc-50 dark:bg-zinc-800/50 ring-1 ring-zinc-950/5 dark:ring-white/5 px-3 py-2.5"
-                              >
-                                <div className="flex items-start gap-2.5">
-                                  <DocumentTextIcon className="size-4 text-violet-500 dark:text-violet-400 shrink-0 mt-0.5" />
-                                  <div className="flex-1 min-w-0">
-                                    {editingLabelId === r.id ? (
-                                      <input
-                                        type="text"
-                                        value={editingLabelValue}
-                                        onChange={(e) => setEditingLabelValue(e.target.value)}
-                                        onBlur={handleRenameSubmit}
-                                        onKeyDown={(e) => {
-                                          if (e.key === 'Enter') handleRenameSubmit();
-                                          if (e.key === 'Escape') { setEditingLabelId(null); setEditingLabelValue(''); }
-                                        }}
-                                        autoFocus
-                                        placeholder="Add a label..."
-                                        className="w-full text-sm font-medium bg-transparent border-b border-violet-400 dark:border-violet-500 outline-none text-zinc-950 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-500 pb-0.5"
-                                      />
-                                    ) : (
-                                      <p className="text-sm font-medium text-zinc-950 dark:text-white truncate">
-                                        {r.label || r.filename}
-                                      </p>
-                                    )}
-                                    <div className="flex items-center gap-2 mt-0.5">
-                                      {r.label && (
-                                        <span className="text-[11px] text-zinc-400 dark:text-zinc-500 truncate">
-                                          {r.filename}
-                                        </span>
-                                      )}
-                                      <span className="text-[11px] text-zinc-400 dark:text-zinc-500">
-                                        {formatFileSize(r.fileSize)}
-                                      </span>
-                                    </div>
-                                  </div>
-                                  <div className="flex items-center gap-0.5 shrink-0">
-                                    <button
-                                      type="button"
-                                      onClick={() => { setEditingLabelId(r.id); setEditingLabelValue(r.label || ''); }}
-                                      className="rounded p-1 text-zinc-400 hover:text-violet-600 hover:bg-violet-50 dark:hover:text-violet-400 dark:hover:bg-violet-950/50 transition-colors"
-                                      title="Rename"
-                                    >
-                                      <PencilIcon className="size-3.5" />
-                                    </button>
-                                    <button
-                                      type="button"
-                                      onClick={() => handleDeleteResumeClick(r.id)}
-                                      className="rounded p-1 text-zinc-400 hover:text-red-600 hover:bg-red-50 dark:hover:text-red-400 dark:hover:bg-red-950/50 transition-colors"
-                                      title="Delete"
-                                    >
-                                      <TrashIcon className="size-3.5" />
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-
-                        <input
-                          ref={fileInputRef}
-                          type="file"
-                          accept=".pdf,application/pdf"
-                          onChange={handleFileSelect}
-                          className="hidden"
-                        />
-                        <Button
-                          outline
-                          onClick={() => fileInputRef.current?.click()}
-                          disabled={uploading || resumes.length >= 10}
-                          className="w-full"
-                        >
-                          <ArrowUpTrayIcon data-slot="icon" />
-                          {uploading ? 'Uploading...' : 'Upload resume'}
-                        </Button>
-                        <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-1.5 text-center">
-                          PDF only, max 200 KB
-                        </p>
-                        {uploadError && (
-                          <p className="text-xs text-red-500 mt-1.5 text-center">{uploadError}</p>
-                        )}
                       </section>
 
                       {/* Notifications section */}

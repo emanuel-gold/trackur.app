@@ -26,6 +26,7 @@ const EditJobModal = lazy(() => import('./components/EditJobModal.jsx'));
 const ImportModal = lazy(() => import('./components/ImportModal.jsx'));
 const ConfirmModal = lazy(() => import('./components/ConfirmModal.jsx'));
 const SettingsModal = lazy(() => import('./components/SettingsModal.jsx'));
+const ResumesModal = lazy(() => import('./components/ResumesModal.jsx'));
 
 function App() {
   const auth = useAuth();
@@ -68,6 +69,7 @@ function App() {
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [editingJobId, setEditingJobId] = useState(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [resumesOpen, setResumesOpen] = useState(false);
 
   const { notificationsSupported, permissionState, requestPermission } = useNotifications(jobs, auth.profile);
 
@@ -237,7 +239,7 @@ function App() {
   }
 
   return (
-    <Layout dark={dark} onToggleDark={toggleDark} user={auth.user} profile={auth.profile} onSignOut={auth.signOut} onSettings={() => setSettingsOpen(true)}>
+    <Layout dark={dark} onToggleDark={toggleDark} user={auth.user} profile={auth.profile} onSignOut={auth.signOut} onSettings={() => setSettingsOpen(true)} onResumes={() => setResumesOpen(true)}>
       {/* Toolbar */}
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <FilterBar
@@ -380,6 +382,11 @@ function App() {
           notificationsSupported={notificationsSupported}
           permissionState={permissionState}
           requestPermission={requestPermission}
+        />
+
+        <ResumesModal
+          open={resumesOpen}
+          onClose={() => setResumesOpen(false)}
           resumes={resumes}
           onUploadResume={uploadResume}
           onRenameResume={renameResume}
