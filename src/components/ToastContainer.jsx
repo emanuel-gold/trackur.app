@@ -3,14 +3,14 @@ import { CheckCircleIcon, ExclamationCircleIcon, XMarkIcon } from '@heroicons/re
 
 export default function ToastContainer({ toasts, onDismiss }) {
   return (
-    <div className="fixed bottom-4 left-4 right-4 z-50 flex flex-col gap-2 items-center md:left-auto md:items-end">
+    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-9999 flex flex-col gap-2 items-center w-full max-w-sm px-4">
       {toasts.map((toast) => (
         <Transition
           key={toast.id}
           appear
           show
           enter="transition ease-out duration-300"
-          enterFrom="translate-y-2 opacity-0"
+          enterFrom="-translate-y-2 opacity-0"
           enterTo="translate-y-0 opacity-100"
           leave="transition ease-in duration-200"
           leaveFrom="opacity-100"
