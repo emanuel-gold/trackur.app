@@ -35,4 +35,12 @@
   body {
     scrollbar-color: gray transparent;
   }
+
+  button {
+    cursor: pointer;
+
+    &:is([disabled]) {
+      cursor: not-allowed;
+    }
+  }
 }

@@ -121,7 +121,7 @@ export default function IndustryMultiSelect({ value = [], onChange }) {
                 key={industry}
                 value={industry}
                 className={clsx(
-                  'group/option flex cursor-default items-center gap-2 rounded-lg py-2.5 pr-3.5 pl-2 sm:py-1.5 sm:pr-3 sm:pl-1.5',
+                  'group/option flex items-center gap-2 rounded-lg py-2.5 pr-3.5 pl-2 sm:py-1.5 sm:pr-3 sm:pl-1.5',
                   'text-base/6 text-zinc-950 sm:text-sm/6 dark:text-white',
                   'outline-hidden data-focus:bg-mauve-500 data-focus:text-white',
                   'select-none',
@@ -138,7 +138,7 @@ export default function IndustryMultiSelect({ value = [], onChange }) {
             <ListboxOption
               value={OTHER_SENTINEL}
               className={clsx(
-                'group/option flex cursor-default items-center gap-2 rounded-lg py-2.5 pr-3.5 pl-2 sm:py-1.5 sm:pr-3 sm:pl-1.5',
+                'group/option flex items-center gap-2 rounded-lg py-2.5 pr-3.5 pl-2 sm:py-1.5 sm:pr-3 sm:pl-1.5',
                 'text-base/6 text-zinc-950 sm:text-sm/6 dark:text-white',
                 'outline-hidden data-focus:bg-mauve-500 data-focus:text-white',
                 'select-none',
