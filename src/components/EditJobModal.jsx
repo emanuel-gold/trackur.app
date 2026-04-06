@@ -1,8 +1,8 @@
-import { Fragment } from 'react';
+import { Fragment, useCallback } from 'react';
 import { Dialog, DialogBackdrop, Transition, TransitionChild } from '@headlessui/react';
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import { STAGES, STAGE_COLORS } from '../constants.js';
-import { Badge, Button } from './catalyst';
+import { Badge, Button, Select } from './catalyst';
 import useInlineEdit from '../hooks/useInlineEdit.js';
 import useTodos from '../hooks/useTodos.js';
 import InlineEditableField from './InlineEditableField.jsx';
@@ -17,7 +17,7 @@ const FIELD_CONFIG = [
   { key: 'notes', label: 'Notes', inputType: 'textarea', placeholder: 'Add notes...' },
 ];
 
-export default function EditJobModal({ job, onUpdate, onDelete, onClose }) {
+export default function EditJobModal({ job, onUpdate, onDelete, onClose, resumes = [], onGetDownloadUrl }) {
   const { editingField, draftValue, startEdit, updateDraft, cancel, save } = useInlineEdit();
   const { todos, addTodo, toggleTodo, removeTodo, updateTodo } = useTodos(job, onUpdate);
 
@@ -38,6 +38,17 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose }) {
     onDelete(job.id);
     onClose();
   };
+
+  const handleViewResume = useCallback(async () => {
+    const resume = resumes.find((r) => r.id === job.resumeId);
+    if (!resume || !onGetDownloadUrl) return;
+    try {
+      const url = await onGetDownloadUrl(resume.storagePath);
+      window.open(url, '_blank');
+    } catch {
+      // silently fail
+    }
+  }, [resumes, job.resumeId, onGetDownloadUrl]);
 
   const renderField = (config) => {
     const { key, label, inputType, selectOptions, placeholder, required } = config;
@@ -152,6 +163,32 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose }) {
                             />
                           </div>
                         </div>
+
+                        {/* Resume */}
+                        {resumes.length > 0 && (
+                          <div className="col-span-full">
+                            <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">
+                              Resume
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Select
+                                value={job.resumeId || ''}
+                                onChange={(e) => onUpdate(job.id, { resumeId: e.target.value || null })}
+                                className="flex-1"
+                              >
+                                <option value="">None</option>
+                                {resumes.map((r) => (
+                                  <option key={r.id} value={r.id}>{r.label || r.filename}</option>
+                                ))}
+                              </Select>
+                              {job.resumeId && (
+                                <Button plain onClick={handleViewResume} title="View resume">
+                                  <ArrowDownTrayIcon data-slot="icon" />
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        )}
 
                         {FIELD_CONFIG.filter((c) => c.key === 'notes').map(renderField)}
                       </div>

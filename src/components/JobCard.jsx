@@ -1,5 +1,5 @@
 import { memo, useMemo, useCallback } from 'react';
-import { TrashIcon, PencilSquareIcon, ChevronUpDownIcon, CalendarIcon } from '@heroicons/react/24/outline';
+import { TrashIcon, PencilSquareIcon, ChevronUpDownIcon, CalendarIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
 import { STAGES, STAGE_COLORS } from '../constants.js';
 import { Badge } from './catalyst';
@@ -242,7 +242,13 @@ export default memo(function JobCard({ job, onUpdate, onDelete, onEdit, onDragSt
         />
       </div>
 
-      <div className="mt-auto flex gap-1 border-t border-zinc-950/5 dark:border-white/5 pt-2">
+      <div className="mt-auto flex items-center gap-1 border-t border-zinc-950/5 dark:border-white/5 pt-2">
+        {job.resumeId && (
+          <span className="inline-flex items-center gap-0.5 text-[11px] text-violet-500 dark:text-violet-400 mr-auto" title="Resume attached">
+            <DocumentTextIcon className="size-3.5" />
+            PDF
+          </span>
+        )}
         <button
           type="button"
           onClick={() => onEdit(job.id)}

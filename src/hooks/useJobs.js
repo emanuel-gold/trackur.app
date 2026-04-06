@@ -50,5 +50,9 @@ export default function useJobs(userId) {
     setJobs(newJobs);
   }, []);
 
-  return { jobs, loading, addJob, updateJob, deleteJob, importJobs, replaceAllJobs };
+  const clearResumeId = useCallback((resumeId) => {
+    setJobs((prev) => prev.map((j) => (j.resumeId === resumeId ? { ...j, resumeId: null } : j)));
+  }, []);
+
+  return { jobs, loading, addJob, updateJob, deleteJob, importJobs, replaceAllJobs, clearResumeId };
 }

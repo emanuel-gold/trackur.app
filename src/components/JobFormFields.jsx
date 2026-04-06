@@ -1,7 +1,7 @@
 import { STAGES } from '../constants.js';
 import { Field, FieldGroup, Label, Input, Select, Textarea } from './catalyst';
 
-export default function JobFormFields({ values, onChange }) {
+export default function JobFormFields({ values, onChange, resumes = [] }) {
   const field = (name) => ({
     value: values[name] || '',
     onChange: (e) => onChange(name, e.target.value),
@@ -34,6 +34,18 @@ export default function JobFormFields({ values, onChange }) {
           </Select>
         </Field>
       </div>
+
+      {resumes.length > 0 && (
+        <Field>
+          <Label>Resume</Label>
+          <Select value={values.resumeId || ''} onChange={(e) => onChange('resumeId', e.target.value || null)}>
+            <option value="">None</option>
+            {resumes.map((r) => (
+              <option key={r.id} value={r.id}>{r.label || r.filename}</option>
+            ))}
+          </Select>
+        </Field>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Field>

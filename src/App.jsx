@@ -5,6 +5,7 @@ import useJobs from './hooks/useJobs.js';
 import useToast from './hooks/useToast.js';
 import useDarkMode from './hooks/useDarkMode.js';
 import useAuth from './hooks/useAuth.js';
+import useResumes from './hooks/useResumes.js';
 import useNotifications from './hooks/useNotifications.js';
 import { exportJobsToCsv } from './services/csvService.js';
 import { STAGES } from './constants.js';
@@ -28,7 +29,8 @@ const SettingsModal = lazy(() => import('./components/SettingsModal.jsx'));
 
 function App() {
   const auth = useAuth();
-  const { jobs, loading, addJob, updateJob, deleteJob, importJobs, replaceAllJobs } = useJobs(auth.user?.id);
+  const { jobs, loading, addJob, updateJob, deleteJob, importJobs, replaceAllJobs, clearResumeId } = useJobs(auth.user?.id);
+  const { resumes, loading: resumesLoading, uploadResume, renameResume, deleteResume, getDownloadUrl } = useResumes(auth.user?.id);
   const { toasts, showToast, dismissToast } = useToast();
   const { dark, toggle: toggleDark } = useDarkMode();
 
@@ -160,6 +162,11 @@ function App() {
     }
   }, [replaceAllJobs, showToast]);
 
+  const handleDeleteResume = useCallback(async (id) => {
+    await deleteResume(id);
+    clearResumeId(id);
+  }, [deleteResume, clearResumeId]);
+
   // Auth loading
   if (auth.loading) {
     return (
@@ -220,8 +227,8 @@ function App() {
     );
   }
 
-  // Jobs loading
-  if (loading) {
+  // Jobs / resumes loading
+  if (loading || resumesLoading) {
     return (
       <div className="flex items-center justify-center min-h-svh bg-zinc-200 dark:bg-zinc-950">
         <p className="text-zinc-500 dark:text-zinc-400">Loading...</p>
@@ -335,7 +342,7 @@ function App() {
       )}
 
       <Suspense fallback={null}>
-        <AddJobForm open={addJobOpen} onClose={() => setAddJobOpen(false)} onAdd={handleAdd} />
+        <AddJobForm open={addJobOpen} onClose={() => setAddJobOpen(false)} onAdd={handleAdd} resumes={resumes} />
 
         {editingJob && (
           <EditJobModal
@@ -343,6 +350,8 @@ function App() {
             onUpdate={handleUpdate}
             onDelete={handleDeleteRequest}
             onClose={() => setEditingJobId(null)}
+            resumes={resumes}
+            onGetDownloadUrl={getDownloadUrl}
           />
         )}
 
@@ -371,6 +380,10 @@ function App() {
           notificationsSupported={notificationsSupported}
           permissionState={permissionState}
           requestPermission={requestPermission}
+          resumes={resumes}
+          onUploadResume={uploadResume}
+          onRenameResume={renameResume}
+          onDeleteResume={handleDeleteResume}
         />
       </Suspense>
 
