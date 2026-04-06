@@ -1,6 +1,6 @@
 import { Fragment, useState, useCallback, useRef } from 'react';
-import { Dialog, DialogBackdrop, Transition, TransitionChild } from '@headlessui/react';
-import { XMarkIcon, DocumentTextIcon, PencilIcon, TrashIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline';
+import { Dialog, DialogBackdrop, Transition, TransitionChild, Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/react';
+import { XMarkIcon, DocumentTextIcon, ArrowUpTrayIcon, EllipsisVerticalIcon, PencilIcon, ArrowDownTrayIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { Button } from './catalyst';
 
 function formatFileSize(bytes) {
@@ -8,7 +8,7 @@ function formatFileSize(bytes) {
   return Math.round(bytes / 1024) + ' KB';
 }
 
-export default function ResumesModal({ open, onClose, resumes = [], onUploadResume, onRenameResume, onDeleteResume }) {
+export default function ResumesModal({ open, onClose, resumes = [], onUploadResume, onRenameResume, onDeleteResume, onGetDownloadUrl }) {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState(null);
   const [editingLabelId, setEditingLabelId] = useState(null);
@@ -40,6 +40,26 @@ export default function ResumesModal({ open, onClose, resumes = [], onUploadResu
     setEditingLabelId(null);
     setEditingLabelValue('');
   }, [editingLabelId, editingLabelValue, onRenameResume]);
+
+  const handleDownload = useCallback(async (r) => {
+    if (!onGetDownloadUrl) return;
+    try {
+      const url = await onGetDownloadUrl(r.storagePath);
+      const filename = r.label ? `${r.label}.pdf` : r.filename;
+      const resp = await fetch(url);
+      const blob = await resp.blob();
+      const objUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = objUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(objUrl);
+    } catch {
+      // silently fail
+    }
+  }, [onGetDownloadUrl]);
 
   const handleDeleteResumeClick = useCallback(async (id) => {
     if (!window.confirm('Delete this resume? Jobs using it will be unlinked.')) return;
@@ -142,24 +162,51 @@ export default function ResumesModal({ open, onClose, resumes = [], onUploadResu
                                     </span>
                                   </div>
                                 </div>
-                                <div className="flex items-center gap-0.5 shrink-0">
-                                  <button
-                                    type="button"
-                                    onClick={() => { setEditingLabelId(r.id); setEditingLabelValue(r.label || ''); }}
-                                    className="rounded p-1 text-zinc-400 hover:text-mauve-600 hover:bg-mauve-50 dark:hover:text-mauve-400 dark:hover:bg-mauve-950/50 transition-colors"
-                                    title="Rename"
+
+                                <Menu as="div" className="relative shrink-0">
+                                  <MenuButton
+                                    className="rounded-md p-1.5 text-zinc-400 hover:text-zinc-600 hover:bg-zinc-950/5 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:bg-white/5 transition-colors"
+                                    title="Resume actions"
                                   >
-                                    <PencilIcon className="size-3.5" />
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={() => handleDeleteResumeClick(r.id)}
-                                    className="rounded p-1 text-zinc-400 hover:text-red-600 hover:bg-red-50 dark:hover:text-red-400 dark:hover:bg-red-950/50 transition-colors"
-                                    title="Delete"
+                                    <EllipsisVerticalIcon className="size-5" />
+                                  </MenuButton>
+                                  <MenuItems
+                                    anchor="bottom end"
+                                    transition
+                                    className="z-50 mt-1.5 w-44 origin-top-right rounded-lg bg-white p-1.5 shadow-lg ring-1 ring-zinc-950/10 transition duration-100 data-closed:scale-95 data-closed:opacity-0 dark:bg-zinc-800 dark:ring-white/10"
                                   >
-                                    <TrashIcon className="size-3.5" />
-                                  </button>
-                                </div>
+                                    <MenuItem>
+                                      <button
+                                        type="button"
+                                        onClick={() => { setEditingLabelId(r.id); setEditingLabelValue(r.label || ''); }}
+                                        className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-zinc-700 data-focus:bg-zinc-950/5 dark:text-zinc-300 dark:data-focus:bg-white/5 transition-colors"
+                                      >
+                                        <PencilIcon className="size-4" />
+                                        Rename
+                                      </button>
+                                    </MenuItem>
+                                    <MenuItem>
+                                      <button
+                                        type="button"
+                                        onClick={() => handleDownload(r)}
+                                        className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-zinc-700 data-focus:bg-zinc-950/5 dark:text-zinc-300 dark:data-focus:bg-white/5 transition-colors"
+                                      >
+                                        <ArrowDownTrayIcon className="size-4" />
+                                        Download
+                                      </button>
+                                    </MenuItem>
+                                    <MenuItem>
+                                      <button
+                                        type="button"
+                                        onClick={() => handleDeleteResumeClick(r.id)}
+                                        className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-red-600 data-focus:bg-red-50 dark:text-red-400 dark:data-focus:bg-red-950/30 transition-colors"
+                                      >
+                                        <TrashIcon className="size-4" />
+                                        Delete
+                                      </button>
+                                    </MenuItem>
+                                  </MenuItems>
+                                </Menu>
                               </div>
                             </div>
                           ))}
@@ -182,7 +229,7 @@ export default function ResumesModal({ open, onClose, resumes = [], onUploadResu
                         <ArrowUpTrayIcon data-slot="icon" />
                         {uploading ? 'Uploading...' : 'Upload resume'}
                       </Button>
-                      <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-1.5 text-center">
+                      <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-1.5 text-center">
                         PDF only, max 200 KB
                       </p>
                       {uploadError && (

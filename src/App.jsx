@@ -414,6 +414,7 @@ function App() {
           onUploadResume={uploadResume}
           onRenameResume={renameResume}
           onDeleteResume={handleDeleteResume}
+          onGetDownloadUrl={getDownloadUrl}
         />
       </Suspense>
 
