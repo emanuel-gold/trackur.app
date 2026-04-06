@@ -14,7 +14,7 @@ const EMPTY = {
   resumeId: '',
 };
 
-export default function AddJobForm({ onAdd, open, onClose, resumes }) {
+export default function AddJobForm({ onAdd, open, onClose, resumes, onUploadResume }) {
   const [values, setValues] = useState({ ...EMPTY });
 
   const handleChange = (name, value) => {
@@ -55,7 +55,7 @@ export default function AddJobForm({ onAdd, open, onClose, resumes }) {
       <DialogTitle>Add New Job</DialogTitle>
       <DialogBody>
         <form onSubmit={handleSubmit}>
-          <JobFormFields values={values} onChange={handleChange} resumes={resumes} />
+          <JobFormFields values={values} onChange={handleChange} resumes={resumes} onUploadResume={onUploadResume} />
           <DialogActions>
             <Button plain onClick={onClose}>Cancel</Button>
             <Button color="violet" type="submit">Add Job</Button>

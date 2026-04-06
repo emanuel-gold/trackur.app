@@ -1,6 +1,6 @@
-import { Fragment, useCallback } from 'react';
+import { Fragment, useState, useRef, useCallback } from 'react';
 import { Dialog, DialogBackdrop, Transition, TransitionChild } from '@headlessui/react';
-import { XMarkIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, ArrowDownTrayIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline';
 import { STAGES, STAGE_COLORS } from '../constants.js';
 import { Badge, Button, Select } from './catalyst';
 import useInlineEdit from '../hooks/useInlineEdit.js';
@@ -17,9 +17,12 @@ const FIELD_CONFIG = [
   { key: 'notes', label: 'Notes', inputType: 'textarea', placeholder: 'Add notes...' },
 ];
 
-export default function EditJobModal({ job, onUpdate, onDelete, onClose, resumes = [], onGetDownloadUrl }) {
+export default function EditJobModal({ job, onUpdate, onDelete, onClose, resumes = [], onGetDownloadUrl, onUploadResume }) {
   const { editingField, draftValue, startEdit, updateDraft, cancel, save } = useInlineEdit();
   const { todos, addTodo, toggleTodo, removeTodo, updateTodo } = useTodos(job, onUpdate);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState(null);
+  const fileInputRef = useRef(null);
 
   if (!job) return null;
 
@@ -49,6 +52,22 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose, resumes
       // silently fail
     }
   }, [resumes, job.resumeId, onGetDownloadUrl]);
+
+  const handleUpload = useCallback(async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadError(null);
+    setUploading(true);
+    try {
+      const saved = await onUploadResume(file, '');
+      onUpdate(job.id, { resumeId: saved.id });
+    } catch (err) {
+      setUploadError(err.message);
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
+  }, [onUploadResume, onUpdate, job.id]);
 
   const renderField = (config) => {
     const { key, label, inputType, selectOptions, placeholder, required } = config;
@@ -165,11 +184,19 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose, resumes
                         </div>
 
                         {/* Resume */}
-                        {resumes.length > 0 && (
-                          <div className="col-span-full">
-                            <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">
+                        <div className="col-span-full">
+                          <div className="flex items-center justify-between mb-1.5">
+                            <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                               Resume
                             </div>
+                            <span className="text-[11px] text-zinc-400 dark:text-zinc-500">{resumes.length} of 10</span>
+                          </div>
+                          {resumes.length === 0 ? (
+                            <Button outline onClick={() => fileInputRef.current?.click()} disabled={uploading} className="w-full">
+                              <ArrowUpTrayIcon data-slot="icon" />
+                              {uploading ? 'Uploading...' : 'Upload resume'}
+                            </Button>
+                          ) : (
                             <div className="flex items-center gap-2">
                               <Select
                                 value={job.resumeId || ''}
@@ -181,14 +208,27 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose, resumes
                                   <option key={r.id} value={r.id}>{r.label || r.filename}</option>
                                 ))}
                               </Select>
+                              {resumes.length < 10 && (
+                                <Button plain onClick={() => fileInputRef.current?.click()} disabled={uploading} title="Upload new resume">
+                                  <ArrowUpTrayIcon data-slot="icon" />
+                                </Button>
+                              )}
                               {job.resumeId && (
-                                <Button plain onClick={handleViewResume} title="View resume">
+                                <Button plain onClick={handleViewResume} title="Download resume">
                                   <ArrowDownTrayIcon data-slot="icon" />
                                 </Button>
                               )}
                             </div>
-                          </div>
-                        )}
+                          )}
+                          {uploadError && <p className="text-xs text-red-500 mt-1">{uploadError}</p>}
+                          <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept=".pdf,application/pdf"
+                            onChange={handleUpload}
+                            className="hidden"
+                          />
+                        </div>
 
                         {FIELD_CONFIG.filter((c) => c.key === 'notes').map(renderField)}
                       </div>

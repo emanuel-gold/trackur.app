@@ -344,7 +344,7 @@ function App() {
       )}
 
       <Suspense fallback={null}>
-        <AddJobForm open={addJobOpen} onClose={() => setAddJobOpen(false)} onAdd={handleAdd} resumes={resumes} />
+        <AddJobForm open={addJobOpen} onClose={() => setAddJobOpen(false)} onAdd={handleAdd} resumes={resumes} onUploadResume={uploadResume} />
 
         {editingJob && (
           <EditJobModal
@@ -354,6 +354,7 @@ function App() {
             onClose={() => setEditingJobId(null)}
             resumes={resumes}
             onGetDownloadUrl={getDownloadUrl}
+            onUploadResume={uploadResume}
           />
         )}
 
