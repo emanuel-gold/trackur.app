@@ -86,7 +86,7 @@ export default function ResumesModal({ open, onClose, resumes = [], onUploadResu
                           <h2 className="text-base/7 font-semibold text-zinc-950 dark:text-white">
                             Resumes
                           </h2>
-                          <span className="text-[11px] text-zinc-400 dark:text-zinc-500">
+                          <span className="text-xs text-zinc-400 dark:text-zinc-500">
                             {resumes.length} of 10 used
                           </span>
                         </div>
@@ -133,11 +133,11 @@ export default function ResumesModal({ open, onClose, resumes = [], onUploadResu
                                   )}
                                   <div className="flex items-center gap-2 mt-0.5">
                                     {r.label && (
-                                      <span className="text-[11px] text-zinc-400 dark:text-zinc-500 truncate">
+                                      <span className="text-xs text-zinc-400 dark:text-zinc-500 truncate">
                                         {r.filename}
                                       </span>
                                     )}
-                                    <span className="text-[11px] text-zinc-400 dark:text-zinc-500">
+                                    <span className="text-xs text-zinc-400 dark:text-zinc-500">
                                       {formatFileSize(r.fileSize)}
                                     </span>
                                   </div>
