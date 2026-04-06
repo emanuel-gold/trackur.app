@@ -10,6 +10,7 @@ function toApp(row) {
     dateApplied: row.date_applied ?? '',
     todos: row.todos ?? [],
     notes: row.notes ?? '',
+    resumeId: row.resume_id ?? null,
   };
 }
 
@@ -22,6 +23,7 @@ function toDb(job) {
     date_applied: job.dateApplied || null,
     todos: job.todos ?? [],
     notes: job.notes || null,
+    resume_id: job.resumeId ?? null,
   };
   if (job.id) row.id = job.id;
   return row;
@@ -78,6 +80,7 @@ const supabaseAdapter = {
       const rows = toInsert.map((j) => {
         const row = toDb(j);
         delete row.id; // Let DB generate new UUIDs for imported jobs
+        delete row.resume_id; // Resume IDs are not portable across users
         return row;
       });
       const { error } = await supabase.from('jobs').insert(rows);
@@ -98,6 +101,7 @@ const supabaseAdapter = {
       const rows = jobs.map((j) => {
         const row = toDb(j);
         delete row.id; // Let DB generate new UUIDs
+        delete row.resume_id; // Resume IDs are not portable across users
         return row;
       });
       const { error: insertError } = await supabase.from('jobs').insert(rows);

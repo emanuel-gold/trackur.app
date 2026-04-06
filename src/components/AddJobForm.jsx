@@ -11,9 +11,10 @@ const EMPTY = {
   firstStep: '',
   firstStepDate: '',
   notes: '',
+  resumeId: '',
 };
 
-export default function AddJobForm({ onAdd, open, onClose }) {
+export default function AddJobForm({ onAdd, open, onClose, resumes, onUploadResume }) {
   const [values, setValues] = useState({ ...EMPTY });
 
   const handleChange = (name, value) => {
@@ -22,7 +23,7 @@ export default function AddJobForm({ onAdd, open, onClose }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const { firstStep, firstStepDate, ...jobData } = values;
+    const { firstStep, firstStepDate, resumeId, ...jobData } = values;
     const todos = [];
     if (firstStep.trim()) {
       todos.push({
@@ -34,7 +35,7 @@ export default function AddJobForm({ onAdd, open, onClose }) {
         createdAt: new Date().toISOString(),
       });
     }
-    onAdd({ ...jobData, todos });
+    onAdd({ ...jobData, todos, resumeId: resumeId || null });
     setValues({ ...EMPTY });
     onClose();
   };
@@ -54,7 +55,7 @@ export default function AddJobForm({ onAdd, open, onClose }) {
       <DialogTitle>Add New Job</DialogTitle>
       <DialogBody>
         <form onSubmit={handleSubmit}>
-          <JobFormFields values={values} onChange={handleChange} />
+          <JobFormFields values={values} onChange={handleChange} resumes={resumes} onUploadResume={onUploadResume} />
           <DialogActions>
             <Button plain onClick={onClose}>Cancel</Button>
             <Button color="violet" type="submit">Add Job</Button>

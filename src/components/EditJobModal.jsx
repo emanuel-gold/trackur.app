@@ -1,8 +1,8 @@
-import { Fragment } from 'react';
-import { Dialog, DialogBackdrop, Transition, TransitionChild } from '@headlessui/react';
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import { Fragment, useState, useRef, useCallback } from 'react';
+import { Dialog, DialogBackdrop, Transition, TransitionChild, Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/react';
+import { XMarkIcon, ArrowDownTrayIcon, ArrowUpTrayIcon, EllipsisVerticalIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 import { STAGES, STAGE_COLORS } from '../constants.js';
-import { Badge, Button } from './catalyst';
+import { Badge, Button, Select } from './catalyst';
 import useInlineEdit from '../hooks/useInlineEdit.js';
 import useTodos from '../hooks/useTodos.js';
 import InlineEditableField from './InlineEditableField.jsx';
@@ -17,9 +17,12 @@ const FIELD_CONFIG = [
   { key: 'notes', label: 'Notes', inputType: 'textarea', placeholder: 'Add notes...' },
 ];
 
-export default function EditJobModal({ job, onUpdate, onDelete, onClose }) {
+export default function EditJobModal({ job, onUpdate, onDelete, onClose, resumes = [], onGetDownloadUrl, onUploadResume, onManageResumes }) {
   const { editingField, draftValue, startEdit, updateDraft, cancel, save } = useInlineEdit();
   const { todos, addTodo, toggleTodo, removeTodo, updateTodo } = useTodos(job, onUpdate);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState(null);
+  const fileInputRef = useRef(null);
 
   if (!job) return null;
 
@@ -38,6 +41,43 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose }) {
     onDelete(job.id);
     onClose();
   };
+
+  const handleViewResume = useCallback(async () => {
+    const resume = resumes.find((r) => r.id === job.resumeId);
+    if (!resume || !onGetDownloadUrl) return;
+    try {
+      const url = await onGetDownloadUrl(resume.storagePath);
+      const filename = resume.label ? `${resume.label}.pdf` : resume.filename;
+      const resp = await fetch(url);
+      const blob = await resp.blob();
+      const objUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = objUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(objUrl);
+    } catch {
+      // silently fail
+    }
+  }, [resumes, job.resumeId, onGetDownloadUrl]);
+
+  const handleUpload = useCallback(async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadError(null);
+    setUploading(true);
+    try {
+      const saved = await onUploadResume(file, '');
+      onUpdate(job.id, { resumeId: saved.id });
+    } catch (err) {
+      setUploadError(err.message);
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
+  }, [onUploadResume, onUpdate, job.id]);
 
   const renderField = (config) => {
     const { key, label, inputType, selectOptions, placeholder, required } = config;
@@ -151,6 +191,79 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose }) {
                               onUpdate={updateTodo}
                             />
                           </div>
+                        </div>
+
+                        {/* Resume */}
+                        <div className="col-span-full">
+                          <div className="flex items-center justify-between mb-1.5">
+                            <div className="text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                              Resume
+                            </div>
+                            <span className="text-xs text-zinc-400 dark:text-zinc-500">{resumes.length} of 10</span>
+                          </div>
+                          {resumes.length === 0 ? (
+                            <Button outline onClick={() => fileInputRef.current?.click()} disabled={uploading} className="w-full">
+                              <ArrowUpTrayIcon data-slot="icon" />
+                              {uploading ? 'Uploading...' : 'Upload resume'}
+                            </Button>
+                          ) : (
+                            <div className="flex items-center gap-2">
+                              <Select
+                                value={job.resumeId || ''}
+                                onChange={(e) => onUpdate(job.id, { resumeId: e.target.value || null })}
+                                className="flex-1"
+                              >
+                                <option value="">None</option>
+                                {resumes.map((r) => (
+                                  <option key={r.id} value={r.id}>{r.label || r.filename}</option>
+                                ))}
+                              </Select>
+                              <Menu as="div" className="relative">
+                                <MenuButton
+                                  className="rounded-md p-1.5 text-zinc-400 hover:text-zinc-600 hover:bg-zinc-950/5 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:bg-white/5 transition-colors"
+                                  title="Resume actions"
+                                >
+                                  <EllipsisVerticalIcon className="size-5" />
+                                </MenuButton>
+                                <MenuItems
+                                  anchor="bottom end"
+                                  transition
+                                  className="z-50 mt-1.5 w-52 origin-top-right rounded-lg bg-white p-1.5 shadow-lg ring-1 ring-zinc-950/10 transition duration-100 data-closed:scale-95 data-closed:opacity-0 dark:bg-zinc-800 dark:ring-white/10"
+                                >
+                                  {job.resumeId && (
+                                    <MenuItem>
+                                      <button type="button" onClick={handleViewResume} className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-zinc-700 data-focus:bg-zinc-950/5 dark:text-zinc-300 dark:data-focus:bg-white/5 transition-colors">
+                                        <ArrowDownTrayIcon className="size-4" />
+                                        Download Resume
+                                      </button>
+                                    </MenuItem>
+                                  )}
+                                  {resumes.length < 10 && (
+                                    <MenuItem disabled={uploading}>
+                                      <button type="button" onClick={() => fileInputRef.current?.click()} disabled={uploading} className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-zinc-700 data-focus:bg-zinc-950/5 dark:text-zinc-300 dark:data-focus:bg-white/5 transition-colors disabled:opacity-50">
+                                        <ArrowUpTrayIcon className="size-4" />
+                                        Upload New Resume
+                                      </button>
+                                    </MenuItem>
+                                  )}
+                                  <MenuItem>
+                                    <button type="button" onClick={onManageResumes} className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-zinc-700 data-focus:bg-zinc-950/5 dark:text-zinc-300 dark:data-focus:bg-white/5 transition-colors">
+                                      <DocumentTextIcon className="size-4" />
+                                      Manage Resumes
+                                    </button>
+                                  </MenuItem>
+                                </MenuItems>
+                              </Menu>
+                            </div>
+                          )}
+                          {uploadError && <p className="text-xs text-red-500 mt-1">{uploadError}</p>}
+                          <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept=".pdf,application/pdf"
+                            onChange={handleUpload}
+                            className="hidden"
+                          />
                         </div>
 
                         {FIELD_CONFIG.filter((c) => c.key === 'notes').map(renderField)}

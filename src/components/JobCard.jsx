@@ -1,5 +1,5 @@
 import { memo, useMemo, useCallback } from 'react';
-import { TrashIcon, PencilSquareIcon, ChevronUpDownIcon, CalendarIcon } from '@heroicons/react/24/outline';
+import { TrashIcon, PencilSquareIcon, ChevronUpDownIcon, CalendarIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
 import { STAGES, STAGE_COLORS } from '../constants.js';
 import { Badge } from './catalyst';
@@ -7,7 +7,7 @@ import useInlineEdit from '../hooks/useInlineEdit.js';
 import InlineEditableField from './InlineEditableField.jsx';
 import { formatDate } from '../utils/formatDate.js';
 
-export default memo(function JobCard({ job, onUpdate, onDelete, onEdit, onDragStart, compact, onStageChange }) {
+export default memo(function JobCard({ job, onUpdate, onDelete, onEdit, onDragStart, compact, onStageChange, onViewResume, resumeName }) {
   const { editingField, draftValue, startEdit, updateDraft, cancel, save } = useInlineEdit();
 
   const handleSave = () => {
@@ -242,11 +242,23 @@ export default memo(function JobCard({ job, onUpdate, onDelete, onEdit, onDragSt
         />
       </div>
 
-      <div className="mt-auto flex gap-1 border-t border-zinc-950/5 dark:border-white/5 pt-2">
+      {job.resumeId && onViewResume && (
+        <button
+          type="button"
+          onClick={onViewResume}
+          className="mt-1.5 inline-flex items-center gap-1 text-xs font-medium text-mauve-600 dark:text-mauve-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
+          title="Download resume"
+        >
+          <DocumentTextIcon className="size-3.5 shrink-0" />
+          <span className="truncate">{resumeName || 'Resume'}</span>
+        </button>
+      )}
+
+      <div className="mt-auto flex items-center justify-end gap-1 border-t border-zinc-950/5 dark:border-white/5 pt-2">
         <button
           type="button"
           onClick={() => onEdit(job.id)}
-          className="inline-flex items-center gap-1 rounded-sm px-2 py-1 text-xs text-zinc-500 hover:text-mauve-600 hover:bg-mauve-50 dark:text-zinc-400 dark:hover:text-mauve-400 dark:hover:bg-mauve-950/50 transition-colors"
+          className="inline-flex items-center gap-1 rounded-sm px-2 py-1 text-xs text-zinc-500 hover:text-mauve-700 hover:bg-zinc-950/5 dark:text-zinc-400 dark:hover:text-mauve-300 dark:hover:bg-white/5 transition-colors"
         >
           <PencilSquareIcon className="h-3.5 w-3.5" />
           Edit

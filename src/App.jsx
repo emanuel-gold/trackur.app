@@ -5,6 +5,7 @@ import useJobs from './hooks/useJobs.js';
 import useToast from './hooks/useToast.js';
 import useDarkMode from './hooks/useDarkMode.js';
 import useAuth from './hooks/useAuth.js';
+import useResumes from './hooks/useResumes.js';
 import useNotifications from './hooks/useNotifications.js';
 import { exportJobsToCsv } from './services/csvService.js';
 import { STAGES } from './constants.js';
@@ -25,10 +26,12 @@ const EditJobModal = lazy(() => import('./components/EditJobModal.jsx'));
 const ImportModal = lazy(() => import('./components/ImportModal.jsx'));
 const ConfirmModal = lazy(() => import('./components/ConfirmModal.jsx'));
 const SettingsModal = lazy(() => import('./components/SettingsModal.jsx'));
+const ResumesModal = lazy(() => import('./components/ResumesModal.jsx'));
 
 function App() {
   const auth = useAuth();
-  const { jobs, loading, addJob, updateJob, deleteJob, importJobs, replaceAllJobs } = useJobs(auth.user?.id);
+  const { jobs, loading, addJob, updateJob, deleteJob, importJobs, replaceAllJobs, clearResumeId } = useJobs(auth.user?.id);
+  const { resumes, loading: resumesLoading, uploadResume, renameResume, deleteResume, getDownloadUrl } = useResumes(auth.user?.id);
   const { toasts, showToast, dismissToast } = useToast();
   const { dark, toggle: toggleDark } = useDarkMode();
 
@@ -66,6 +69,7 @@ function App() {
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [editingJobId, setEditingJobId] = useState(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [resumesOpen, setResumesOpen] = useState(false);
 
   const { notificationsSupported, permissionState, requestPermission } = useNotifications(jobs, auth.profile);
 
@@ -160,6 +164,32 @@ function App() {
     }
   }, [replaceAllJobs, showToast]);
 
+  const handleDeleteResume = useCallback(async (id) => {
+    await deleteResume(id);
+    clearResumeId(id);
+  }, [deleteResume, clearResumeId]);
+
+  const handleViewResumeForJob = useCallback(async (job) => {
+    const resume = resumes.find((r) => r.id === job.resumeId);
+    if (!resume) return;
+    try {
+      const url = await getDownloadUrl(resume.storagePath);
+      const filename = resume.label ? `${resume.label}.pdf` : resume.filename;
+      const resp = await fetch(url);
+      const blob = await resp.blob();
+      const objUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = objUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(objUrl);
+    } catch {
+      showToast('Failed to download resume', 'error');
+    }
+  }, [resumes, getDownloadUrl, showToast]);
+
   // Auth loading
   if (auth.loading) {
     return (
@@ -220,8 +250,8 @@ function App() {
     );
   }
 
-  // Jobs loading
-  if (loading) {
+  // Jobs / resumes loading
+  if (loading || resumesLoading) {
     return (
       <div className="flex items-center justify-center min-h-svh bg-zinc-200 dark:bg-zinc-950">
         <p className="text-zinc-500 dark:text-zinc-400">Loading...</p>
@@ -230,7 +260,7 @@ function App() {
   }
 
   return (
-    <Layout dark={dark} onToggleDark={toggleDark} user={auth.user} profile={auth.profile} onSignOut={auth.signOut} onSettings={() => setSettingsOpen(true)}>
+    <Layout dark={dark} onToggleDark={toggleDark} user={auth.user} profile={auth.profile} onSignOut={auth.signOut} onSettings={() => setSettingsOpen(true)} onResumes={() => setResumesOpen(true)}>
       {/* Toolbar */}
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <FilterBar
@@ -329,13 +359,13 @@ function App() {
           <p className="text-zinc-400 dark:text-zinc-500 text-lg">Click "Add Job" to get started.</p>
         </div>
       ) : view === 'board' ? (
-        <KanbanBoard jobs={filteredJobs} onUpdate={handleUpdate} onDelete={handleDeleteRequest} onEdit={handleEditRequest} onUpdateStage={handleUpdateStage} />
+        <KanbanBoard jobs={filteredJobs} onUpdate={handleUpdate} onDelete={handleDeleteRequest} onEdit={handleEditRequest} onUpdateStage={handleUpdateStage} onViewResume={handleViewResumeForJob} resumes={resumes} />
       ) : (
         <TableView jobs={filteredJobs} onUpdate={handleUpdate} onDelete={handleDeleteRequest} onEdit={handleEditRequest} sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
       )}
 
       <Suspense fallback={null}>
-        <AddJobForm open={addJobOpen} onClose={() => setAddJobOpen(false)} onAdd={handleAdd} />
+        <AddJobForm open={addJobOpen} onClose={() => setAddJobOpen(false)} onAdd={handleAdd} resumes={resumes} onUploadResume={uploadResume} />
 
         {editingJob && (
           <EditJobModal
@@ -343,6 +373,10 @@ function App() {
             onUpdate={handleUpdate}
             onDelete={handleDeleteRequest}
             onClose={() => setEditingJobId(null)}
+            resumes={resumes}
+            onGetDownloadUrl={getDownloadUrl}
+            onUploadResume={uploadResume}
+            onManageResumes={() => setResumesOpen(true)}
           />
         )}
 
@@ -371,6 +405,16 @@ function App() {
           notificationsSupported={notificationsSupported}
           permissionState={permissionState}
           requestPermission={requestPermission}
+        />
+
+        <ResumesModal
+          open={resumesOpen}
+          onClose={() => setResumesOpen(false)}
+          resumes={resumes}
+          onUploadResume={uploadResume}
+          onRenameResume={renameResume}
+          onDeleteResume={handleDeleteResume}
+          onGetDownloadUrl={getDownloadUrl}
         />
       </Suspense>
 
