@@ -355,6 +355,7 @@ function App() {
             resumes={resumes}
             onGetDownloadUrl={getDownloadUrl}
             onUploadResume={uploadResume}
+            onManageResumes={() => setResumesOpen(true)}
           />
         )}
 
