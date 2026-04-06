@@ -47,7 +47,17 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose, resumes
     if (!resume || !onGetDownloadUrl) return;
     try {
       const url = await onGetDownloadUrl(resume.storagePath);
-      window.open(url, '_blank');
+      const filename = resume.label ? `${resume.label}.pdf` : resume.filename;
+      const resp = await fetch(url);
+      const blob = await resp.blob();
+      const objUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = objUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(objUrl);
     } catch {
       // silently fail
     }
