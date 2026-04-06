@@ -80,7 +80,7 @@ function MobileStageRow({ stage, stageJobs, onUpdate, onDelete, onEdit, onUpdate
           <>
             <div
               ref={scrollRef}
-              className="flex items-stretch gap-3 overflow-x-auto snap-x snap-mandatory pb-1"
+              className="flex items-stretch gap-3 overflow-x-auto snap-x snap-mandatory pb-4"
             >
               {stageJobs.map((job) => (
                 <div key={job.id} className="shrink-0 w-[80%] min-w-52 snap-start grid">
