@@ -102,11 +102,11 @@ export default function ResumesModal({ open, onClose, resumes = [], onUploadResu
                     {/* Header */}
                     <div className="px-5 py-4 border-b border-zinc-950/5 dark:border-white/5">
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
+                        <div className="flex flex-col items-start">
                           <h2 className="text-base/7 font-semibold text-zinc-950 dark:text-white">
-                            Resumes
+                            Manage Saved Resumes
                           </h2>
-                          <span className="text-xs text-zinc-400 dark:text-zinc-500">
+                          <span className="text-xs text-zinc-500 dark:text-zinc-400">
                             {resumes.length} of 10 used
                           </span>
                         </div>
@@ -157,7 +157,7 @@ export default function ResumesModal({ open, onClose, resumes = [], onUploadResu
                                         {r.filename}
                                       </span>
                                     )}
-                                    <span className="text-xs text-zinc-400 dark:text-zinc-500">
+                                    <span className="text-xs text-zinc-500 dark:text-zinc-400">
                                       {formatFileSize(r.fileSize)}
                                     </span>
                                   </div>
@@ -229,7 +229,7 @@ export default function ResumesModal({ open, onClose, resumes = [], onUploadResu
                         <ArrowUpTrayIcon data-slot="icon" />
                         {uploading ? 'Uploading...' : 'Upload resume'}
                       </Button>
-                      <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-1.5 text-center">
+                      <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1.5 text-center">
                         PDF only, max 200 KB
                       </p>
                       {uploadError && (

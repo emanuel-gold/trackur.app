@@ -258,7 +258,7 @@ export default memo(function JobCard({ job, onUpdate, onDelete, onEdit, onDragSt
         <button
           type="button"
           onClick={() => onEdit(job.id)}
-          className="inline-flex items-center gap-1 rounded-sm px-2 py-1 text-xs text-zinc-500 hover:text-mauve-600 hover:bg-mauve-50 dark:text-zinc-400 dark:hover:text-mauve-400 dark:hover:bg-mauve-950/50 transition-colors"
+          className="inline-flex items-center gap-1 rounded-sm px-2 py-1 text-xs text-zinc-500 hover:text-mauve-700 hover:bg-zinc-950/5 dark:text-zinc-400 dark:hover:text-mauve-300 dark:hover:bg-white/5 transition-colors"
         >
           <PencilSquareIcon className="h-3.5 w-3.5" />
           Edit

@@ -31,7 +31,7 @@ export default function UserMenu({ user, profile, onSignOut, onSettings, onResum
               className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-zinc-700 data-focus:bg-zinc-950/5 dark:text-zinc-300 dark:data-focus:bg-white/5 transition-colors"
             >
               <DocumentTextIcon className="size-4" />
-              Resumes
+              Manage Resumes
             </button>
           </MenuItem>
 
@@ -96,7 +96,7 @@ export default function UserMenu({ user, profile, onSignOut, onSettings, onResum
               className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-zinc-700 data-focus:bg-zinc-950/5 dark:text-zinc-300 dark:data-focus:bg-white/5 transition-colors"
             >
               <DocumentTextIcon className="size-4" />
-              Resumes
+              Manage Resumes
             </button>
           </MenuItem>
 
