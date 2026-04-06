@@ -25,7 +25,7 @@ function saveCollapsed(collapsed) {
   localStorage.setItem(COLLAPSED_KEY, JSON.stringify(collapsed));
 }
 
-function MobileStageRow({ stage, stageJobs, onUpdate, onDelete, onEdit, onUpdateStage, collapsed, onToggleCollapse }) {
+function MobileStageRow({ stage, stageJobs, onUpdate, onDelete, onEdit, onUpdateStage, onViewResume, resumes, collapsed, onToggleCollapse }) {
   const scrollRef = useRef(null);
   const [activeCard, setActiveCard] = useState(0);
 
@@ -90,6 +90,8 @@ function MobileStageRow({ stage, stageJobs, onUpdate, onDelete, onEdit, onUpdate
                     onDelete={onDelete}
                     onEdit={onEdit}
                     onStageChange={onUpdateStage}
+                    onViewResume={onViewResume ? () => onViewResume(job) : undefined}
+                    resumeName={resumes?.find((r) => r.id === job.resumeId)?.label || resumes?.find((r) => r.id === job.resumeId)?.filename}
                     compact
                   />
                 </div>
@@ -117,7 +119,7 @@ function MobileStageRow({ stage, stageJobs, onUpdate, onDelete, onEdit, onUpdate
   );
 }
 
-export default function KanbanBoard({ jobs, onUpdate, onDelete, onEdit, onUpdateStage }) {
+export default function KanbanBoard({ jobs, onUpdate, onDelete, onEdit, onUpdateStage, onViewResume, resumes }) {
   const [dragOverStage, setDragOverStage] = useState(null);
   const [collapsedStages, setCollapsedStages] = useState(loadCollapsed);
 
@@ -176,6 +178,8 @@ export default function KanbanBoard({ jobs, onUpdate, onDelete, onEdit, onUpdate
             onDelete={onDelete}
             onEdit={onEdit}
             onUpdateStage={onUpdateStage}
+            onViewResume={onViewResume}
+            resumes={resumes}
             collapsed={!!collapsedStages[stage]}
             onToggleCollapse={() => toggleCollapse(stage)}
           />
@@ -241,6 +245,8 @@ export default function KanbanBoard({ jobs, onUpdate, onDelete, onEdit, onUpdate
                       onDelete={onDelete}
                       onEdit={onEdit}
                       onDragStart={(e) => handleDragStart(e, job.id)}
+                      onViewResume={onViewResume ? () => onViewResume(job) : undefined}
+                      resumeName={resumes?.find((r) => r.id === job.resumeId)?.label || resumes?.find((r) => r.id === job.resumeId)?.filename}
                       compact
                     />
                   ))

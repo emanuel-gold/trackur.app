@@ -169,6 +169,27 @@ function App() {
     clearResumeId(id);
   }, [deleteResume, clearResumeId]);
 
+  const handleViewResumeForJob = useCallback(async (job) => {
+    const resume = resumes.find((r) => r.id === job.resumeId);
+    if (!resume) return;
+    try {
+      const url = await getDownloadUrl(resume.storagePath);
+      const filename = resume.label ? `${resume.label}.pdf` : resume.filename;
+      const resp = await fetch(url);
+      const blob = await resp.blob();
+      const objUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = objUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(objUrl);
+    } catch {
+      showToast('Failed to download resume', 'error');
+    }
+  }, [resumes, getDownloadUrl, showToast]);
+
   // Auth loading
   if (auth.loading) {
     return (
@@ -338,7 +359,7 @@ function App() {
           <p className="text-zinc-400 dark:text-zinc-500 text-lg">Click "Add Job" to get started.</p>
         </div>
       ) : view === 'board' ? (
-        <KanbanBoard jobs={filteredJobs} onUpdate={handleUpdate} onDelete={handleDeleteRequest} onEdit={handleEditRequest} onUpdateStage={handleUpdateStage} />
+        <KanbanBoard jobs={filteredJobs} onUpdate={handleUpdate} onDelete={handleDeleteRequest} onEdit={handleEditRequest} onUpdateStage={handleUpdateStage} onViewResume={handleViewResumeForJob} resumes={resumes} />
       ) : (
         <TableView jobs={filteredJobs} onUpdate={handleUpdate} onDelete={handleDeleteRequest} onEdit={handleEditRequest} sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
       )}
