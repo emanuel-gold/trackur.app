@@ -13,6 +13,12 @@ function toApp(row) {
   };
 }
 
+async function getAccessToken() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) throw new Error('Not authenticated');
+  return session.access_token;
+}
+
 const resumeAdapter = {
   async getAll() {
     const { data, error } = await supabase
@@ -24,21 +30,24 @@ const resumeAdapter = {
   },
 
   async insert(resume, file) {
-    // Get current user ID for storage path
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('Not authenticated');
+    const token = await getAccessToken();
 
-    // Generate a temp ID for the storage path
-    const tempId = crypto.randomUUID();
-    const storagePath = `${user.id}/${tempId}.pdf`;
+    // Upload file to R2 via API
+    const uploadRes = await fetch('/api/resume/upload', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/pdf',
+      },
+      body: file,
+    });
+    if (!uploadRes.ok) {
+      const err = await uploadRes.json().catch(() => ({}));
+      throw new Error(err.error || 'Upload failed');
+    }
+    const { storagePath } = await uploadRes.json();
 
-    // Upload file to storage
-    const { error: uploadError } = await supabase.storage
-      .from('resumes')
-      .upload(storagePath, file, { contentType: 'application/pdf' });
-    if (uploadError) throw uploadError;
-
-    // Insert DB row
+    // Insert DB row (RLS enforces auth.uid() = user_id)
     const { data, error: dbError } = await supabase
       .from('resumes')
       .insert({
@@ -51,8 +60,15 @@ const resumeAdapter = {
       .single();
 
     if (dbError) {
-      // Clean up orphaned file if DB insert fails
-      await supabase.storage.from('resumes').remove([storagePath]);
+      // Clean up orphaned file in R2
+      await fetch('/api/resume/delete', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ storagePath }),
+      }).catch(() => {});
       throw dbError;
     }
 
@@ -86,16 +102,34 @@ const resumeAdapter = {
       .eq('id', id);
     if (deleteError) throw deleteError;
 
-    // Remove file from storage
-    await supabase.storage.from('resumes').remove([row.storage_path]);
+    // Remove file from R2 (best-effort)
+    const token = await getAccessToken();
+    await fetch('/api/resume/delete', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ storagePath: row.storage_path }),
+    }).catch(() => {});
   },
 
   async getDownloadUrl(storagePath) {
-    const { data, error } = await supabase.storage
-      .from('resumes')
-      .createSignedUrl(storagePath, 60);
-    if (error) throw error;
-    return data.signedUrl;
+    const token = await getAccessToken();
+    const res = await fetch('/api/resume/download-url', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ storagePath }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Failed to get download URL');
+    }
+    const { url } = await res.json();
+    return url;
   },
 };
 
