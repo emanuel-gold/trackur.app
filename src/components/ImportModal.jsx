@@ -36,7 +36,7 @@ export default function ImportModal({ open, onClose, onImport, onReplace }) {
       <DialogTitle>Import Jobs from CSV</DialogTitle>
       <DialogBody>
         <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-zinc-950/10 dark:border-white/10 rounded-lg cursor-pointer hover:border-mauve-400 hover:bg-mauve-50/50 dark:hover:bg-mauve-950/50 transition-colors">
-          <ArrowUpTrayIcon className="size-8 text-zinc-400 dark:text-zinc-500 mb-2" />
+          <ArrowUpTrayIcon className="size-8 text-zinc-500 dark:text-zinc-400 mb-2" />
           <span className="text-sm text-zinc-500 dark:text-zinc-400">
             {fileName || 'Click to select a CSV file'}
           </span>

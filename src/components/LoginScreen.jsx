@@ -51,7 +51,7 @@ export default function LoginScreen({ signInWithEmail, signInWithGoogle, onCreat
         {/* Divider */}
         <div className="my-5 flex items-center gap-3">
           <div className="h-px flex-1 bg-zinc-950/10 dark:bg-white/10" />
-          <span className="text-xs font-medium text-zinc-400 dark:text-zinc-500">OR</span>
+          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">OR</span>
           <div className="h-px flex-1 bg-zinc-950/10 dark:bg-white/10" />
         </div>
 

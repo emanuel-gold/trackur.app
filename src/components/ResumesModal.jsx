@@ -153,7 +153,7 @@ export default function ResumesModal({ open, onClose, resumes = [], onUploadResu
                                   )}
                                   <div className="flex items-center gap-2 mt-0.5">
                                     {r.label && (
-                                      <span className="text-xs text-zinc-400 dark:text-zinc-500 truncate">
+                                      <span className="text-xs text-zinc-500 dark:text-zinc-400 truncate">
                                         {r.filename}
                                       </span>
                                     )}

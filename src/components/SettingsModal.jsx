@@ -114,7 +114,7 @@ export default function SettingsModal({ open, onClose, user, profile, refreshPro
                         {!notificationsSupported ? (
                           <div className="rounded-lg bg-zinc-50 dark:bg-zinc-800/50 ring-1 ring-zinc-950/5 dark:ring-white/5 p-4">
                             <div className="flex items-start gap-3">
-                              <BellSlashIcon className="size-5 text-zinc-400 dark:text-zinc-500 shrink-0 mt-0.5" />
+                              <BellSlashIcon className="size-5 text-zinc-500 dark:text-zinc-400 shrink-0 mt-0.5" />
                               <div>
                                 <p className="text-sm text-zinc-600 dark:text-zinc-300">
                                   Browser notifications are not supported in this browser.
@@ -125,7 +125,7 @@ export default function SettingsModal({ open, onClose, user, profile, refreshPro
                         ) : permissionState === 'denied' ? (
                           <div className="rounded-lg bg-zinc-50 dark:bg-zinc-800/50 ring-1 ring-zinc-950/5 dark:ring-white/5 p-4">
                             <div className="flex items-start gap-3">
-                              <BellSlashIcon className="size-5 text-zinc-400 dark:text-zinc-500 shrink-0 mt-0.5" />
+                              <BellSlashIcon className="size-5 text-zinc-500 dark:text-zinc-400 shrink-0 mt-0.5" />
                               <div>
                                 <p className="text-sm text-zinc-600 dark:text-zinc-300">
                                   Notifications are blocked.

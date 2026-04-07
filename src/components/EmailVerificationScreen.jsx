@@ -48,7 +48,7 @@ export default function EmailVerificationScreen({ email, onBack }) {
             <strong className="text-zinc-700 dark:text-zinc-300">{email}</strong>.
             Click the link to activate your account.
           </p>
-          <p className="mt-3 text-xs text-zinc-400 dark:text-zinc-500">
+          <p className="mt-3 text-xs text-zinc-500 dark:text-zinc-400">
             Once verified, you can sign in to your account.
           </p>
 

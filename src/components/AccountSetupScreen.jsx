@@ -190,7 +190,7 @@ export default function AccountSetupScreen({ user, onComplete }) {
             <FieldGroup>
               <div data-slot="field">
                 <span data-slot="label" className="text-base/6 font-medium text-zinc-950 select-none sm:text-sm/6 dark:text-white">Which industries are you job hunting in?</span>
-                <p className="text-xs text-zinc-400 dark:text-zinc-500 mb-2">Optional — select all that apply</p>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-2">Optional — select all that apply</p>
                 <IndustryMultiSelect
                   value={values.industries}
                   onChange={(v) => updateValue('industries', v)}
@@ -198,7 +198,7 @@ export default function AccountSetupScreen({ user, onComplete }) {
               </div>
               <div data-slot="field">
                 <span data-slot="label" className="text-base/6 font-medium text-zinc-950 select-none sm:text-sm/6 dark:text-white">Which job titles are you targeting?</span>
-                <p className="text-xs text-zinc-400 dark:text-zinc-500 mb-2">Optional — type a title and press Enter</p>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-2">Optional — type a title and press Enter</p>
                 <TagInput
                   name="jobTitles"
                   value={values.jobTitles}

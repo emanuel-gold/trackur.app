@@ -59,7 +59,7 @@ export default function TableView({ jobs, onUpdate, onDelete, onEdit, sortKey, s
 
   if (jobs.length === 0) {
     return (
-      <p className="py-12 text-center text-zinc-400 dark:text-zinc-500">No jobs to display.</p>
+      <p className="py-12 text-center text-zinc-500 dark:text-zinc-400">No jobs to display.</p>
     );
   }
 
@@ -94,7 +94,7 @@ export default function TableView({ jobs, onUpdate, onDelete, onEdit, sortKey, s
           {...cellProps}
           inputType="date"
           placeholder="Set date"
-          displayRender={(val) => val ? formatDate(val) : <span className="text-zinc-400 dark:text-zinc-500">&mdash;</span>}
+          displayRender={(val) => val ? formatDate(val) : <span className="text-zinc-500 dark:text-zinc-400">&mdash;</span>}
         />
       );
     }
@@ -104,7 +104,7 @@ export default function TableView({ jobs, onUpdate, onDelete, onEdit, sortKey, s
       const uncompleted = todos.filter((t) => !t.completed);
       const completed = todos.filter((t) => t.completed);
       if (todos.length === 0) {
-        return <span className="text-zinc-400 dark:text-zinc-500">&mdash;</span>;
+        return <span className="text-zinc-500 dark:text-zinc-400">&mdash;</span>;
       }
       return (
         <button type="button" onClick={() => onEdit(job.id)} className="text-left">
@@ -146,7 +146,7 @@ export default function TableView({ jobs, onUpdate, onDelete, onEdit, sortKey, s
               <Badge color={STAGE_COLORS[job.stage]?.badge || 'zinc'}>{job.stage}</Badge>
             </div>
             {job.dateApplied && (
-              <p className="mt-1.5 text-xs text-zinc-400 dark:text-zinc-500">Applied {formatDate(job.dateApplied)}</p>
+              <p className="mt-1.5 text-xs text-zinc-500 dark:text-zinc-400">Applied {formatDate(job.dateApplied)}</p>
             )}
             {(() => {
               const todos = job.todos ?? [];
@@ -158,7 +158,7 @@ export default function TableView({ jobs, onUpdate, onDelete, onEdit, sortKey, s
                     ? <>Next: {uncompleted[0].text}</>
                     : <span className="text-emerald-600 dark:text-emerald-400">All steps done</span>
                   }
-                  {' '}<span className="text-zinc-400 dark:text-zinc-500">({todos.filter((t) => t.completed).length}/{todos.length})</span>
+                  {' '}<span className="text-zinc-500 dark:text-zinc-400">({todos.filter((t) => t.completed).length}/{todos.length})</span>
                 </p>
               );
             })()}

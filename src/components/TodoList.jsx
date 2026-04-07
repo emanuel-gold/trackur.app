@@ -42,7 +42,7 @@ export default function TodoList({ todos, onAdd, onToggle, onRemove, onUpdate, m
       {!atLimit && (
         <div className="mt-2">
           <div className="flex items-center gap-2">
-            <PlusIcon className="size-4 shrink-0 text-zinc-400 dark:text-zinc-500" />
+            <PlusIcon className="size-4 shrink-0 text-zinc-500 dark:text-zinc-400" />
             <input
               ref={inputRef}
               type="text"
@@ -72,7 +72,7 @@ export default function TodoList({ todos, onAdd, onToggle, onRemove, onUpdate, m
               className={`shrink-0 p-1 rounded transition-colors ${
                 dueDate
                   ? 'text-violet-500 dark:text-violet-400'
-                  : 'text-zinc-400 dark:text-zinc-500 hover:text-violet-500 dark:hover:text-violet-400'
+                  : 'text-zinc-500 dark:text-zinc-400 hover:text-violet-500 dark:hover:text-violet-400'
               }`}
             >
               <CalendarIcon className="size-4" />
@@ -103,7 +103,7 @@ export default function TodoList({ todos, onAdd, onToggle, onRemove, onUpdate, m
 
       {/* Counter */}
       {todos.length > 0 && (
-        <p className="mt-2 text-[11px] text-zinc-400 dark:text-zinc-500">
+        <p className="mt-2 text-[11px] text-zinc-500 dark:text-zinc-400">
           {todos.filter((t) => t.completed).length}/{todos.length} done
           {atLimit && ' (limit reached)'}
         </p>

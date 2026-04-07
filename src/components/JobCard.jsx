@@ -204,7 +204,7 @@ export default memo(function JobCard({ job, onUpdate, onDelete, onEdit, onDragSt
                       <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); onEdit(job.id); }}
-                        className="shrink-0 p-0.5 rounded text-zinc-400 dark:text-zinc-500 opacity-0 group-hover/todo:opacity-100 hover:text-mauve-600 hover:bg-mauve-50 dark:hover:text-mauve-400 dark:hover:bg-mauve-950/50 transition-all"
+                        className="shrink-0 p-0.5 rounded text-zinc-500 dark:text-zinc-400 opacity-0 group-hover/todo:opacity-100 hover:text-mauve-600 hover:bg-mauve-50 dark:hover:text-mauve-400 dark:hover:bg-mauve-950/50 transition-all"
                         title="Edit details"
                       >
                         <PencilSquareIcon className="size-3" />

@@ -80,7 +80,7 @@ export default function JobFormFields({ values, onChange, resumes = [], onUpload
       <div>
         <div className="flex items-center justify-between mb-1.5">
           <label className="text-sm/6 font-medium text-zinc-950 dark:text-white select-none">Attach Resume</label>
-          <span className="text-[11px] text-zinc-400 dark:text-zinc-500">{resumes.length} of 10</span>
+          <span className="text-[11px] text-zinc-500 dark:text-zinc-400">{resumes.length} of 10</span>
         </div>
         {resumes.length === 0 ? (
           <Button outline onClick={() => fileInputRef.current?.click()} disabled={uploading || !onUploadResume} className="w-full">
@@ -115,6 +115,16 @@ export default function JobFormFields({ values, onChange, resumes = [], onUpload
       <Field>
         <Label>Notes</Label>
         <Textarea rows={3} resizable={false} maxLength={CHAR_LIMITS.notes} placeholder="Add a link to the job description, questions to ask, or anything else." {...field('notes')} />
+        {(() => {
+          const len = (values.notes || '').length;
+          const remaining = CHAR_LIMITS.notes - len;
+          const color = remaining <= 15
+            ? 'text-red-500 dark:text-red-400'
+            : len >= CHAR_LIMITS.notes * 0.75
+              ? 'text-yellow-500 dark:text-yellow-400'
+              : 'text-zinc-500 dark:text-zinc-400';
+          return <span className={`text-[11px] ${color}`}>{len}/{CHAR_LIMITS.notes}</span>;
+        })()}
       </Field>
     </FieldGroup>
   );

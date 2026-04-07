@@ -200,7 +200,7 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose, resumes
                             <div className="text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                               Attach Resume
                             </div>
-                            <span className="text-xs text-zinc-400 dark:text-zinc-500">{resumes.length} of 10</span>
+                            <span className="text-xs text-zinc-500 dark:text-zinc-400">{resumes.length} of 10</span>
                           </div>
                           {resumes.length === 0 ? (
                             <Button outline onClick={() => fileInputRef.current?.click()} disabled={uploading} className="w-full">

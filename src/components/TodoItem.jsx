@@ -92,7 +92,7 @@ export default function TodoItem({ todo, onToggle, onRemove, onUpdate }) {
             onClick={startEditText}
             className={`text-left text-sm w-full truncate ${
               todo.completed
-                ? 'line-through text-zinc-400 dark:text-zinc-500'
+                ? 'line-through text-zinc-500 dark:text-zinc-400'
                 : 'text-zinc-950 dark:text-white hover:text-violet-600 dark:hover:text-violet-400'
             }`}
           >
@@ -120,7 +120,7 @@ export default function TodoItem({ todo, onToggle, onRemove, onUpdate }) {
             onClick={startEditDate}
             className={`mt-0.5 inline-flex items-center gap-1 text-xs ${
               todo.completed
-                ? 'text-zinc-400 dark:text-zinc-500'
+                ? 'text-zinc-500 dark:text-zinc-400'
                 : 'text-zinc-500 dark:text-zinc-400 hover:text-violet-600 dark:hover:text-violet-400'
             }`}
           >
@@ -131,7 +131,7 @@ export default function TodoItem({ todo, onToggle, onRemove, onUpdate }) {
           <button
             type="button"
             onClick={startEditDate}
-            className="mt-0.5 inline-flex items-center gap-1 text-xs text-zinc-400 dark:text-zinc-500 opacity-0 group-hover:opacity-100 transition-opacity hover:text-violet-600 dark:hover:text-violet-400"
+            className="mt-0.5 inline-flex items-center gap-1 text-xs text-zinc-500 dark:text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity hover:text-violet-600 dark:hover:text-violet-400"
           >
             <CalendarIcon className="size-3" />
             Add date

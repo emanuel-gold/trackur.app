@@ -120,7 +120,20 @@ export default memo(function InlineEditableField({
       );
     }
 
-    const atLimit = maxLength && inputType !== 'textarea' && draftValue.length >= maxLength;
+    let counterEl = null;
+    if (maxLength) {
+      if (inputType === 'textarea') {
+        const remaining = maxLength - draftValue.length;
+        const color = remaining <= 15
+          ? 'text-red-500 dark:text-red-400'
+          : draftValue.length >= maxLength * 0.75
+            ? 'text-yellow-500 dark:text-yellow-400'
+            : 'text-zinc-500 dark:text-zinc-400';
+        counterEl = <span className={`text-[11px] ${color}`}>{draftValue.length}/{maxLength}</span>;
+      } else if (draftValue.length >= maxLength) {
+        counterEl = <span className="text-[11px] text-red-500 dark:text-red-400">Max {maxLength} characters.</span>;
+      }
+    }
 
     return (
       <div className={className}>
@@ -128,9 +141,7 @@ export default memo(function InlineEditableField({
           <div className="flex-1 min-w-0">{input}</div>
           {actionButtons}
         </div>
-        {atLimit && (
-          <span className="text-[11px] text-red-500 dark:text-red-400">Max {maxLength} characters.</span>
-        )}
+        {counterEl}
       </div>
     );
   }
@@ -149,7 +160,7 @@ export default memo(function InlineEditableField({
     ? displayRender(value)
     : hasValue
       ? value
-      : <span className="text-zinc-400 dark:text-zinc-500 italic">{placeholder || 'Empty'}</span>;
+      : <span className="text-zinc-500 dark:text-zinc-400 italic">{placeholder || 'Empty'}</span>;
 
   return (
     <div

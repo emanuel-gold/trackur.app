@@ -63,8 +63,8 @@ function MobileStageRow({ stage, stageJobs, onUpdate, onDelete, onEdit, onUpdate
       >
         <div className="flex items-center gap-1.5">
           {collapsed
-            ? <ChevronDownIcon className="size-4 text-zinc-400 dark:text-zinc-500" />
-            : <ChevronUpIcon className="size-4 text-zinc-400 dark:text-zinc-500" />
+            ? <ChevronDownIcon className="size-4 text-zinc-500 dark:text-zinc-400" />
+            : <ChevronUpIcon className="size-4 text-zinc-500 dark:text-zinc-400" />
           }
           <h3 className="text-lg font-semibold text-zinc-700 dark:text-zinc-300">{stage}</h3>
         </div>
@@ -73,7 +73,7 @@ function MobileStageRow({ stage, stageJobs, onUpdate, onDelete, onEdit, onUpdate
 
       {!collapsed && (
         stageJobs.length === 0 ? (
-          <p className="px-2 py-4 text-center text-xs text-zinc-400 dark:text-zinc-500 bg-mauve-200/50 dark:bg-mauve-950/20 rounded-lg">
+          <p className="px-2 py-4 text-center text-xs text-zinc-500 dark:text-zinc-400 bg-mauve-200/50 dark:bg-mauve-950/20 rounded-lg">
             No jobs
           </p>
         ) : (
@@ -204,7 +204,7 @@ export default function KanbanBoard({ jobs, onUpdate, onDelete, onEdit, onUpdate
                 onDrop={(e) => handleDrop(e, stage)}
                 className={`shrink-0 w-10 rounded-lg bg-mauve-200 dark:bg-mauve-950/40 transition-all cursor-pointer flex flex-col items-center py-3 gap-2 hover:bg-mauve-300/60 dark:hover:bg-mauve-900/40 ${isDragOver ? 'ring-2 ring-mauve-400 dark:ring-mauve-500' : 'ring-1 ring-mauve-300/50 dark:ring-mauve-800/30'}`}
               >
-                <ChevronRightIcon className="size-4 text-zinc-400 dark:text-zinc-500 shrink-0" aria-hidden="true" />
+                <ChevronRightIcon className="size-4 text-zinc-500 dark:text-zinc-400 shrink-0" aria-hidden="true" />
                 <Badge color={STAGE_COLORS[stage].badge}>{stageJobs.length}</Badge>
                 <span className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 [writing-mode:vertical-lr] rotate-180">
                   {stage}
@@ -227,7 +227,7 @@ export default function KanbanBoard({ jobs, onUpdate, onDelete, onEdit, onUpdate
                 className="flex items-center justify-between w-full px-3 py-2 border-b border-mauve-300/50 dark:border-mauve-800/30 cursor-pointer group"
               >
                 <div className="flex items-center gap-1.5">
-                  <ChevronLeftIcon className="size-4 text-zinc-400 dark:text-zinc-500" />
+                  <ChevronLeftIcon className="size-4 text-zinc-500 dark:text-zinc-400" />
                   <h3 className="text-xs font-semibold tracking-wide text-zinc-700 dark:text-zinc-300">{stage}</h3>
                 </div>
                 <Badge color={STAGE_COLORS[stage].badge}>{stageJobs.length}</Badge>
@@ -235,7 +235,7 @@ export default function KanbanBoard({ jobs, onUpdate, onDelete, onEdit, onUpdate
 
               <div className="flex flex-col gap-2 p-2 space-y-2 max-h-[calc(100vh-16rem)] overflow-y-auto">
                 {stageJobs.length === 0 ? (
-                  <p className="px-2 py-4 text-center text-xs text-zinc-400 dark:text-zinc-500">No jobs</p>
+                  <p className="px-2 py-4 text-center text-xs text-zinc-500 dark:text-zinc-400">No jobs</p>
                 ) : (
                   stageJobs.map((job) => (
                     <JobCard
