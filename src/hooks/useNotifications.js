@@ -100,7 +100,7 @@ export default function useNotifications(jobs, profile) {
     }
 
     if (overdue.length > 0 && lastNotified.overdue !== today) {
-      fireNotification('trackur: Overdue follow-ups', overdue);
+      fireNotification('Trackur: Overdue follow-ups', overdue);
       lastNotified.overdue = today;
     }
 
