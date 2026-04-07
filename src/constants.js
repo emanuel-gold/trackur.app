@@ -21,3 +21,16 @@ export const STAGE_COLORS = {
   Ghosted: { badge: 'zinc' },
   Accepted: { badge: 'emerald' },
 };
+
+export const CHAR_LIMITS = {
+  firstName: 40,
+  lastName: 80,
+  company: 100,
+  role: 100,
+  jobTitle: 100,
+  notes: 250,
+  search: 250,
+  todo: 150,
+  email: 256,
+  password: 256,
+};
