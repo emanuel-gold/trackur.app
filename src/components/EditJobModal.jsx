@@ -1,4 +1,4 @@
-import { Fragment, useState, useRef, useCallback } from 'react';
+import { Fragment, useState, useRef, useCallback, useEffect } from 'react';
 import { Dialog, DialogBackdrop, Transition, TransitionChild, Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/react';
 import { XMarkIcon, ArrowDownTrayIcon, ArrowUpTrayIcon, EllipsisVerticalIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 import { STAGES, STAGE_COLORS, CHAR_LIMITS } from '../constants.js';
@@ -22,6 +22,13 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose, resumes
   const { todos, addTodo, toggleTodo, removeTodo, updateTodo } = useTodos(job, onUpdate);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState(null);
+  const [fieldError, setFieldError] = useState(null);
+
+  useEffect(() => {
+    if (!fieldError) return;
+    const t = setTimeout(() => setFieldError(null), 5000);
+    return () => clearTimeout(t);
+  }, [fieldError]);
   const fileInputRef = useRef(null);
 
   if (!job) return null;
@@ -30,6 +37,13 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose, resumes
     const { field, value } = save();
     if (!field) return;
     if ((field === 'company' || field === 'role') && !value.trim()) return;
+    if (value && FIELD_CONFIG.find((c) => c.key === field)?.inputType === 'date') {
+      const year = parseInt(value.split('-')[0], 10);
+      if (year < 2000 || year > 2099) {
+        setFieldError({ field, message: 'Sorry, time traveller! Year must be between 2000 and 2099.' });
+        return;
+      }
+    }
     onUpdate(job.id, { [field]: value });
   };
 
@@ -100,7 +114,7 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose, resumes
           fieldName={key}
           isEditing={editingField === key}
           draftValue={draftValue}
-          onStartEdit={startEdit}
+          onStartEdit={(fieldName, val) => { setFieldError(null); startEdit(fieldName, val); }}
           onDraftChange={updateDraft}
           onSave={handleSave}
           onCancel={cancel}
@@ -113,6 +127,9 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose, resumes
           displayRender={displayRender}
           className="text-sm text-zinc-950 dark:text-white"
         />
+        {fieldError?.field === key && (
+          <p className="mt-1 text-xs text-red-500 dark:text-red-400">{fieldError.message}</p>
+        )}
       </div>
     );
   };
