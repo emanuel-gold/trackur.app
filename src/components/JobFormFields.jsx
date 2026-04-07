@@ -57,10 +57,22 @@ export default function JobFormFields({ values, onChange, resumes = [], onUpload
         </Field>
       </div>
 
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <Field>
+          <Label>Next Step</Label>
+          <Input type="text" placeholder="e.g. Follow up with recruiter" {...field('firstStep')} />
+        </Field>
+
+        <Field>
+          <Label>Due Date</Label>
+          <Input type="date" {...field('firstStepDate')} />
+        </Field>
+      </div>
+
       {/* Resume — always shown */}
       <div>
         <div className="flex items-center justify-between mb-1.5">
-          <label className="text-sm/6 font-medium text-zinc-950 dark:text-white select-none">Resume</label>
+          <label className="text-sm/6 font-medium text-zinc-950 dark:text-white select-none">Attach Resume</label>
           <span className="text-[11px] text-zinc-400 dark:text-zinc-500">{resumes.length} of 10</span>
         </div>
         {resumes.length === 0 ? (
@@ -91,18 +103,6 @@ export default function JobFormFields({ values, onChange, resumes = [], onUpload
           onChange={handleUpload}
           className="hidden"
         />
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Field>
-          <Label>First Step</Label>
-          <Input type="text" placeholder="e.g. Follow up with recruiter" {...field('firstStep')} />
-        </Field>
-
-        <Field>
-          <Label>Due Date</Label>
-          <Input type="date" {...field('firstStepDate')} />
-        </Field>
       </div>
 
       <Field>

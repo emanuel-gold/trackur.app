@@ -197,7 +197,7 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose, resumes
                         <div className="col-span-full">
                           <div className="flex items-center justify-between mb-1.5">
                             <div className="text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-                              Resume
+                              Attach Resume
                             </div>
                             <span className="text-xs text-zinc-400 dark:text-zinc-500">{resumes.length} of 10</span>
                           </div>
