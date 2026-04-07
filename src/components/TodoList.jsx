@@ -91,7 +91,9 @@ export default function TodoList({ todos, onAdd, onToggle, onRemove, onUpdate, m
             <div className="mt-1.5 ml-6">
               <input
                 ref={dateRef}
-                type="date"
+                type="date" 
+                min="2000-01-01" 
+                max="2099-12-31" 
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
                 className="text-xs bg-transparent text-zinc-500 dark:text-zinc-400 outline-none border border-zinc-300 dark:border-zinc-600 rounded px-2 py-1"

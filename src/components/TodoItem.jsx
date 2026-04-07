@@ -105,6 +105,8 @@ export default function TodoItem({ todo, onToggle, onRemove, onUpdate }) {
           <input
             ref={dateRef}
             type="date"
+            min="2000-01-01"
+            max="2099-12-31"
             value={dateDraft}
             onChange={(e) => setDateDraft(e.target.value)}
             onBlur={saveDate}

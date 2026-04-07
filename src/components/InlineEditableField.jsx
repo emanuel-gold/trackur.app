@@ -111,6 +111,7 @@ export default memo(function InlineEditableField({
           type={inputType}
           value={draftValue}
           maxLength={maxLength}
+          {...(inputType === 'date' ? { min: '2000-01-01', max: '2099-12-31' } : {})}
           onChange={(e) => onDraftChange(e.target.value)}
           onKeyDown={handleKeyDown}
           onBlur={onBlur}

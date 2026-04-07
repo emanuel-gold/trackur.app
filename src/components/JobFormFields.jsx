@@ -51,7 +51,7 @@ export default function JobFormFields({ values, onChange, resumes = [], onUpload
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Field>
           <Label>Date Applied</Label>
-          <Input type="date" {...field('dateApplied')} />
+          <Input type="date" min="2000-01-01" max="2099-12-31" {...field('dateApplied')} />
         </Field>
 
         <Field>
@@ -72,7 +72,7 @@ export default function JobFormFields({ values, onChange, resumes = [], onUpload
 
         <Field>
           <Label>Due Date</Label>
-          <Input type="date" {...field('firstStepDate')} />
+          <Input type="date" min="2000-01-01" max="2099-12-31" {...field('firstStepDate')} />
         </Field>
       </div>
 
