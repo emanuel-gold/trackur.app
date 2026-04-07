@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import { CHAR_LIMITS } from '../constants.js';
 
 export default function TagInput({ value = [], onChange, placeholder = 'Type and press Enter', name }) {
   const [input, setInput] = useState('');
@@ -46,15 +47,21 @@ export default function TagInput({ value = [], onChange, placeholder = 'Type and
           ))}
         </div>
       )}
-      <input
-        type="text"
-        name={name}
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder={placeholder}
-        className="w-full rounded-lg border-0 bg-transparent px-3.5 py-2 text-sm text-zinc-950 ring-1 ring-zinc-950/10 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-mauve-500 dark:text-white dark:ring-white/10 dark:placeholder:text-zinc-500"
-      />
+      <div className="relative">
+        <input
+          type="text"
+          name={name}
+          value={input}
+          maxLength={CHAR_LIMITS.jobTitle}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={placeholder}
+          className="w-full rounded-lg border-0 bg-transparent px-3.5 py-2 text-sm text-zinc-950 ring-1 ring-zinc-950/10 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-mauve-500 dark:text-white dark:ring-white/10 dark:placeholder:text-zinc-500"
+        />
+        {input.length >= CHAR_LIMITS.jobTitle && (
+          <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[11px] text-red-500 dark:text-red-400">Max {CHAR_LIMITS.jobTitle} characters.</span>
+        )}
+      </div>
     </div>
   );
 }

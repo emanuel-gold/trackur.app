@@ -1,5 +1,5 @@
 import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { STAGES } from '../constants.js';
+import { STAGES, CHAR_LIMITS } from '../constants.js';
 import { InputGroup, Input, Select, Button } from './catalyst';
 
 export default function FilterBar({ search, onSearchChange, stageFilter, onStageFilterChange, hideStageFilter, hideMobileExtras }) {
@@ -13,10 +13,14 @@ export default function FilterBar({ search, onSearchChange, stageFilter, onStage
           <Input
             type="text"
             placeholder="Search company or role..."
+            maxLength={CHAR_LIMITS.search}
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
           />
         </InputGroup>
+        {search.length >= CHAR_LIMITS.search && (
+          <span className="absolute right-2 bottom-0 translate-y-full pt-0.5 text-[11px] text-red-500 dark:text-red-400">Max {CHAR_LIMITS.search} characters.</span>
+        )}
       </div>
 
       {!hideStageFilter && (

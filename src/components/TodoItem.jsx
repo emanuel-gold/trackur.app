@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { XMarkIcon, CalendarIcon } from '@heroicons/react/24/outline';
+import { CHAR_LIMITS } from '../constants.js';
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
 import { formatDate } from '../utils/formatDate.js';
 
@@ -67,18 +68,24 @@ export default function TodoItem({ todo, onToggle, onRemove, onUpdate }) {
       {/* Content */}
       <div className="min-w-0 flex-1">
         {editingText ? (
-          <input
-            ref={textRef}
-            type="text"
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            onBlur={saveText}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') saveText();
-              if (e.key === 'Escape') setEditingText(false);
-            }}
-            className="w-full bg-transparent text-sm text-zinc-950 dark:text-white outline-none border-b border-violet-400 dark:border-violet-500 py-0.5"
-          />
+          <div>
+            <input
+              ref={textRef}
+              type="text"
+              value={draft}
+              maxLength={CHAR_LIMITS.todo}
+              onChange={(e) => setDraft(e.target.value)}
+              onBlur={saveText}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') saveText();
+                if (e.key === 'Escape') setEditingText(false);
+              }}
+              className="w-full bg-transparent text-sm text-zinc-950 dark:text-white outline-none border-b border-violet-400 dark:border-violet-500 py-0.5"
+            />
+            {draft.length >= CHAR_LIMITS.todo && (
+              <span className="text-[11px] text-red-500 dark:text-red-400">Max {CHAR_LIMITS.todo} characters.</span>
+            )}
+          </div>
         ) : (
           <button
             type="button"

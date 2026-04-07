@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { EnvelopeIcon, LockClosedIcon } from '@heroicons/react/24/outline';
 import { Button, Input, InputGroup, Field, Label, FieldGroup } from './catalyst';
+import { CHAR_LIMITS } from '../constants.js';
 import GoogleIcon from './GoogleIcon.jsx';
 import TrackurWordmark from './TrackurWordmark.jsx';
 import { Turnstile } from '@marsidev/react-turnstile';
@@ -88,11 +89,15 @@ export default function SignUpScreen({ signUpWithEmail, signInWithGoogle, onBack
                 <Input
                   type="email"
                   required
+                  maxLength={CHAR_LIMITS.email}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
                 />
               </InputGroup>
+              {email.length >= CHAR_LIMITS.email && (
+                <span className="text-[11px] text-red-500 dark:text-red-400">Max {CHAR_LIMITS.email} characters.</span>
+              )}
             </Field>
             <Field>
               <Label>Password</Label>
@@ -102,11 +107,15 @@ export default function SignUpScreen({ signUpWithEmail, signInWithGoogle, onBack
                   type="password"
                   required
                   minLength={6}
+                  maxLength={CHAR_LIMITS.password}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="At least 6 characters"
                 />
               </InputGroup>
+              {password.length >= CHAR_LIMITS.password && (
+                <span className="text-[11px] text-red-500 dark:text-red-400">Max {CHAR_LIMITS.password} characters.</span>
+              )}
             </Field>
             <Field>
               <Label>Confirm Password</Label>
@@ -116,11 +125,15 @@ export default function SignUpScreen({ signUpWithEmail, signInWithGoogle, onBack
                   type="password"
                   required
                   minLength={6}
+                  maxLength={CHAR_LIMITS.password}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Confirm your password"
                 />
               </InputGroup>
+              {confirmPassword.length >= CHAR_LIMITS.password && (
+                <span className="text-[11px] text-red-500 dark:text-red-400">Max {CHAR_LIMITS.password} characters.</span>
+              )}
             </Field>
           </FieldGroup>
 

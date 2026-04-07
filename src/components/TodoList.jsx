@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { PlusIcon, CalendarIcon } from '@heroicons/react/24/outline';
-import { MAX_TODOS } from '../constants.js';
+import { MAX_TODOS, CHAR_LIMITS } from '../constants.js';
 import TodoItem from './TodoItem.jsx';
 
 export default function TodoList({ todos, onAdd, onToggle, onRemove, onUpdate, maxItems = MAX_TODOS }) {
@@ -47,6 +47,7 @@ export default function TodoList({ todos, onAdd, onToggle, onRemove, onUpdate, m
               ref={inputRef}
               type="text"
               value={text}
+              maxLength={CHAR_LIMITS.todo}
               onChange={(e) => setText(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') handleAdd();
@@ -54,6 +55,9 @@ export default function TodoList({ todos, onAdd, onToggle, onRemove, onUpdate, m
               placeholder="Add a step..."
               className="flex-1 bg-transparent text-sm text-zinc-950 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-500 outline-none"
             />
+            {text.length >= CHAR_LIMITS.todo && (
+              <span className="shrink-0 text-[11px] text-red-500 dark:text-red-400">Max {CHAR_LIMITS.todo} characters.</span>
+            )}
             <button
               type="button"
               onClick={() => {

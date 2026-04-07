@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { ArrowUpTrayIcon } from '@heroicons/react/24/outline';
 import { STAGES } from '../constants.js';
 import { Field, FieldGroup, Label, Input, Select, Textarea, Button } from './catalyst';
+import { CHAR_LIMITS } from '../constants.js';
 
 export default function JobFormFields({ values, onChange, resumes = [], onUploadResume }) {
   const [uploading, setUploading] = useState(false);
@@ -33,12 +34,18 @@ export default function JobFormFields({ values, onChange, resumes = [], onUpload
     <FieldGroup className="space-y-4">
       <Field>
         <Label>Company Name *</Label>
-        <Input type="text" required placeholder="e.g. HubSpot" {...field('company')} />
+        <Input type="text" required maxLength={CHAR_LIMITS.company} placeholder="e.g. HubSpot" {...field('company')} />
+        {(values.company || '').length >= CHAR_LIMITS.company && (
+          <span className="text-[11px] text-red-500 dark:text-red-400">Max {CHAR_LIMITS.company} characters.</span>
+        )}
       </Field>
 
       <Field>
         <Label>Role *</Label>
-        <Input type="text" required placeholder="e.g. Frontend Developer" {...field('role')} />
+        <Input type="text" required maxLength={CHAR_LIMITS.role} placeholder="e.g. Frontend Developer" {...field('role')} />
+        {(values.role || '').length >= CHAR_LIMITS.role && (
+          <span className="text-[11px] text-red-500 dark:text-red-400">Max {CHAR_LIMITS.role} characters.</span>
+        )}
       </Field>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -107,7 +114,7 @@ export default function JobFormFields({ values, onChange, resumes = [], onUpload
 
       <Field>
         <Label>Notes</Label>
-        <Textarea rows={3} resizable={false} placeholder="Add notes, to-do items, or anything else." {...field('notes')} />
+        <Textarea rows={3} resizable={false} maxLength={CHAR_LIMITS.notes} placeholder="Add a link to the job description, questions to ask, or anything else." {...field('notes')} />
       </Field>
     </FieldGroup>
   );

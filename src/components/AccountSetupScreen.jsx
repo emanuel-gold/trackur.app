@@ -6,6 +6,7 @@ import { COUNTRIES } from '../constants/countries.js';
 import IndustryMultiSelect from './IndustryMultiSelect.jsx';
 import TagInput from './TagInput.jsx';
 import profileService from '../services/profileService.js';
+import { CHAR_LIMITS } from '../constants.js';
 
 export default function AccountSetupScreen({ user, onComplete }) {
   const [stage, setStage] = useState(1);
@@ -103,10 +104,14 @@ export default function AccountSetupScreen({ user, onComplete }) {
                     type="text"
                     name="firstName"
                     required
+                    maxLength={CHAR_LIMITS.firstName}
                     value={values.firstName}
                     onChange={(e) => updateValue('firstName', e.target.value)}
                     placeholder="First name"
                   />
+                  {values.firstName.length >= CHAR_LIMITS.firstName && (
+                    <span className="text-[11px] text-red-500 dark:text-red-400">Max {CHAR_LIMITS.firstName} characters.</span>
+                  )}
                   {errors.firstName && <ErrorMessage>{errors.firstName}</ErrorMessage>}
                 </Field>
                 <Field>
@@ -115,10 +120,14 @@ export default function AccountSetupScreen({ user, onComplete }) {
                     type="text"
                     name="lastName"
                     required
+                    maxLength={CHAR_LIMITS.lastName}
                     value={values.lastName}
                     onChange={(e) => updateValue('lastName', e.target.value)}
                     placeholder="Last name"
                   />
+                  {values.lastName.length >= CHAR_LIMITS.lastName && (
+                    <span className="text-[11px] text-red-500 dark:text-red-400">Max {CHAR_LIMITS.lastName} characters.</span>
+                  )}
                   {errors.lastName && <ErrorMessage>{errors.lastName}</ErrorMessage>}
                 </Field>
               </div>

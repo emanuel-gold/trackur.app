@@ -19,6 +19,7 @@ export default memo(function InlineEditableField({
   placeholder,
   required,
   multiline,
+  maxLength,
   className = '',
 }) {
   const inputRef = useRef(null);
@@ -94,6 +95,7 @@ export default memo(function InlineEditableField({
         <textarea
           ref={inputRef}
           value={draftValue}
+          maxLength={maxLength}
           onChange={(e) => onDraftChange(e.target.value)}
           onKeyDown={handleKeyDown}
           onBlur={onBlur}
@@ -108,6 +110,7 @@ export default memo(function InlineEditableField({
           ref={inputRef}
           type={inputType}
           value={draftValue}
+          maxLength={maxLength}
           onChange={(e) => onDraftChange(e.target.value)}
           onKeyDown={handleKeyDown}
           onBlur={onBlur}
@@ -117,10 +120,17 @@ export default memo(function InlineEditableField({
       );
     }
 
+    const atLimit = maxLength && inputType !== 'textarea' && draftValue.length >= maxLength;
+
     return (
-      <div className={`flex items-start gap-1 ${className}`}>
-        <div className="flex-1 min-w-0">{input}</div>
-        {actionButtons}
+      <div className={className}>
+        <div className="flex items-start gap-1">
+          <div className="flex-1 min-w-0">{input}</div>
+          {actionButtons}
+        </div>
+        {atLimit && (
+          <span className="text-[11px] text-red-500 dark:text-red-400">Max {maxLength} characters.</span>
+        )}
       </div>
     );
   }

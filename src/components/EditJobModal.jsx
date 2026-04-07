@@ -1,7 +1,7 @@
 import { Fragment, useState, useRef, useCallback } from 'react';
 import { Dialog, DialogBackdrop, Transition, TransitionChild, Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/react';
 import { XMarkIcon, ArrowDownTrayIcon, ArrowUpTrayIcon, EllipsisVerticalIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
-import { STAGES, STAGE_COLORS } from '../constants.js';
+import { STAGES, STAGE_COLORS, CHAR_LIMITS } from '../constants.js';
 import { Badge, Button, Select } from './catalyst';
 import useInlineEdit from '../hooks/useInlineEdit.js';
 import useTodos from '../hooks/useTodos.js';
@@ -10,11 +10,11 @@ import TodoList from './TodoList.jsx';
 import { formatDate } from '../utils/formatDate.js';
 
 const FIELD_CONFIG = [
-  { key: 'company', label: 'Company', required: true, placeholder: 'Company name' },
-  { key: 'role', label: 'Role', required: true, placeholder: 'Job title' },
+  { key: 'company', label: 'Company', required: true, placeholder: 'Company name', maxLength: CHAR_LIMITS.company },
+  { key: 'role', label: 'Role', required: true, placeholder: 'Job title', maxLength: CHAR_LIMITS.role },
   { key: 'stage', label: 'Stage', inputType: 'select', selectOptions: STAGES },
   { key: 'dateApplied', label: 'Date Applied', inputType: 'date', placeholder: 'Set date' },
-  { key: 'notes', label: 'Notes', inputType: 'textarea', placeholder: 'Add notes...' },
+  { key: 'notes', label: 'Notes', inputType: 'textarea', placeholder: 'Add notes...', maxLength: CHAR_LIMITS.notes },
 ];
 
 export default function EditJobModal({ job, onUpdate, onDelete, onClose, resumes = [], onGetDownloadUrl, onUploadResume, onManageResumes }) {
@@ -80,7 +80,7 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose, resumes
   }, [onUploadResume, onUpdate, job.id]);
 
   const renderField = (config) => {
-    const { key, label, inputType, selectOptions, placeholder, required } = config;
+    const { key, label, inputType, selectOptions, placeholder, required, maxLength } = config;
     const isStage = key === 'stage';
 
     const isDate = inputType === 'date';
@@ -109,6 +109,7 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose, resumes
           selectOptions={selectOptions}
           placeholder={placeholder || 'Not set'}
           required={required}
+          maxLength={maxLength}
           displayRender={displayRender}
           className="text-sm text-zinc-950 dark:text-white"
         />
