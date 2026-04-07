@@ -19,7 +19,7 @@ export default function FilterBar({ search, onSearchChange, stageFilter, onStage
           />
         </InputGroup>
         {search.length >= CHAR_LIMITS.search && (
-          <span className="absolute right-2 bottom-0 translate-y-full pt-0.5 text-[11px] text-red-500 dark:text-red-400">Max {CHAR_LIMITS.search} characters.</span>
+          <span className="absolute right-2 bottom-0 translate-y-full pt-0.5 text-xs text-red-500 dark:text-red-400">Max {CHAR_LIMITS.search} characters.</span>
         )}
       </div>
 

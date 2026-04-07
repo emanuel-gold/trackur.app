@@ -106,7 +106,7 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose, resumes
 
     return (
       <div key={key} className={key === 'notes' ? 'col-span-full' : ''}>
-        <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">
+        <div className="text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">
           {label}
         </div>
         <InlineEditableField
@@ -197,7 +197,7 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose, resumes
 
                         {/* Next Steps (todo list) */}
                         <div className="col-span-full">
-                          <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">
+                          <div className="text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">
                             Next Steps
                           </div>
                           <div className="rounded-lg bg-zinc-50 dark:bg-zinc-800/50 ring-1 ring-zinc-950/5 dark:ring-white/5 px-3 py-2">

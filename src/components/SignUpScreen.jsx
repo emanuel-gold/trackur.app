@@ -96,7 +96,7 @@ export default function SignUpScreen({ signUpWithEmail, signInWithGoogle, onBack
                 />
               </InputGroup>
               {email.length >= CHAR_LIMITS.email && (
-                <span className="text-[11px] text-red-500 dark:text-red-400">Max {CHAR_LIMITS.email} characters.</span>
+                <span className="text-xs text-red-500 dark:text-red-400">Max {CHAR_LIMITS.email} characters.</span>
               )}
             </Field>
             <Field>
@@ -114,7 +114,7 @@ export default function SignUpScreen({ signUpWithEmail, signInWithGoogle, onBack
                 />
               </InputGroup>
               {password.length >= CHAR_LIMITS.password && (
-                <span className="text-[11px] text-red-500 dark:text-red-400">Max {CHAR_LIMITS.password} characters.</span>
+                <span className="text-xs text-red-500 dark:text-red-400">Max {CHAR_LIMITS.password} characters.</span>
               )}
             </Field>
             <Field>
@@ -132,7 +132,7 @@ export default function SignUpScreen({ signUpWithEmail, signInWithGoogle, onBack
                 />
               </InputGroup>
               {confirmPassword.length >= CHAR_LIMITS.password && (
-                <span className="text-[11px] text-red-500 dark:text-red-400">Max {CHAR_LIMITS.password} characters.</span>
+                <span className="text-xs text-red-500 dark:text-red-400">Max {CHAR_LIMITS.password} characters.</span>
               )}
             </Field>
           </FieldGroup>

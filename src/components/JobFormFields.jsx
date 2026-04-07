@@ -36,7 +36,7 @@ export default function JobFormFields({ values, onChange, resumes = [], onUpload
         <Label>Company Name *</Label>
         <Input type="text" required maxLength={CHAR_LIMITS.company} placeholder="e.g. HubSpot" {...field('company')} />
         {(values.company || '').length >= CHAR_LIMITS.company && (
-          <span className="text-[11px] text-red-500 dark:text-red-400">Max {CHAR_LIMITS.company} characters.</span>
+          <span className="text-xs text-red-500 dark:text-red-400">Max {CHAR_LIMITS.company} characters.</span>
         )}
       </Field>
 
@@ -44,7 +44,7 @@ export default function JobFormFields({ values, onChange, resumes = [], onUpload
         <Label>Role *</Label>
         <Input type="text" required maxLength={CHAR_LIMITS.role} placeholder="e.g. Frontend Developer" {...field('role')} />
         {(values.role || '').length >= CHAR_LIMITS.role && (
-          <span className="text-[11px] text-red-500 dark:text-red-400">Max {CHAR_LIMITS.role} characters.</span>
+          <span className="text-xs text-red-500 dark:text-red-400">Max {CHAR_LIMITS.role} characters.</span>
         )}
       </Field>
 
@@ -80,7 +80,7 @@ export default function JobFormFields({ values, onChange, resumes = [], onUpload
       <div>
         <div className="flex items-center justify-between mb-1.5">
           <label className="text-sm/6 font-medium text-zinc-950 dark:text-white select-none">Attach Resume</label>
-          <span className="text-[11px] text-zinc-500 dark:text-zinc-400">{resumes.length} of 10</span>
+          <span className="text-xs text-zinc-500 dark:text-zinc-400">{resumes.length} of 10</span>
         </div>
         {resumes.length === 0 ? (
           <Button outline onClick={() => fileInputRef.current?.click()} disabled={uploading || !onUploadResume} className="w-full">
@@ -123,7 +123,7 @@ export default function JobFormFields({ values, onChange, resumes = [], onUpload
             : len >= CHAR_LIMITS.notes * 0.75
               ? 'text-yellow-500 dark:text-yellow-400'
               : 'text-zinc-500 dark:text-zinc-400';
-          return <span className={`text-[11px] ${color}`}>{len}/{CHAR_LIMITS.notes}</span>;
+          return <span className={`text-xs ${color}`}>{len}/{CHAR_LIMITS.notes}</span>;
         })()}
       </Field>
     </FieldGroup>

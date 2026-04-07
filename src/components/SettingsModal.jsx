@@ -86,7 +86,7 @@ export default function SettingsModal({ open, onClose, user, profile, refreshPro
                     <div className="flex-1 overflow-y-auto px-5 py-5 space-y-8">
                       {/* Account section */}
                       <section>
-                        <h3 className="text-[11px] font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3">
+                        <h3 className="text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3">
                           Account
                         </h3>
                         <div className="space-y-2">
@@ -107,7 +107,7 @@ export default function SettingsModal({ open, onClose, user, profile, refreshPro
 
                       {/* Notifications section */}
                       <section>
-                        <h3 className="text-[11px] font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3">
+                        <h3 className="text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3">
                           Notifications
                         </h3>
 

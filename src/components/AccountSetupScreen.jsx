@@ -110,7 +110,7 @@ export default function AccountSetupScreen({ user, onComplete }) {
                     placeholder="First name"
                   />
                   {values.firstName.length >= CHAR_LIMITS.firstName && (
-                    <span className="text-[11px] text-red-500 dark:text-red-400">Max {CHAR_LIMITS.firstName} characters.</span>
+                    <span className="text-xs text-red-500 dark:text-red-400">Max {CHAR_LIMITS.firstName} characters.</span>
                   )}
                   {errors.firstName && <ErrorMessage>{errors.firstName}</ErrorMessage>}
                 </Field>
@@ -126,7 +126,7 @@ export default function AccountSetupScreen({ user, onComplete }) {
                     placeholder="Last name"
                   />
                   {values.lastName.length >= CHAR_LIMITS.lastName && (
-                    <span className="text-[11px] text-red-500 dark:text-red-400">Max {CHAR_LIMITS.lastName} characters.</span>
+                    <span className="text-xs text-red-500 dark:text-red-400">Max {CHAR_LIMITS.lastName} characters.</span>
                   )}
                   {errors.lastName && <ErrorMessage>{errors.lastName}</ErrorMessage>}
                 </Field>

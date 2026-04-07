@@ -130,9 +130,9 @@ export default memo(function InlineEditableField({
           : draftValue.length >= maxLength * 0.75
             ? 'text-yellow-500 dark:text-yellow-400'
             : 'text-zinc-500 dark:text-zinc-400';
-        counterEl = <span className={`text-[11px] ${color}`}>{draftValue.length}/{maxLength}</span>;
+        counterEl = <span className={`text-xs ${color}`}>{draftValue.length}/{maxLength}</span>;
       } else if (draftValue.length >= maxLength) {
-        counterEl = <span className="text-[11px] text-red-500 dark:text-red-400">Max {maxLength} characters.</span>;
+        counterEl = <span className="text-xs text-red-500 dark:text-red-400">Max {maxLength} characters.</span>;
       }
     }
 

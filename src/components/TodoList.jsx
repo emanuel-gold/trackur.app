@@ -56,7 +56,7 @@ export default function TodoList({ todos, onAdd, onToggle, onRemove, onUpdate, m
               className="flex-1 bg-transparent text-sm text-zinc-950 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-500 outline-none"
             />
             {text.length >= CHAR_LIMITS.todo && (
-              <span className="shrink-0 text-[11px] text-red-500 dark:text-red-400">Max {CHAR_LIMITS.todo} characters.</span>
+              <span className="shrink-0 text-xs text-red-500 dark:text-red-400">Max {CHAR_LIMITS.todo} characters.</span>
             )}
             <button
               type="button"
@@ -105,7 +105,7 @@ export default function TodoList({ todos, onAdd, onToggle, onRemove, onUpdate, m
 
       {/* Counter */}
       {todos.length > 0 && (
-        <p className="mt-2 text-[11px] text-zinc-500 dark:text-zinc-400">
+        <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
           {todos.filter((t) => t.completed).length}/{todos.length} done
           {atLimit && ' (limit reached)'}
         </p>

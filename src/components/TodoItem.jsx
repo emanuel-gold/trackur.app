@@ -83,7 +83,7 @@ export default function TodoItem({ todo, onToggle, onRemove, onUpdate }) {
               className="w-full bg-transparent text-sm text-zinc-950 dark:text-white outline-none border-b border-violet-400 dark:border-violet-500 py-0.5"
             />
             {draft.length >= CHAR_LIMITS.todo && (
-              <span className="text-[11px] text-red-500 dark:text-red-400">Max {CHAR_LIMITS.todo} characters.</span>
+              <span className="text-xs text-red-500 dark:text-red-400">Max {CHAR_LIMITS.todo} characters.</span>
             )}
           </div>
         ) : (
