@@ -106,7 +106,7 @@ export default function JobFormFields({ values, onChange, resumes = [], onUpload
         <input
           ref={fileInputRef}
           type="file"
-          accept=".pdf,application/pdf"
+          accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
           onChange={handleUpload}
           className="hidden"
         />

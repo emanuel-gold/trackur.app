@@ -61,7 +61,8 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose, resumes
     if (!resume || !onGetDownloadUrl) return;
     try {
       const url = await onGetDownloadUrl(resume.storagePath);
-      const filename = resume.label ? `${resume.label}.pdf` : resume.filename;
+      const ext = resume.filename.split('.').pop();
+      const filename = resume.label ? `${resume.label}.${ext}` : resume.filename;
       const resp = await fetch(url);
       const blob = await resp.blob();
       const objUrl = URL.createObjectURL(blob);
@@ -278,7 +279,7 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose, resumes
                           <input
                             ref={fileInputRef}
                             type="file"
-                            accept=".pdf,application/pdf"
+                            accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                             onChange={handleUpload}
                             className="hidden"
                           />
