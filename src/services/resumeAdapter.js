@@ -37,7 +37,7 @@ const resumeAdapter = {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/pdf',
+        'Content-Type': file.type,
       },
       body: file,
     });

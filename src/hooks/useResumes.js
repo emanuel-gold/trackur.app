@@ -3,6 +3,7 @@ import resumeRepository from '../services/resumeRepository.js';
 
 const MAX_RESUMES = 10;
 const MAX_SIZE = 200 * 1024; // 200 KB
+const ALLOWED_TYPES = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
 
 export default function useResumes(userId) {
   const [resumes, setResumes] = useState([]);
@@ -27,8 +28,8 @@ export default function useResumes(userId) {
   }, [userId]);
 
   const uploadResume = useCallback(async (file, label) => {
-    if (file.type !== 'application/pdf') {
-      throw new Error('Only PDF files are allowed');
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      throw new Error('Only PDF and DOCX files are allowed');
     }
     if (file.size > MAX_SIZE) {
       throw new Error('File must be under 200 KB');

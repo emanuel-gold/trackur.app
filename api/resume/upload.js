@@ -5,6 +5,10 @@ import { r2, BUCKET } from '../_lib/r2.js';
 export const config = { api: { bodyParser: false } };
 
 const MAX_SIZE = 200 * 1024; // 200 KB
+const ALLOWED_TYPES = {
+  'application/pdf': 'pdf',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
+};
 
 async function readBody(req) {
   const chunks = [];
@@ -25,8 +29,9 @@ export default async function handler(req, res) {
   }
 
   const contentType = req.headers['content-type'];
-  if (contentType !== 'application/pdf') {
-    return res.status(400).json({ error: 'Only PDF files are allowed' });
+  const ext = ALLOWED_TYPES[contentType];
+  if (!ext) {
+    return res.status(400).json({ error: 'Only PDF and DOCX files are allowed' });
   }
 
   const body = await readBody(req);
@@ -35,14 +40,14 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'File must be under 200 KB' });
   }
 
-  const storagePath = `${userId}/${crypto.randomUUID()}.pdf`;
+  const storagePath = `${userId}/${crypto.randomUUID()}.${ext}`;
 
   await r2.send(
     new PutObjectCommand({
       Bucket: BUCKET,
       Key: storagePath,
       Body: body,
-      ContentType: 'application/pdf',
+      ContentType: contentType,
     }),
   );
 
