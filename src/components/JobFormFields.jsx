@@ -33,18 +33,18 @@ export default function JobFormFields({ values, onChange, resumes = [], onUpload
   return (
     <FieldGroup className="space-y-4">
       <Field>
-        <Label>Company Name *</Label>
-        <Input type="text" required maxLength={CHAR_LIMITS.company} placeholder="e.g. HubSpot" {...field('company')} />
-        {(values.company || '').length >= CHAR_LIMITS.company && (
-          <span className="text-xs text-red-500 dark:text-red-400">Max {CHAR_LIMITS.company} characters.</span>
-        )}
-      </Field>
-
-      <Field>
         <Label>Role *</Label>
         <Input type="text" required maxLength={CHAR_LIMITS.role} placeholder="e.g. Frontend Developer" {...field('role')} />
         {(values.role || '').length >= CHAR_LIMITS.role && (
           <span className="text-xs text-red-500 dark:text-red-400">Max {CHAR_LIMITS.role} characters.</span>
+        )}
+      </Field>
+
+      <Field>
+        <Label>Company Name *</Label>
+        <Input type="text" required maxLength={CHAR_LIMITS.company} placeholder="e.g. HubSpot" {...field('company')} />
+        {(values.company || '').length >= CHAR_LIMITS.company && (
+          <span className="text-xs text-red-500 dark:text-red-400">Max {CHAR_LIMITS.company} characters.</span>
         )}
       </Field>
 

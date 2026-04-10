@@ -10,8 +10,8 @@ import TodoList from './TodoList.jsx';
 import { formatDate } from '../utils/formatDate.js';
 
 const FIELD_CONFIG = [
-  { key: 'company', label: 'Company', required: true, placeholder: 'Company name', maxLength: CHAR_LIMITS.company },
   { key: 'role', label: 'Role', required: true, placeholder: 'Job title', maxLength: CHAR_LIMITS.role },
+  { key: 'company', label: 'Company', required: true, placeholder: 'Company name', maxLength: CHAR_LIMITS.company },
   { key: 'stage', label: 'Stage', inputType: 'select', selectOptions: STAGES },
   { key: 'dateApplied', label: 'Date Applied', inputType: 'date', placeholder: 'Set date' },
   { key: 'notes', label: 'Notes', inputType: 'textarea', placeholder: 'Add notes...', maxLength: CHAR_LIMITS.notes },
@@ -171,10 +171,10 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose, resumes
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0 flex-1">
                           <h2 className="text-base/7 font-semibold text-zinc-950 dark:text-white truncate">
-                            {job.company}
+                            {job.role}
                           </h2>
                           <p className="text-sm/6 text-zinc-500 dark:text-zinc-400 truncate">
-                            {job.role}
+                            {job.company}
                           </p>
                         </div>
                         <div className="flex items-center gap-3 shrink-0">

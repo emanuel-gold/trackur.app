@@ -6,8 +6,8 @@ import InlineEditableField from './InlineEditableField.jsx';
 import { formatDate } from '../utils/formatDate.js';
 
 const COLUMNS = [
-  { key: 'company', label: 'Company' },
   { key: 'role', label: 'Role' },
+  { key: 'company', label: 'Company' },
   { key: 'stage', label: 'Stage' },
   { key: 'dateApplied', label: 'Date Applied' },
   { key: 'nextStep', label: 'Next Step' },
@@ -140,8 +140,8 @@ export default function TableView({ jobs, onUpdate, onDelete, onEdit, sortKey, s
           >
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0 flex-1">
-                <p className="font-medium text-zinc-950 dark:text-white truncate">{job.company}</p>
-                <p className="text-sm text-zinc-500 dark:text-zinc-400 truncate">{job.role}</p>
+                <p className="font-medium text-zinc-950 dark:text-white truncate">{job.role}</p>
+                <p className="text-sm text-zinc-500 dark:text-zinc-400 truncate">{job.company}</p>
               </div>
               <Badge color={STAGE_COLORS[job.stage]?.badge || 'zinc'}>{job.stage}</Badge>
             </div>
@@ -199,10 +199,10 @@ export default function TableView({ jobs, onUpdate, onDelete, onEdit, sortKey, s
             {sorted.map((job) => (
               <tr key={job.id} className="hover:bg-zinc-950/2.5 dark:hover:bg-white/2.5 transition-colors">
                 <td className="px-4 py-3 text-sm font-medium text-zinc-950 dark:text-white whitespace-nowrap">
-                  {renderCell(job, 'company')}
+                  {renderCell(job, 'role')}
                 </td>
                 <td className="px-4 py-3 text-sm text-zinc-500 dark:text-zinc-400 whitespace-nowrap">
-                  {renderCell(job, 'role')}
+                  {renderCell(job, 'company')}
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap">
                   {renderCell(job, 'stage')}

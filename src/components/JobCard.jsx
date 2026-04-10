@@ -97,20 +97,6 @@ export default memo(function JobCard({ job, onUpdate, onDelete, onEdit, onDragSt
       
       <div className="min-w-0 flex-1 space-y-0.5">
           <InlineEditableField
-            value={job.company}
-            fieldName="company"
-            isEditing={editingField === 'company'}
-            draftValue={draftValue}
-            onStartEdit={startEdit}
-            onDraftChange={updateDraft}
-            onSave={handleSave}
-            onCancel={cancel}
-            onBlur={handleSave}
-            required
-            placeholder="Company name"
-            className="text-base font-bold text-zinc-950 dark:text-white"
-          />
-          <InlineEditableField
             value={job.role}
             fieldName="role"
             isEditing={editingField === 'role'}
@@ -122,6 +108,20 @@ export default memo(function JobCard({ job, onUpdate, onDelete, onEdit, onDragSt
             onBlur={handleSave}
             required
             placeholder="Role"
+            className="text-base font-bold text-zinc-950 dark:text-white"
+          />
+          <InlineEditableField
+            value={job.company}
+            fieldName="company"
+            isEditing={editingField === 'company'}
+            draftValue={draftValue}
+            onStartEdit={startEdit}
+            onDraftChange={updateDraft}
+            onSave={handleSave}
+            onCancel={cancel}
+            onBlur={handleSave}
+            required
+            placeholder="Company name"
             className="text-sm text-zinc-950 dark:text-white"
           />
         </div>
