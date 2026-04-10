@@ -51,18 +51,6 @@ export default function useAuth() {
     await fetchProfile();
   }, [fetchProfile]);
 
-  const signInWithEmail = useCallback(async (email, password) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return { error };
-  }, []);
-
-  const signUpWithEmail = useCallback(async (email, password, captchaToken) => {
-    const options = {};
-    if (captchaToken) options.captchaToken = captchaToken;
-    const { error } = await supabase.auth.signUp({ email, password, options });
-    return { error };
-  }, []);
-
   const signInWithGoogle = useCallback(async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
@@ -81,8 +69,6 @@ export default function useAuth() {
     loading,
     profile,
     profileLoaded,
-    signInWithEmail,
-    signUpWithEmail,
     signInWithGoogle,
     signOut,
     refreshProfile,

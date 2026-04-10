@@ -17,8 +17,6 @@ import KanbanBoard from './components/KanbanBoard.jsx';
 import TableView from './components/TableView.jsx';
 import ToastContainer from './components/ToastContainer.jsx';
 import LoginScreen from './components/LoginScreen.jsx';
-import SignUpScreen from './components/SignUpScreen.jsx';
-import EmailVerificationScreen from './components/EmailVerificationScreen.jsx';
 import AccountSetupScreen from './components/AccountSetupScreen.jsx';
 
 const AddJobForm = lazy(() => import('./components/AddJobForm.jsx'));
@@ -34,9 +32,6 @@ function App() {
   const { resumes, loading: resumesLoading, uploadResume, renameResume, deleteResume, getDownloadUrl } = useResumes(auth.user?.id);
   const { toasts, showToast, dismissToast } = useToast();
   const { dark, toggle: toggleDark } = useDarkMode();
-
-  const [authScreen, setAuthScreen] = useState('login'); // 'login' | 'signup' | 'verify'
-  const [pendingEmail, setPendingEmail] = useState('');
 
   const [view, setView] = useState(() => localStorage.getItem('viewPreference') || 'board');
   const [search, setSearch] = useState('');
@@ -199,35 +194,10 @@ function App() {
     );
   }
 
-  // Not signed in — show auth screens
+  // Not signed in — show auth screen
   if (!auth.session) {
-    if (authScreen === 'signup') {
-      return (
-        <SignUpScreen
-          signUpWithEmail={auth.signUpWithEmail}
-          signInWithGoogle={auth.signInWithGoogle}
-          onBack={() => setAuthScreen('login')}
-          onSignUpSuccess={(email) => {
-            setPendingEmail(email);
-            setAuthScreen('verify');
-          }}
-        />
-      );
-    }
-    if (authScreen === 'verify') {
-      return (
-        <EmailVerificationScreen
-          email={pendingEmail}
-          onBack={() => setAuthScreen('login')}
-        />
-      );
-    }
     return (
-      <LoginScreen
-        signInWithEmail={auth.signInWithEmail}
-        signInWithGoogle={auth.signInWithGoogle}
-        onCreateAccount={() => setAuthScreen('signup')}
-      />
+      <LoginScreen signInWithGoogle={auth.signInWithGoogle} />
     );
   }
 
