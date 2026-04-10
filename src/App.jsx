@@ -201,6 +201,8 @@ function App() {
       <LoginScreen
         signInWithGoogle={auth.signInWithGoogle}
         signInWithGithub={auth.signInWithGithub}
+        dark={dark}
+        onToggleDark={toggleDark}
       />
     );
   }
