@@ -59,6 +59,14 @@ export default function useAuth() {
     return { error };
   }, []);
 
+  const signInWithGithub = useCallback(async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'github',
+      options: { redirectTo: window.location.origin },
+    });
+    return { error };
+  }, []);
+
   const signOut = useCallback(async () => {
     await supabase.auth.signOut();
   }, []);
@@ -70,6 +78,7 @@ export default function useAuth() {
     profile,
     profileLoaded,
     signInWithGoogle,
+    signInWithGithub,
     signOut,
     refreshProfile,
   };

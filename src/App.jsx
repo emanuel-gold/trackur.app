@@ -198,7 +198,10 @@ function App() {
   // Not signed in — show auth screen
   if (!auth.session) {
     return (
-      <LoginScreen signInWithGoogle={auth.signInWithGoogle} />
+      <LoginScreen
+        signInWithGoogle={auth.signInWithGoogle}
+        signInWithGithub={auth.signInWithGithub}
+      />
     );
   }
 
