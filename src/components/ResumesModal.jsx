@@ -45,7 +45,8 @@ export default function ResumesModal({ open, onClose, resumes = [], onUploadResu
     if (!onGetDownloadUrl) return;
     try {
       const url = await onGetDownloadUrl(r.storagePath);
-      const filename = r.label ? `${r.label}.pdf` : r.filename;
+      const ext = r.filename.split('.').pop();
+      const filename = r.label ? `${r.label}.${ext}` : r.filename;
       const resp = await fetch(url);
       const blob = await resp.blob();
       const objUrl = URL.createObjectURL(blob);
@@ -216,7 +217,7 @@ export default function ResumesModal({ open, onClose, resumes = [], onUploadResu
                       <input
                         ref={fileInputRef}
                         type="file"
-                        accept=".pdf,application/pdf"
+                        accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                         onChange={handleFileSelect}
                         className="hidden"
                       />
@@ -230,7 +231,7 @@ export default function ResumesModal({ open, onClose, resumes = [], onUploadResu
                         {uploading ? 'Uploading...' : 'Upload resume'}
                       </Button>
                       <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1.5 text-center">
-                        PDF only, max 200 KB
+                        PDF or DOCX, max 200 KB
                       </p>
                       {uploadError && (
                         <p className="text-xs text-red-500 mt-1.5 text-center">{uploadError}</p>

@@ -3,7 +3,7 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { verifyAuth } from '../_lib/auth.js';
 import { r2, BUCKET } from '../_lib/r2.js';
 
-const PATH_PATTERN = /^[a-f0-9-]+\/[a-f0-9-]+\.pdf$/;
+const PATH_PATTERN = /^[a-f0-9-]+\/[a-f0-9-]+\.(pdf|docx)$/;
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {

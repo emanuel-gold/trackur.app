@@ -169,7 +169,8 @@ function App() {
     if (!resume) return;
     try {
       const url = await getDownloadUrl(resume.storagePath);
-      const filename = resume.label ? `${resume.label}.pdf` : resume.filename;
+      const ext = resume.filename.split('.').pop();
+      const filename = resume.label ? `${resume.label}.${ext}` : resume.filename;
       const resp = await fetch(url);
       const blob = await resp.blob();
       const objUrl = URL.createObjectURL(blob);
