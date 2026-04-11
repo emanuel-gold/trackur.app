@@ -1,14 +1,28 @@
 import { useState } from 'react';
 import { Button } from './catalyst';
 import GoogleIcon from './GoogleIcon.jsx';
+import GithubIcon from './GithubIcon.jsx';
+import LinkedinIcon from './LinkedinIcon.jsx';
 import TrackurWordmark from './TrackurWordmark.jsx';
 
-export default function LoginScreen({ signInWithGoogle }) {
+export default function LoginScreen({ signInWithGoogle, signInWithGithub, signInWithLinkedin }) {
   const [error, setError] = useState('');
 
   const handleGoogle = async () => {
     setError('');
     const { error } = await signInWithGoogle();
+    if (error) setError(error.message);
+  };
+
+  const handleGithub = async () => {
+    setError('');
+    const { error } = await signInWithGithub();
+    if (error) setError(error.message);
+  };
+
+  const handleLinkedin = async () => {
+    setError('');
+    const { error } = await signInWithLinkedin();
     if (error) setError(error.message);
   };
 
@@ -23,14 +37,46 @@ export default function LoginScreen({ signInWithGoogle }) {
           Sign in to Trackur
         </h2>
 
-        <Button outline className="w-full" onClick={handleGoogle}>
-          <GoogleIcon />
-          Continue with Google
-        </Button>
+        <div className="flex flex-col gap-3">
+          <Button outline className="w-full" onClick={handleGoogle}>
+            <GoogleIcon />
+            Continue with Google
+          </Button>
+          <Button outline className="w-full" onClick={handleGithub}>
+            <GithubIcon />
+            Continue with GitHub
+          </Button>
+          <Button outline className="w-full" onClick={handleLinkedin}>
+            <LinkedinIcon />
+            Continue with LinkedIn
+          </Button>
+        </div>
 
         {error && (
           <p className="mt-3 text-center text-sm text-red-600 dark:text-red-400">{error}</p>
         )}
+
+        <p className="mt-5 text-center text-xs text-zinc-500 dark:text-zinc-400">
+          By proceeding, you agree to the{' '}
+          <a
+            href="https://trackur.app/terms"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-mauve-600 hover:text-mauve-700 dark:text-mauve-400 dark:hover:text-mauve-300"
+          >
+            terms of service
+          </a>{' '}
+          and{' '}
+          <a
+            href="https://trackur.app/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-mauve-600 hover:text-mauve-700 dark:text-mauve-400 dark:hover:text-mauve-300"
+          >
+            privacy policy
+          </a>
+          .
+        </p>
       </div>
     </div>
   );
