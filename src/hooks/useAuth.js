@@ -67,6 +67,14 @@ export default function useAuth() {
     return { error };
   }, []);
 
+  const signInWithLinkedin = useCallback(async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'linkedin_oidc',
+      options: { redirectTo: window.location.origin },
+    });
+    return { error };
+  }, []);
+
   const signOut = useCallback(async () => {
     await supabase.auth.signOut();
   }, []);
@@ -79,6 +87,7 @@ export default function useAuth() {
     profileLoaded,
     signInWithGoogle,
     signInWithGithub,
+    signInWithLinkedin,
     signOut,
     refreshProfile,
   };

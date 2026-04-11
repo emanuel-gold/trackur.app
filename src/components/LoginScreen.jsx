@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { SunIcon, MoonIcon } from '@heroicons/react/24/outline';
-import { Button, Switch } from './catalyst';
+import { Button } from './catalyst';
 import GoogleIcon from './GoogleIcon.jsx';
 import GithubIcon from './GithubIcon.jsx';
+import LinkedinIcon from './LinkedinIcon.jsx';
 import TrackurWordmark from './TrackurWordmark.jsx';
 
-export default function LoginScreen({ signInWithGoogle, signInWithGithub, dark, onToggleDark }) {
+export default function LoginScreen({ signInWithGoogle, signInWithGithub, signInWithLinkedin }) {
   const [error, setError] = useState('');
 
   const handleGoogle = async () => {
@@ -20,15 +20,15 @@ export default function LoginScreen({ signInWithGoogle, signInWithGithub, dark, 
     if (error) setError(error.message);
   };
 
+  const handleLinkedin = async () => {
+    setError('');
+    const { error } = await signInWithLinkedin();
+    if (error) setError(error.message);
+  };
+
   return (
     <div className="flex min-h-svh flex-col items-center justify-center bg-zinc-200 px-4 dark:bg-zinc-950">
-      <div className="relative w-full max-w-sm rounded-xl bg-white p-8 shadow-sm ring-1 ring-zinc-950/5 dark:bg-zinc-900 dark:ring-white/10">
-        <div className="absolute top-4 right-4 flex items-center gap-1.5">
-          <SunIcon className="size-4 text-zinc-400 dark:text-zinc-500" />
-          <Switch color="violet" checked={dark} onChange={onToggleDark} aria-label="Toggle dark mode" />
-          <MoonIcon className="size-4 text-zinc-400 dark:text-zinc-500" />
-        </div>
-
+      <div className="w-full max-w-sm rounded-xl bg-white p-8 shadow-sm ring-1 ring-zinc-950/5 dark:bg-zinc-900 dark:ring-white/10">
         <div className="mb-6 flex justify-center">
           <TrackurWordmark size="lg" />
         </div>
@@ -45,6 +45,10 @@ export default function LoginScreen({ signInWithGoogle, signInWithGithub, dark, 
           <Button outline className="w-full" onClick={handleGithub}>
             <GithubIcon />
             Continue with GitHub
+          </Button>
+          <Button outline className="w-full" onClick={handleLinkedin}>
+            <LinkedinIcon />
+            Continue with LinkedIn
           </Button>
         </div>
 
