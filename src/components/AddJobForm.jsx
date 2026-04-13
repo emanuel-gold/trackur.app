@@ -51,17 +51,18 @@ export default function AddJobForm({ onAdd, open, onClose, resumes, onUploadResu
   );
 
   return (
-    <Dialog open={open} onClose={onClose} size="lg" fixedContent={closeFab}>
-      <DialogTitle>Add New Job</DialogTitle>
-      <DialogBody>
-        <form onSubmit={handleSubmit}>
+    <Dialog open={open} onClose={onClose} size="lg" fixedContent={closeFab}
+      className="flex flex-col max-h-[90dvh] sm:max-h-[80dvh]">
+      <DialogTitle className="shrink-0">Add New Job</DialogTitle>
+      <DialogBody className="flex-1 overflow-y-auto min-h-0">
+        <form id="add-job-form" onSubmit={handleSubmit}>
           <JobFormFields values={values} onChange={handleChange} resumes={resumes} onUploadResume={onUploadResume} />
-          <DialogActions>
-            <Button plain onClick={onClose}>Cancel</Button>
-            <Button color="violet" type="submit">Add Job</Button>
-          </DialogActions>
         </form>
       </DialogBody>
+      <DialogActions>
+        <Button plain onClick={onClose}>Cancel</Button>
+        <Button color="violet" type="submit" form="add-job-form">Add Job</Button>
+      </DialogActions>
     </Dialog>
   );
 }
