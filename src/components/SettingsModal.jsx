@@ -5,7 +5,7 @@ import { Switch, SwitchField } from './catalyst';
 import { Button } from './catalyst';
 import profileService from '../services/profileService.js';
 
-export default function SettingsModal({ open, onClose, user, profile, refreshProfile, notificationsSupported, permissionState, requestPermission }) {
+export default function SettingsModal({ open, onClose, user, profile, refreshProfile, notificationsSupported, permissionState, requestPermission, gdriveEnabled, gdriveConnected, onConnectGdrive, onDisconnectGdrive }) {
   const [saving, setSaving] = useState(false);
 
   const updatePref = useCallback(async (key, value) => {
@@ -104,6 +104,40 @@ export default function SettingsModal({ open, onClose, user, profile, refreshPro
                           </div>
                         </div>
                       </section>
+
+                      {/* Integrations section */}
+                      {gdriveEnabled && (
+                        <section>
+                          <h3 className="text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3">
+                            Integrations
+                          </h3>
+                          <div className="rounded-lg bg-zinc-50 dark:bg-zinc-800/50 ring-1 ring-zinc-950/5 dark:ring-white/5 p-4">
+                            <div className="flex items-start justify-between gap-4">
+                              <div className="min-w-0">
+                                <p className="text-sm font-medium text-zinc-950 dark:text-white">
+                                  Google Drive
+                                </p>
+                                <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+                                  {gdriveConnected
+                                    ? 'Link resumes from your Google Drive to jobs.'
+                                    : 'Connect to link resumes from your Google Drive.'}
+                                </p>
+                              </div>
+                              <div className="shrink-0">
+                                {gdriveConnected ? (
+                                  <Button plain onClick={onDisconnectGdrive} className="text-xs">
+                                    Disconnect
+                                  </Button>
+                                ) : (
+                                  <Button color="violet" onClick={onConnectGdrive} className="text-xs">
+                                    Connect
+                                  </Button>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </section>
+                      )}
 
                       {/* Notifications section */}
                       <section>

@@ -34,7 +34,9 @@ export default function useResumes(userId) {
     if (file.size > MAX_SIZE) {
       throw new Error('File must be under 200 KB');
     }
-    if (resumesRef.current.length >= MAX_RESUMES) {
+    // Only Trackur-hosted resumes count toward the 10-resume limit
+    const trackurCount = resumesRef.current.filter((r) => r.source !== 'gdrive').length;
+    if (trackurCount >= MAX_RESUMES) {
       throw new Error('Resume library is full (max 10)');
     }
     const saved = await resumeRepository.insert(
@@ -55,9 +57,15 @@ export default function useResumes(userId) {
     setResumes((prev) => prev.filter((r) => r.id !== id));
   }, []);
 
-  const getDownloadUrl = useCallback(async (storagePath) => {
-    return resumeRepository.getDownloadUrl(storagePath);
+  const getDownloadUrl = useCallback(async (resumeOrPath) => {
+    return resumeRepository.getDownloadUrl(resumeOrPath);
   }, []);
 
-  return { resumes, loading, uploadResume, renameResume, deleteResume, getDownloadUrl };
+  const linkDriveFile = useCallback(async (metadata) => {
+    const saved = await resumeRepository.linkDriveFile(metadata);
+    setResumes((prev) => [saved, ...prev]);
+    return saved;
+  }, []);
+
+  return { resumes, loading, uploadResume, renameResume, deleteResume, getDownloadUrl, linkDriveFile };
 }

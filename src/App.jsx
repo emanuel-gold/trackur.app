@@ -6,6 +6,7 @@ import useToast from './hooks/useToast.js';
 import useDarkMode from './hooks/useDarkMode.js';
 import useAuth from './hooks/useAuth.js';
 import useResumes from './hooks/useResumes.js';
+import useGoogleDrive from './hooks/useGoogleDrive.js';
 import useNotifications from './hooks/useNotifications.js';
 import { exportJobsToCsv } from './services/csvService.js';
 import { STAGES } from './constants.js';
@@ -29,7 +30,8 @@ const ResumesModal = lazy(() => import('./components/ResumesModal.jsx'));
 function App() {
   const auth = useAuth();
   const { jobs, loading, addJob, updateJob, deleteJob, importJobs, replaceAllJobs, clearResumeId } = useJobs(auth.user?.id);
-  const { resumes, loading: resumesLoading, uploadResume, renameResume, deleteResume, getDownloadUrl } = useResumes(auth.user?.id);
+  const { resumes, loading: resumesLoading, uploadResume, renameResume, deleteResume, getDownloadUrl, linkDriveFile } = useResumes(auth.user?.id);
+  const gdrive = useGoogleDrive();
   const { toasts, showToast, dismissToast } = useToast();
   const { dark, toggle: toggleDark } = useDarkMode();
 
@@ -168,23 +170,84 @@ function App() {
     const resume = resumes.find((r) => r.id === job.resumeId);
     if (!resume) return;
     try {
-      const url = await getDownloadUrl(resume.storagePath);
       const ext = resume.filename.split('.').pop();
       const filename = resume.label ? `${resume.label}.${ext}` : resume.filename;
-      const resp = await fetch(url);
-      const blob = await resp.blob();
-      const objUrl = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = objUrl;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(objUrl);
-    } catch {
-      showToast('Failed to download resume', 'error');
+
+      if (resume.source === 'gdrive') {
+        // GDrive download returns a blob URL directly from the adapter
+        const blobUrl = await getDownloadUrl(resume);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(blobUrl);
+      } else {
+        // Trackur (R2) — presigned URL flow
+        const url = await getDownloadUrl(resume);
+        const resp = await fetch(url);
+        const blob = await resp.blob();
+        const objUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = objUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(objUrl);
+      }
+    } catch (err) {
+      if (err.name === 'GDriveDisconnectedError') {
+        showToast('Google Drive disconnected. Reconnect in Settings to download this resume.');
+      } else {
+        showToast('Failed to download resume');
+      }
     }
   }, [resumes, getDownloadUrl, showToast]);
+
+  const handlePickFromDrive = useCallback(async (jobId) => {
+    try {
+      await gdrive.openPicker(async (metadata) => {
+        try {
+          const saved = await linkDriveFile({
+            ...metadata,
+            label: '',
+          });
+          if (jobId) {
+            await updateJob(jobId, { resumeId: saved.id });
+            showToast('Google Drive resume linked');
+          }
+        } catch (err) {
+          showToast('Failed to link Google Drive resume: ' + err.message);
+        }
+      });
+    } catch (err) {
+      if (err.message === 'Google Drive is not connected') {
+        showToast('Google Drive is not connected. Please reconnect in Settings.');
+        gdrive.refreshStatus();
+      } else {
+        showToast('Failed to open Google Drive picker: ' + err.message);
+      }
+    }
+  }, [gdrive, linkDriveFile, updateJob, showToast]);
+
+  const handleConnectGdrive = useCallback(async () => {
+    try {
+      await gdrive.connect();
+    } catch {
+      showToast('Failed to connect Google Drive');
+    }
+  }, [gdrive, showToast]);
+
+  const handleDisconnectGdrive = useCallback(async () => {
+    try {
+      await gdrive.disconnect();
+      showToast('Google Drive disconnected');
+    } catch {
+      showToast('Failed to disconnect Google Drive');
+    }
+  }, [gdrive, showToast]);
 
   // Auth loading
   if (auth.loading) {
@@ -340,7 +403,7 @@ function App() {
       )}
 
       <Suspense fallback={null}>
-        <AddJobForm open={addJobOpen} onClose={() => setAddJobOpen(false)} onAdd={handleAdd} resumes={resumes} onUploadResume={uploadResume} />
+        <AddJobForm open={addJobOpen} onClose={() => setAddJobOpen(false)} onAdd={handleAdd} resumes={resumes} onUploadResume={uploadResume} gdriveEnabled={gdrive.enabled} gdriveConnected={gdrive.connected} onConnectGdrive={handleConnectGdrive} onPickFromDrive={() => handlePickFromDrive(null)} />
 
         {editingJob && (
           <EditJobModal
@@ -352,6 +415,10 @@ function App() {
             onGetDownloadUrl={getDownloadUrl}
             onUploadResume={uploadResume}
             onManageResumes={() => setResumesOpen(true)}
+            gdriveEnabled={gdrive.enabled}
+            gdriveConnected={gdrive.connected}
+            onConnectGdrive={handleConnectGdrive}
+            onPickFromDrive={handlePickFromDrive}
           />
         )}
 
@@ -380,6 +447,10 @@ function App() {
           notificationsSupported={notificationsSupported}
           permissionState={permissionState}
           requestPermission={requestPermission}
+          gdriveEnabled={gdrive.enabled}
+          gdriveConnected={gdrive.connected}
+          onConnectGdrive={handleConnectGdrive}
+          onDisconnectGdrive={handleDisconnectGdrive}
         />
 
         <ResumesModal
@@ -390,6 +461,10 @@ function App() {
           onRenameResume={renameResume}
           onDeleteResume={handleDeleteResume}
           onGetDownloadUrl={getDownloadUrl}
+          gdriveEnabled={gdrive.enabled}
+          gdriveConnected={gdrive.connected}
+          onConnectGdrive={handleConnectGdrive}
+          onPickFromDrive={() => handlePickFromDrive(null)}
         />
       </Suspense>
 

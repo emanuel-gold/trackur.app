@@ -17,7 +17,7 @@ const FIELD_CONFIG = [
   { key: 'notes', label: 'Notes', inputType: 'textarea', placeholder: 'Add notes...', maxLength: CHAR_LIMITS.notes },
 ];
 
-export default function EditJobModal({ job, onUpdate, onDelete, onClose, resumes = [], onGetDownloadUrl, onUploadResume, onManageResumes }) {
+export default function EditJobModal({ job, onUpdate, onDelete, onClose, resumes = [], onGetDownloadUrl, onUploadResume, onManageResumes, gdriveEnabled, gdriveConnected, onConnectGdrive, onPickFromDrive }) {
   const { editingField, draftValue, startEdit, updateDraft, cancel, save } = useInlineEdit();
   const { todos, addTodo, toggleTodo, removeTodo, updateTodo } = useTodos(job, onUpdate);
   const [uploading, setUploading] = useState(false);
@@ -60,19 +60,33 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose, resumes
     const resume = resumes.find((r) => r.id === job.resumeId);
     if (!resume || !onGetDownloadUrl) return;
     try {
-      const url = await onGetDownloadUrl(resume.storagePath);
       const ext = resume.filename.split('.').pop();
       const filename = resume.label ? `${resume.label}.${ext}` : resume.filename;
-      const resp = await fetch(url);
-      const blob = await resp.blob();
-      const objUrl = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = objUrl;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(objUrl);
+
+      if (resume.source === 'gdrive') {
+        // GDrive download returns a blob URL directly from the adapter
+        const blobUrl = await onGetDownloadUrl(resume);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(blobUrl);
+      } else {
+        // Trackur (R2) — presigned URL flow
+        const url = await onGetDownloadUrl(resume);
+        const resp = await fetch(url);
+        const blob = await resp.blob();
+        const objUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = objUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(objUrl);
+      }
     } catch {
       // silently fail
     }
@@ -218,13 +232,26 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose, resumes
                             <div className="text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                               Attach Resume
                             </div>
-                            <span className="text-xs text-zinc-500 dark:text-zinc-400">{resumes.length} of 10</span>
+                            <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                              {resumes.filter((r) => r.source !== 'gdrive').length} of 10
+                            </span>
                           </div>
                           {resumes.length === 0 ? (
-                            <Button outline onClick={() => fileInputRef.current?.click()} disabled={uploading} className="w-full">
-                              <ArrowUpTrayIcon data-slot="icon" />
-                              {uploading ? 'Uploading...' : 'Upload resume'}
-                            </Button>
+                            <div className="flex flex-col gap-2">
+                              <Button outline onClick={() => fileInputRef.current?.click()} disabled={uploading} className="w-full">
+                                <ArrowUpTrayIcon data-slot="icon" />
+                                {uploading ? 'Uploading...' : 'Upload resume'}
+                              </Button>
+                              {gdriveEnabled && (
+                                <Button
+                                  outline
+                                  onClick={gdriveConnected ? () => onPickFromDrive(job.id) : onConnectGdrive}
+                                  className="w-full"
+                                >
+                                  {gdriveConnected ? 'Pick from Google Drive' : 'Connect Google Drive'}
+                                </Button>
+                              )}
+                            </div>
                           ) : (
                             <div className="flex items-center gap-2">
                               <Select
@@ -233,9 +260,37 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose, resumes
                                 className="flex-1"
                               >
                                 <option value="">None</option>
-                                {resumes.map((r) => (
-                                  <option key={r.id} value={r.id}>{r.label || r.filename}</option>
-                                ))}
+                                {(() => {
+                                  const trackurResumes = resumes.filter((r) => r.source !== 'gdrive');
+                                  const driveResumes = resumes.filter((r) => r.source === 'gdrive');
+                                  const hasGroups = trackurResumes.length > 0 && driveResumes.length > 0;
+                                  return (
+                                    <>
+                                      {hasGroups ? (
+                                        <optgroup label="Trackur Resumes">
+                                          {trackurResumes.map((r) => (
+                                            <option key={r.id} value={r.id}>{r.label || r.filename}</option>
+                                          ))}
+                                        </optgroup>
+                                      ) : (
+                                        trackurResumes.map((r) => (
+                                          <option key={r.id} value={r.id}>{r.label || r.filename}</option>
+                                        ))
+                                      )}
+                                      {hasGroups ? (
+                                        <optgroup label="Google Drive">
+                                          {driveResumes.map((r) => (
+                                            <option key={r.id} value={r.id}>{r.label || r.filename}</option>
+                                          ))}
+                                        </optgroup>
+                                      ) : (
+                                        driveResumes.map((r) => (
+                                          <option key={r.id} value={r.id}>{r.label || r.filename}</option>
+                                        ))
+                                      )}
+                                    </>
+                                  );
+                                })()}
                               </Select>
                               <Menu as="div" className="relative">
                                 <MenuButton
@@ -257,11 +312,23 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose, resumes
                                       </button>
                                     </MenuItem>
                                   )}
-                                  {resumes.length < 10 && (
+                                  {resumes.filter((r) => r.source !== 'gdrive').length < 10 && (
                                     <MenuItem disabled={uploading}>
                                       <button type="button" onClick={() => fileInputRef.current?.click()} disabled={uploading} className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-zinc-700 data-focus:bg-zinc-950/5 dark:text-zinc-300 dark:data-focus:bg-white/5 transition-colors disabled:opacity-50">
                                         <ArrowUpTrayIcon className="size-4" />
                                         Upload New Resume
+                                      </button>
+                                    </MenuItem>
+                                  )}
+                                  {gdriveEnabled && (
+                                    <MenuItem>
+                                      <button
+                                        type="button"
+                                        onClick={gdriveConnected ? () => onPickFromDrive(job.id) : onConnectGdrive}
+                                        className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-zinc-700 data-focus:bg-zinc-950/5 dark:text-zinc-300 dark:data-focus:bg-white/5 transition-colors"
+                                      >
+                                        <DocumentTextIcon className="size-4" />
+                                        {gdriveConnected ? 'Pick from Google Drive' : 'Connect Google Drive'}
                                       </button>
                                     </MenuItem>
                                   )}

@@ -14,7 +14,7 @@ const EMPTY = {
   resumeId: '',
 };
 
-export default function AddJobForm({ onAdd, open, onClose, resumes, onUploadResume }) {
+export default function AddJobForm({ onAdd, open, onClose, resumes, onUploadResume, gdriveEnabled, gdriveConnected, onConnectGdrive, onPickFromDrive }) {
   const [values, setValues] = useState({ ...EMPTY });
 
   const handleChange = (name, value) => {
@@ -56,7 +56,7 @@ export default function AddJobForm({ onAdd, open, onClose, resumes, onUploadResu
       <DialogTitle className="shrink-0">Add New Job</DialogTitle>
       <DialogBody className="flex-1 overflow-y-auto min-h-0">
         <form id="add-job-form" onSubmit={handleSubmit}>
-          <JobFormFields values={values} onChange={handleChange} resumes={resumes} onUploadResume={onUploadResume} />
+          <JobFormFields values={values} onChange={handleChange} resumes={resumes} onUploadResume={onUploadResume} gdriveEnabled={gdriveEnabled} gdriveConnected={gdriveConnected} onConnectGdrive={onConnectGdrive} onPickFromDrive={onPickFromDrive} />
         </form>
       </DialogBody>
       <DialogActions>
