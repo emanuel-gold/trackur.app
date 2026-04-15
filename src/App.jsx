@@ -96,7 +96,7 @@ function App() {
       await addJob(job);
       showToast('Job added');
     } catch (err) {
-      showToast('Failed to add job: ' + err.message);
+      showToast('Failed to add job: ' + err.message, 'error');
     }
   }, [addJob, showToast]);
 
@@ -105,7 +105,7 @@ function App() {
       await updateJob(id, updates);
       showToast('Job updated');
     } catch (err) {
-      showToast('Failed to update job: ' + err.message);
+      showToast('Failed to update job: ' + err.message, 'error');
     }
   }, [updateJob, showToast]);
 
@@ -114,7 +114,7 @@ function App() {
       await updateJob(id, { stage });
       showToast('Job moved to ' + stage);
     } catch (err) {
-      showToast('Failed to move job: ' + err.message);
+      showToast('Failed to move job: ' + err.message, 'error');
     }
   }, [updateJob, showToast]);
 
@@ -133,7 +133,7 @@ function App() {
         setDeleteConfirm(null);
         showToast('Job deleted');
       } catch (err) {
-        showToast('Failed to delete job: ' + err.message);
+        showToast('Failed to delete job: ' + err.message, 'error');
       }
     }
   }, [deleteConfirm, deleteJob, showToast]);
@@ -148,7 +148,7 @@ function App() {
       const total = await importJobs(newJobs);
       showToast(`Merged ${newJobs.length} job${newJobs.length !== 1 ? 's' : ''} (${total} total)`);
     } catch (err) {
-      showToast('Failed to import jobs: ' + err.message);
+      showToast('Failed to import jobs: ' + err.message, 'error');
     }
   }, [importJobs, showToast]);
 
@@ -157,7 +157,7 @@ function App() {
       await replaceAllJobs(newJobs);
       showToast(`Replaced with ${newJobs.length} job${newJobs.length !== 1 ? 's' : ''}`);
     } catch (err) {
-      showToast('Failed to replace jobs: ' + err.message);
+      showToast('Failed to replace jobs: ' + err.message, 'error');
     }
   }, [replaceAllJobs, showToast]);
 
@@ -199,9 +199,9 @@ function App() {
       }
     } catch (err) {
       if (err.name === 'GDriveDisconnectedError') {
-        showToast('Google Drive disconnected. Reconnect in Settings to download this resume.');
+        showToast('Google Drive disconnected. Reconnect in Settings to download this resume.', 'error');
       } else {
-        showToast('Failed to download resume');
+        showToast('Failed to download resume', 'error');
       }
     }
   }, [resumes, getDownloadUrl, showToast]);
@@ -219,15 +219,15 @@ function App() {
             showToast('Google Drive resume linked');
           }
         } catch (err) {
-          showToast('Failed to link Google Drive resume: ' + err.message);
+          showToast('Failed to link Google Drive resume: ' + err.message, 'error');
         }
       });
     } catch (err) {
       if (err.message === 'Google Drive is not connected') {
-        showToast('Google Drive is not connected. Please reconnect in Settings.');
+        showToast('Google Drive is not connected. Please reconnect in Settings.', 'error');
         gdrive.refreshStatus();
       } else {
-        showToast('Failed to open Google Drive picker: ' + err.message);
+        showToast('Failed to open Google Drive picker: ' + err.message, 'error');
       }
     }
   }, [gdrive, linkDriveFile, updateJob, showToast]);
@@ -236,7 +236,7 @@ function App() {
     try {
       await gdrive.connect();
     } catch {
-      showToast('Failed to connect Google Drive');
+      showToast('Failed to connect Google Drive', 'error');
     }
   }, [gdrive, showToast]);
 
@@ -245,7 +245,7 @@ function App() {
       await gdrive.disconnect();
       showToast('Google Drive disconnected');
     } catch {
-      showToast('Failed to disconnect Google Drive');
+      showToast('Failed to disconnect Google Drive', 'error');
     }
   }, [gdrive, showToast]);
 
