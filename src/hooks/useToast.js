@@ -8,9 +8,6 @@ export default function useToast() {
   const showToast = useCallback((message, type = 'success') => {
     const id = ++toastId;
     setToasts((prev) => [...prev, { id, message, type, visible: true }]);
-    setTimeout(() => {
-      setToasts((prev) => prev.map((t) => (t.id === id ? { ...t, visible: false } : t)));
-    }, 5000);
   }, []);
 
   const dismissToast = useCallback((id) => {

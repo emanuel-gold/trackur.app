@@ -3,14 +3,14 @@ import { Switch } from './catalyst';
 import UserMenu from './UserMenu.jsx';
 import TrackurWordmark from './TrackurWordmark.jsx';
 
-export default function Layout({ dark, onToggleDark, user, profile, onSignOut, onSettings, onResumes, children }) {
+export default function Layout({ dark, onToggleDark, user, profile, onSignOut, onSettings, onResumes, showToast, children }) {
   return (
     <div className="flex min-h-svh flex-col bg-zinc-200 dark:bg-zinc-950">
       {/* Header — full-width, separate from content */}
       <header className="flex items-center justify-between px-4 py-3 sm:px-6">
         <TrackurWordmark size="lg" />
         <div className="flex items-center gap-3">
-          {user && <UserMenu user={user} profile={profile} onSignOut={onSignOut} onSettings={onSettings} onResumes={onResumes} dark={dark} onToggleDark={onToggleDark} />}
+          {user && <UserMenu user={user} profile={profile} onSignOut={onSignOut} onSettings={onSettings} onResumes={onResumes} dark={dark} onToggleDark={onToggleDark} showToast={showToast} />}
           <div className="hidden md:flex items-center gap-2">
             <SunIcon className="size-4 text-zinc-500 dark:text-zinc-400" />
             <Switch color="violet" checked={dark} onChange={onToggleDark} aria-label="Toggle dark mode" />

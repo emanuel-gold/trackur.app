@@ -298,7 +298,7 @@ function App() {
   }
 
   return (
-    <Layout dark={dark} onToggleDark={toggleDark} user={auth.user} profile={auth.profile} onSignOut={auth.signOut} onSettings={() => setSettingsOpen(true)} onResumes={() => setResumesOpen(true)}>
+    <Layout dark={dark} onToggleDark={toggleDark} user={auth.user} profile={auth.profile} onSignOut={auth.signOut} onSettings={() => setSettingsOpen(true)} onResumes={() => setResumesOpen(true)} showToast={showToast}>
       {/* Toolbar */}
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <FilterBar
