@@ -146,6 +146,7 @@ export default function useGoogleDrive() {
 
     // Build and show the Picker
     const view = new window.google.picker.DocsView()
+      .setTitle('Attach a resume')
       .setIncludeFolders(true)
       .setMimeTypes('application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document')
       .setMode(google.picker.DocsViewMode.LIST);
