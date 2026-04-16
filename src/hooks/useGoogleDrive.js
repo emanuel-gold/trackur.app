@@ -147,7 +147,8 @@ export default function useGoogleDrive() {
     // Build and show the Picker
     const view = new window.google.picker.DocsView()
       .setIncludeFolders(true)
-      .setMimeTypes('application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+      .setMimeTypes('application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+      .setMode(google.picker.DocsViewMode.LIST);
 
     const picker = new window.google.picker.PickerBuilder()
       .addView(view)
