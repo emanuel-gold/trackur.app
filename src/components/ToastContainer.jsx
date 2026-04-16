@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Transition } from '@headlessui/react';
+import { Portal, Transition } from '@headlessui/react';
 import { CheckCircleIcon, ExclamationCircleIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 const AUTO_DISMISS_MS = 5000;
@@ -49,10 +49,12 @@ function Toast({ toast, onDismiss, onRemove }) {
 
 export default function ToastContainer({ toasts, onDismiss, onRemove }) {
   return (
-    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-9999 flex flex-col gap-2 items-center w-full max-w-sm px-4">
-      {toasts.map((toast) => (
-        <Toast key={toast.id} toast={toast} onDismiss={onDismiss} onRemove={onRemove} />
-      ))}
-    </div>
+    <Portal>
+      <div className="fixed top-4 left-1/2 -translate-x-1/2 z-9999 flex flex-col gap-2 items-center w-full max-w-sm px-4">
+        {toasts.map((toast) => (
+          <Toast key={toast.id} toast={toast} onDismiss={onDismiss} onRemove={onRemove} />
+        ))}
+      </div>
+    </Portal>
   );
 }
