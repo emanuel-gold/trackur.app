@@ -1,7 +1,8 @@
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/react';
 import { ChevronDownIcon, ArrowRightStartOnRectangleIcon, Cog6ToothIcon, SunIcon, MoonIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
+import ToastTestButtons from './dev/ToastTestButtons.jsx';
 
-export default function UserMenu({ user, profile, onSignOut, onSettings, onResumes, dark, onToggleDark }) {
+export default function UserMenu({ user, profile, onSignOut, onSettings, onResumes, dark, onToggleDark, showToast }) {
   const email = user?.email ?? '';
   const displayName = profile?.firstName || email.split('@')[0];
 
@@ -23,6 +24,8 @@ export default function UserMenu({ user, profile, onSignOut, onSettings, onResum
             <p className="text-xs text-zinc-500 dark:text-zinc-400">Signed in as</p>
             <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300 truncate">{email}</p>
           </div>
+
+          <ToastTestButtons showToast={showToast} />
 
           <MenuItem>
             <button
@@ -74,6 +77,8 @@ export default function UserMenu({ user, profile, onSignOut, onSettings, onResum
             <p className="text-xs text-zinc-500 dark:text-zinc-400">Signed in as</p>
             <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300 truncate">{email}</p>
           </div>
+
+          <ToastTestButtons showToast={showToast} />
 
           {/* Dark mode toggle row */}
           <div
