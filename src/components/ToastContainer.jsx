@@ -13,8 +13,8 @@ export default function ToastContainer({ toasts, onDismiss, onRemove }) {
           enterFrom="-translate-y-2 opacity-0"
           enterTo="translate-y-0 opacity-100"
           leave="transition ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
+          leaveFrom="translate-y-0 opacity-100"
+          leaveTo="-translate-y-2 opacity-0"
           afterLeave={() => onRemove(toast.id)}
         >
           <div className="flex items-center gap-2 bg-white dark:bg-zinc-800 px-4 py-3 shadow-lg ring-1 ring-zinc-950/10 dark:ring-white/10 rounded-lg w-full md:w-auto md:min-w-70">
