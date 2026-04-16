@@ -32,7 +32,7 @@ function App() {
   const { jobs, loading, addJob, updateJob, deleteJob, importJobs, replaceAllJobs, clearResumeId } = useJobs(auth.user?.id);
   const { resumes, loading: resumesLoading, uploadResume, renameResume, deleteResume, getDownloadUrl, linkDriveFile } = useResumes(auth.user?.id);
   const gdrive = useGoogleDrive();
-  const { toasts, showToast, dismissToast } = useToast();
+  const { toasts, showToast, dismissToast, removeToast } = useToast();
   const { dark, toggle: toggleDark } = useDarkMode();
 
   const [view, setView] = useState(() => localStorage.getItem('viewPreference') || 'board');
@@ -468,7 +468,7 @@ function App() {
         />
       </Suspense>
 
-      <ToastContainer toasts={toasts} onDismiss={dismissToast} />
+      <ToastContainer toasts={toasts} onDismiss={dismissToast} onRemove={removeToast} />
     </Layout>
   );
 }
