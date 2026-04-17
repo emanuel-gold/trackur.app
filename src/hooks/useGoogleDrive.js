@@ -146,14 +146,14 @@ export default function useGoogleDrive() {
 
     // Build and show the Picker
     const view = new window.google.picker.DocsView()
-      .setTitle('Attach a resume')
-      .enableFeature(google.picker.Feature.NAV_HIDDEN)
       .setIncludeFolders(true)
       .setMimeTypes('application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-      .setMode(google.picker.DocsViewMode.LIST);
+      .setMode(window.google.picker.DocsViewMode.LIST);
 
     const picker = new window.google.picker.PickerBuilder()
       .addView(view)
+      .setTitle('Attach a resume')
+      .enableFeature(window.google.picker.Feature.NAV_HIDDEN)
       .setOAuthToken(data.accessToken)
       .setDeveloperKey(PICKER_API_KEY)
       .setAppId(GOOGLE_CLIENT_ID?.split('-')[0]) // numeric project ID prefix
