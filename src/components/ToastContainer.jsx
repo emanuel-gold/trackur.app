@@ -1,8 +1,21 @@
 import { useEffect, useState } from 'react';
-import { Portal, Transition } from '@headlessui/react';
+import { createPortal } from 'react-dom';
+import { Transition } from '@headlessui/react';
 import { CheckCircleIcon, ExclamationCircleIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
-const AUTO_DISMISS_MS = 5000;
+const AUTO_DISMISS_MS = 4000;
+
+// HeadlessUI's Dialog/Menu modal-mode marks everything inside #root as inert.
+// The inert walk stops at <body>, so a body-level sibling of #root is exempt.
+function getToastRoot() {
+  let root = document.getElementById('toast-root');
+  if (!root) {
+    root = document.createElement('div');
+    root.id = 'toast-root';
+    document.body.appendChild(root);
+  }
+  return root;
+}
 
 function Toast({ toast, onDismiss, onRemove }) {
   const [paused, setPaused] = useState(false);
@@ -48,13 +61,20 @@ function Toast({ toast, onDismiss, onRemove }) {
 }
 
 export default function ToastContainer({ toasts, onDismiss, onRemove }) {
-  return (
-    <Portal>
-      <div className="fixed top-4 left-1/2 -translate-x-1/2 z-9999 flex flex-col gap-2 items-center w-full max-w-sm px-4">
-        {toasts.map((toast) => (
-          <Toast key={toast.id} toast={toast} onDismiss={onDismiss} onRemove={onRemove} />
-        ))}
-      </div>
-    </Portal>
+  const [root, setRoot] = useState(null);
+
+  useEffect(() => {
+    setRoot(getToastRoot());
+  }, []);
+
+  if (!root) return null;
+
+  return createPortal(
+    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-9999 flex flex-col gap-2 items-center w-full max-w-sm px-4">
+      {toasts.map((toast) => (
+        <Toast key={toast.id} toast={toast} onDismiss={onDismiss} onRemove={onRemove} />
+      ))}
+    </div>,
+    root,
   );
 }
