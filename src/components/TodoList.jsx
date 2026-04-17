@@ -52,7 +52,7 @@ export default function TodoList({ todos, onAdd, onToggle, onRemove, onUpdate, m
               onKeyDown={(e) => {
                 if (e.key === 'Enter') handleAdd();
               }}
-              placeholder="Add a step..."
+              placeholder="Add a task, reminder, or to-do"
               className="flex-1 bg-transparent text-sm text-zinc-950 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-500 outline-none"
             />
             {text.length >= CHAR_LIMITS.todo && (

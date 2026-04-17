@@ -150,7 +150,7 @@ export default memo(function JobCard({ job, onUpdate, onDelete, onEdit, onDragSt
           onClick={() => onEdit(job.id)}
           className="mt-2 rounded -mx-1.5 px-1.5 py-1 text-xs text-zinc-500 dark:text-zinc-400 italic hover:bg-mauve-50 dark:hover:bg-mauve-950/30 transition-colors w-full text-left"
         >
-          Add next step...
+          Add next steps...
         </button>
       ) : (
         <div className="rounded mt-2 shadow-md -mx-1.5 px-1.5 py-1.5 text-xs border border-mauve-300 bg-mauve-200 dark:border-mauve-800 dark:bg-mauve-700">
