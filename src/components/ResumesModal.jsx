@@ -129,7 +129,7 @@ export default function ResumesModal({ open, onClose, resumes = [], onUploadResu
                             Manage Saved Resumes
                           </h2>
                           <span className="text-xs text-zinc-500 dark:text-zinc-400">
-                            {resumes.filter((r) => r.source !== 'gdrive').length} of 10 used
+                            {resumes.filter((r) => r.source !== 'gdrive').length} of 10 Trackur Resumes used
                           </span>
                         </div>
                         <button

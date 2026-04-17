@@ -234,7 +234,7 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose, resumes
                               Attach Resume
                             </div>
                             <span className="text-xs text-zinc-500 dark:text-zinc-400">
-                              {resumes.filter((r) => r.source !== 'gdrive').length} of 10
+                              {resumes.filter((r) => r.source !== 'gdrive').length} of 10 Trackur Resumes used
                             </span>
                           </div>
                           {resumes.length === 0 ? (

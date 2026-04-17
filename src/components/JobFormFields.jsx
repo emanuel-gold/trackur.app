@@ -82,7 +82,7 @@ export default function JobFormFields({ values, onChange, resumes = [], onUpload
         <div className="flex items-center justify-between mb-1.5">
           <label className="text-sm/6 font-medium text-zinc-950 dark:text-white select-none">Attach Resume</label>
           <span className="text-xs text-zinc-500 dark:text-zinc-400">
-            {resumes.filter((r) => r.source !== 'gdrive').length} of 10
+            {resumes.filter((r) => r.source !== 'gdrive').length} of 10 Trackur Resumes used
           </span>
         </div>
         {resumes.length === 0 ? (
