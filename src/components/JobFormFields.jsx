@@ -3,6 +3,7 @@ import { ArrowUpTrayIcon } from '@heroicons/react/24/outline';
 import { STAGES } from '../constants.js';
 import { Field, FieldGroup, Label, Input, Select, Textarea, Button } from './catalyst';
 import { CHAR_LIMITS } from '../constants.js';
+import ResumeListbox from './ResumeListbox.jsx';
 
 export default function JobFormFields({ values, onChange, resumes = [], onUploadResume, gdriveEnabled, gdriveConnected, onConnectGdrive, onPickFromDrive }) {
   const [uploading, setUploading] = useState(false);
@@ -102,40 +103,12 @@ export default function JobFormFields({ values, onChange, resumes = [], onUpload
           </div>
         ) : (
           <div className="flex items-center gap-2">
-            <Select value={values.resumeId || ''} onChange={(e) => onChange('resumeId', e.target.value || null)} className="flex-1">
-              <option value="">None</option>
-              {(() => {
-                const trackurResumes = resumes.filter((r) => r.source !== 'gdrive');
-                const driveResumes = resumes.filter((r) => r.source === 'gdrive');
-                const hasGroups = trackurResumes.length > 0 && driveResumes.length > 0;
-                return (
-                  <>
-                    {hasGroups ? (
-                      <optgroup label="Trackur Resumes">
-                        {trackurResumes.map((r) => (
-                          <option key={r.id} value={r.id}>{r.label || r.filename}</option>
-                        ))}
-                      </optgroup>
-                    ) : (
-                      trackurResumes.map((r) => (
-                        <option key={r.id} value={r.id}>{r.label || r.filename}</option>
-                      ))
-                    )}
-                    {hasGroups ? (
-                      <optgroup label="Google Drive">
-                        {driveResumes.map((r) => (
-                          <option key={r.id} value={r.id}>{r.label || r.filename}</option>
-                        ))}
-                      </optgroup>
-                    ) : (
-                      driveResumes.map((r) => (
-                        <option key={r.id} value={r.id}>{r.label || r.filename}</option>
-                      ))
-                    )}
-                  </>
-                );
-              })()}
-            </Select>
+            <ResumeListbox
+              value={values.resumeId}
+              onChange={(v) => onChange('resumeId', v)}
+              resumes={resumes}
+              className="flex-1"
+            />
             <div className="flex items-center gap-1">
               {resumes.filter((r) => r.source !== 'gdrive').length < 10 && onUploadResume && (
                 <Button plain onClick={() => fileInputRef.current?.click()} disabled={uploading} title="Upload new resume">

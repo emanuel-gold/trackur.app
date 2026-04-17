@@ -2,11 +2,12 @@ import { Fragment, useState, useRef, useCallback, useEffect } from 'react';
 import { Dialog, DialogBackdrop, Transition, TransitionChild, Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/react';
 import { XMarkIcon, ArrowDownTrayIcon, ArrowUpTrayIcon, EllipsisVerticalIcon, DocumentTextIcon, ArchiveBoxXMarkIcon } from '@heroicons/react/24/outline';
 import { STAGES, STAGE_COLORS, CHAR_LIMITS } from '../constants.js';
-import { Badge, Button, Select } from './catalyst';
+import { Badge, Button } from './catalyst';
 import useInlineEdit from '../hooks/useInlineEdit.js';
 import useTodos from '../hooks/useTodos.js';
 import InlineEditableField from './InlineEditableField.jsx';
 import TodoList from './TodoList.jsx';
+import ResumeListbox from './ResumeListbox.jsx';
 import { formatDate } from '../utils/formatDate.js';
 
 const FIELD_CONFIG = [
@@ -254,44 +255,12 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose, resumes
                             </div>
                           ) : (
                             <div className="flex items-center gap-2">
-                              <Select
-                                value={job.resumeId || ''}
-                                onChange={(e) => onUpdate(job.id, { resumeId: e.target.value || null })}
+                              <ResumeListbox
+                                value={job.resumeId}
+                                onChange={(v) => onUpdate(job.id, { resumeId: v })}
+                                resumes={resumes}
                                 className="flex-1"
-                              >
-                                <option value="">None</option>
-                                {(() => {
-                                  const trackurResumes = resumes.filter((r) => r.source !== 'gdrive');
-                                  const driveResumes = resumes.filter((r) => r.source === 'gdrive');
-                                  const hasGroups = trackurResumes.length > 0 && driveResumes.length > 0;
-                                  return (
-                                    <>
-                                      {hasGroups ? (
-                                        <optgroup label="Trackur Resumes">
-                                          {trackurResumes.map((r) => (
-                                            <option key={r.id} value={r.id}>{r.label || r.filename}</option>
-                                          ))}
-                                        </optgroup>
-                                      ) : (
-                                        trackurResumes.map((r) => (
-                                          <option key={r.id} value={r.id}>{r.label || r.filename}</option>
-                                        ))
-                                      )}
-                                      {hasGroups ? (
-                                        <optgroup label="Google Drive">
-                                          {driveResumes.map((r) => (
-                                            <option key={r.id} value={r.id}>{r.label || r.filename}</option>
-                                          ))}
-                                        </optgroup>
-                                      ) : (
-                                        driveResumes.map((r) => (
-                                          <option key={r.id} value={r.id}>{r.label || r.filename}</option>
-                                        ))
-                                      )}
-                                    </>
-                                  );
-                                })()}
-                              </Select>
+                              />
                               <Menu as="div" className="relative">
                                 <MenuButton
                                   className="rounded-md p-1.5 text-zinc-400 hover:text-zinc-600 hover:bg-zinc-950/5 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:bg-white/5 transition-colors"

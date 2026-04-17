@@ -92,6 +92,7 @@ function MobileStageRow({ stage, stageJobs, onUpdate, onDelete, onEdit, onUpdate
                     onStageChange={onUpdateStage}
                     onViewResume={onViewResume ? () => onViewResume(job) : undefined}
                     resumeName={resumes?.find((r) => r.id === job.resumeId)?.label || resumes?.find((r) => r.id === job.resumeId)?.filename}
+                    resumeSource={resumes?.find((r) => r.id === job.resumeId)?.source}
                     compact
                   />
                 </div>
@@ -247,6 +248,7 @@ export default function KanbanBoard({ jobs, onUpdate, onDelete, onEdit, onUpdate
                       onDragStart={(e) => handleDragStart(e, job.id)}
                       onViewResume={onViewResume ? () => onViewResume(job) : undefined}
                       resumeName={resumes?.find((r) => r.id === job.resumeId)?.label || resumes?.find((r) => r.id === job.resumeId)?.filename}
+                      resumeSource={resumes?.find((r) => r.id === job.resumeId)?.source}
                       compact
                     />
                   ))

@@ -1,7 +1,8 @@
 import { Fragment, useState, useCallback, useRef } from 'react';
 import { Dialog, DialogBackdrop, Transition, TransitionChild, Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/react';
-import { XMarkIcon, DocumentTextIcon, ArrowUpTrayIcon, EllipsisVerticalIcon, PencilIcon, ArrowDownTrayIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, ArrowUpTrayIcon, EllipsisVerticalIcon, PencilIcon, ArrowDownTrayIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { Button } from './catalyst';
+import ResumeSourceIcon from './ResumeSourceIcon.jsx';
 
 function formatFileSize(bytes) {
   if (bytes < 1024) return bytes + ' B';
@@ -151,7 +152,7 @@ export default function ResumesModal({ open, onClose, resumes = [], onUploadResu
                               className="rounded-lg bg-zinc-50 dark:bg-zinc-800/50 ring-1 ring-zinc-950/5 dark:ring-white/5 px-3 py-2.5"
                             >
                               <div className="flex items-start gap-2.5">
-                                <DocumentTextIcon className="size-4 text-mauve-500 dark:text-mauve-400 shrink-0 mt-0.5" />
+                                <ResumeSourceIcon source="trackur" className="size-4 shrink-0 mt-0.5" />
                                 <div className="flex-1 min-w-0">
                                   {editingLabelId === r.id ? (
                                     <input
@@ -285,7 +286,7 @@ export default function ResumesModal({ open, onClose, resumes = [], onUploadResu
                                       className="rounded-lg bg-zinc-50 dark:bg-zinc-800/50 ring-1 ring-zinc-950/5 dark:ring-white/5 px-3 py-2.5"
                                     >
                                       <div className="flex items-start gap-2.5">
-                                        <DocumentTextIcon className="size-4 text-mauve-500 dark:text-mauve-400 shrink-0 mt-0.5" />
+                                        <ResumeSourceIcon source="gdrive" className="size-4 shrink-0 mt-0.5" />
                                         <div className="flex-1 min-w-0">
                                           <p className="text-sm font-medium text-zinc-950 dark:text-white truncate">
                                             {r.label || r.filename}
