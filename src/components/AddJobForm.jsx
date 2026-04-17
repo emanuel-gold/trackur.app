@@ -54,7 +54,7 @@ export default function AddJobForm({ onAdd, open, onClose, resumes, onUploadResu
     <Dialog open={open} onClose={onClose} size="lg" fixedContent={closeFab}
       className="flex flex-col max-h-[90dvh] sm:max-h-[80dvh]">
       <DialogTitle className="shrink-0">Add New Job</DialogTitle>
-      <DialogBody className="flex-1 overflow-y-auto min-h-0">
+      <DialogBody className="flex-1 overflow-y-auto pr-2 min-h-0">
         <form id="add-job-form" onSubmit={handleSubmit}>
           <JobFormFields values={values} onChange={handleChange} resumes={resumes} onUploadResume={onUploadResume} gdriveEnabled={gdriveEnabled} gdriveConnected={gdriveConnected} onConnectGdrive={onConnectGdrive} onPickFromDrive={onPickFromDrive} />
         </form>
