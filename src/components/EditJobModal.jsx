@@ -1,6 +1,6 @@
 import { Fragment, useState, useRef, useCallback, useEffect } from 'react';
 import { Dialog, DialogBackdrop, Transition, TransitionChild, Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/react';
-import { XMarkIcon, ArrowDownTrayIcon, ArrowUpTrayIcon, EllipsisVerticalIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, ArrowDownTrayIcon, ArrowUpTrayIcon, EllipsisVerticalIcon, DocumentTextIcon, ArchiveBoxXMarkIcon } from '@heroicons/react/24/outline';
 import { STAGES, STAGE_COLORS, CHAR_LIMITS } from '../constants.js';
 import { Badge, Button, Select } from './catalyst';
 import useInlineEdit from '../hooks/useInlineEdit.js';
@@ -329,6 +329,18 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose, resumes
                                       >
                                         <DocumentTextIcon className="size-4" />
                                         {gdriveConnected ? 'Pick from Google Drive' : 'Connect Google Drive'}
+                                      </button>
+                                    </MenuItem>
+                                  )}
+                                  {job.resumeId && (
+                                    <MenuItem>
+                                      <button
+                                        type="button"
+                                        onClick={() => onUpdate(job.id, { resumeId: null })}
+                                        className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-amber-600 data-focus:bg-amber-50 dark:text-amber-400 dark:data-focus:bg-amber-950/30 transition-colors"
+                                      >
+                                        <ArchiveBoxXMarkIcon className="size-4" />
+                                        Remove From Job
                                       </button>
                                     </MenuItem>
                                   )}
