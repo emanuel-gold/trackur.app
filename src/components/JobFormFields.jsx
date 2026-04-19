@@ -1,35 +1,13 @@
-import { useState, useRef } from 'react';
-import { ArrowUpTrayIcon } from '@heroicons/react/24/outline';
 import { STAGES } from '../constants.js';
-import { Field, FieldGroup, Label, Input, Select, Textarea, Button } from './catalyst';
+import { Field, FieldGroup, Label, Input, Select, Textarea } from './catalyst';
 import { CHAR_LIMITS } from '../constants.js';
-import ResumeListbox from './ResumeListbox.jsx';
+import ResumePickerSection from './ResumePickerSection.jsx';
 
 export default function JobFormFields({ values, onChange, resumes = [], onUploadResume, gdriveEnabled, gdriveConnected, onConnectGdrive, onPickFromDrive }) {
-  const [uploading, setUploading] = useState(false);
-  const [uploadError, setUploadError] = useState(null);
-  const fileInputRef = useRef(null);
-
   const field = (name) => ({
     value: values[name] || '',
     onChange: (e) => onChange(name, e.target.value),
   });
-
-  const handleUpload = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploadError(null);
-    setUploading(true);
-    try {
-      const saved = await onUploadResume(file, '');
-      onChange('resumeId', saved.id);
-    } catch (err) {
-      setUploadError(err.message);
-    } finally {
-      setUploading(false);
-      e.target.value = '';
-    }
-  };
 
   return (
     <FieldGroup className="space-y-4">
@@ -77,61 +55,17 @@ export default function JobFormFields({ values, onChange, resumes = [], onUpload
         </Field>
       </div>
 
-      {/* Resume — always shown */}
-      <div>
-        <div className="flex items-center justify-between mb-1.5">
-          <label className="text-sm/6 font-medium text-zinc-950 dark:text-white select-none">Attach Resume</label>
-          <span className="text-xs text-zinc-500 dark:text-zinc-400">
-            {resumes.filter((r) => r.source !== 'gdrive').length} of 10 Trackur Resumes used
-          </span>
-        </div>
-        {resumes.length === 0 ? (
-          <div className="flex flex-col gap-2">
-            <Button outline onClick={() => fileInputRef.current?.click()} disabled={uploading || !onUploadResume} className="w-full">
-              <ArrowUpTrayIcon data-slot="icon" />
-              {uploading ? 'Uploading...' : 'Upload resume'}
-            </Button>
-            {gdriveEnabled && (
-              <Button
-                outline
-                onClick={gdriveConnected ? onPickFromDrive : onConnectGdrive}
-                className="w-full"
-              >
-                {gdriveConnected ? 'Pick from Google Drive' : 'Connect Google Drive'}
-              </Button>
-            )}
-          </div>
-        ) : (
-          <div className="flex items-center gap-2">
-            <ResumeListbox
-              value={values.resumeId}
-              onChange={(v) => onChange('resumeId', v)}
-              resumes={resumes}
-              className="flex-1"
-            />
-            <div className="flex items-center gap-1">
-              {resumes.filter((r) => r.source !== 'gdrive').length < 10 && onUploadResume && (
-                <Button plain onClick={() => fileInputRef.current?.click()} disabled={uploading} title="Upload new resume">
-                  <ArrowUpTrayIcon data-slot="icon" />
-                </Button>
-              )}
-              {gdriveEnabled && gdriveConnected && onPickFromDrive && (
-                <Button plain onClick={onPickFromDrive} title="Pick from Google Drive">
-                  <ArrowUpTrayIcon data-slot="icon" />
-                </Button>
-              )}
-            </div>
-          </div>
-        )}
-        {uploadError && <p className="text-xs text-red-500 mt-1">{uploadError}</p>}
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-          onChange={handleUpload}
-          className="hidden"
-        />
-      </div>
+      <ResumePickerSection
+        value={values.resumeId}
+        onChange={(v) => onChange('resumeId', v)}
+        resumes={resumes}
+        onUploadResume={onUploadResume}
+        gdriveEnabled={gdriveEnabled}
+        gdriveConnected={gdriveConnected}
+        onConnectGdrive={onConnectGdrive}
+        onPickFromDrive={onPickFromDrive}
+        removeLabel="Clear selection"
+      />
 
       <Field>
         <Label>Notes</Label>
