@@ -146,7 +146,7 @@ export default function EditJobModal({ job, onUpdate, onDelete, onClose, resumes
           gdriveEnabled={gdriveEnabled}
           gdriveConnected={gdriveConnected}
           onConnectGdrive={onConnectGdrive}
-          onPickFromDrive={() => onPickFromDrive(job.id)}
+          onPickFromDrive={onPickFromDrive}
           onGetDownloadUrl={onGetDownloadUrl}
           onManageResumes={onManageResumes}
           removeLabel="Remove From Job"

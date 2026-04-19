@@ -168,7 +168,16 @@ const resumeAdapter = {
   },
 
   async linkDriveFile(metadata) {
-    // Insert a resumes row for a Google Drive file (no file upload needed)
+    // If this Drive file is already linked for the current user, return the existing row.
+    // RLS scopes the select to the current user automatically.
+    const { data: existing } = await supabase
+      .from('resumes')
+      .select('*')
+      .eq('source', 'gdrive')
+      .eq('external_id', metadata.externalId)
+      .maybeSingle();
+    if (existing) return { ...toApp(existing), alreadyLinked: true };
+
     const { data, error } = await supabase
       .from('resumes')
       .insert({
@@ -183,8 +192,21 @@ const resumeAdapter = {
       })
       .select()
       .single();
-    if (error) throw error;
-    return toApp(data);
+
+    if (error) {
+      // 23505 = unique_violation — race with another tab/session
+      if (error.code === '23505') {
+        const { data: race } = await supabase
+          .from('resumes')
+          .select('*')
+          .eq('source', 'gdrive')
+          .eq('external_id', metadata.externalId)
+          .single();
+        if (race) return { ...toApp(race), alreadyLinked: true };
+      }
+      throw error;
+    }
+    return { ...toApp(data), alreadyLinked: false };
   },
 };
 

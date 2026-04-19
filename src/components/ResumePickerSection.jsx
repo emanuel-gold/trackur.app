@@ -96,7 +96,7 @@ export default function ResumePickerSection({
           {gdriveEnabled && (
             <Button
               outline
-              onClick={gdriveConnected ? onPickFromDrive : onConnectGdrive}
+              onClick={gdriveConnected ? () => onPickFromDrive(onChange) : onConnectGdrive}
               className="w-full"
             >
               {gdriveConnected ? 'Pick from Google Drive' : 'Connect Google Drive'}
@@ -143,7 +143,7 @@ export default function ResumePickerSection({
                 <MenuItem>
                   <button
                     type="button"
-                    onClick={gdriveConnected ? onPickFromDrive : onConnectGdrive}
+                    onClick={gdriveConnected ? () => onPickFromDrive(onChange) : onConnectGdrive}
                     className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-zinc-700 data-focus:bg-zinc-950/5 dark:text-zinc-300 dark:data-focus:bg-white/5 transition-colors"
                   >
                     <DocumentTextIcon className="size-4" />

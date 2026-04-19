@@ -63,7 +63,7 @@ export default function useResumes(userId) {
 
   const linkDriveFile = useCallback(async (metadata) => {
     const saved = await resumeRepository.linkDriveFile(metadata);
-    setResumes((prev) => [saved, ...prev]);
+    setResumes((prev) => prev.some((r) => r.id === saved.id) ? prev : [saved, ...prev]);
     return saved;
   }, []);
 

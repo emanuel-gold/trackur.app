@@ -206,7 +206,7 @@ function App() {
     }
   }, [resumes, getDownloadUrl, showToast]);
 
-  const handlePickFromDrive = useCallback(async (jobId) => {
+  const handlePickFromDrive = useCallback(async (onLinked) => {
     try {
       await gdrive.openPicker(async (metadata) => {
         try {
@@ -214,10 +214,12 @@ function App() {
             ...metadata,
             label: '',
           });
-          if (jobId) {
-            await updateJob(jobId, { resumeId: saved.id });
-            showToast('Google Drive resume linked');
-          }
+          if (onLinked) await onLinked(saved.id);
+          showToast(
+            saved.alreadyLinked
+              ? 'Resume already in your library — attached it to this job'
+              : 'Google Drive resume linked'
+          );
         } catch (err) {
           showToast('Failed to link Google Drive resume: ' + err.message, 'error');
         }
@@ -230,7 +232,7 @@ function App() {
         showToast('Failed to open Google Drive picker: ' + err.message, 'error');
       }
     }
-  }, [gdrive, linkDriveFile, updateJob, showToast]);
+  }, [gdrive, linkDriveFile, showToast]);
 
   const handleConnectGdrive = useCallback(async () => {
     try {
@@ -403,7 +405,7 @@ function App() {
       )}
 
       <Suspense fallback={null}>
-        <AddJobForm open={addJobOpen} onClose={() => setAddJobOpen(false)} onAdd={handleAdd} resumes={resumes} onUploadResume={uploadResume} gdriveEnabled={gdrive.enabled} gdriveConnected={gdrive.connected} onConnectGdrive={handleConnectGdrive} onPickFromDrive={() => handlePickFromDrive(null)} />
+        <AddJobForm open={addJobOpen} onClose={() => setAddJobOpen(false)} onAdd={handleAdd} resumes={resumes} onUploadResume={uploadResume} gdriveEnabled={gdrive.enabled} gdriveConnected={gdrive.connected} onConnectGdrive={handleConnectGdrive} onPickFromDrive={handlePickFromDrive} />
 
         {editingJob && (
           <EditJobModal
