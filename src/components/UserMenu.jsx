@@ -47,6 +47,18 @@ export default function UserMenu({ user, profile, onSignOut, onSettings, onResum
           </MenuItem>
 
           <MenuItem>
+            <a
+              href="https://trackur.app/privacy-policy/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-zinc-700 data-focus:bg-zinc-950/5 dark:text-zinc-300 dark:data-focus:bg-white/5 transition-colors"
+            >
+              <DocumentTextIcon className="size-4" />
+              Privacy Policy
+            </a>
+          </MenuItem>
+
+          <MenuItem>
             <button
               type="button"
               onClick={onSignOut}
@@ -109,6 +121,18 @@ export default function UserMenu({ user, profile, onSignOut, onSettings, onResum
               <Cog6ToothIcon className="size-4" />
               Settings
             </button>
+          </MenuItem>
+
+          <MenuItem>
+            <a
+              href="https://trackur.app/privacy-policy/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-zinc-700 data-focus:bg-zinc-950/5 dark:text-zinc-300 dark:data-focus:bg-white/5 transition-colors"
+            >
+              <DocumentTextIcon className="size-4" />
+              Privacy Policy
+            </a>
           </MenuItem>
 
           <MenuItem>
