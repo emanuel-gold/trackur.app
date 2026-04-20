@@ -27,22 +27,22 @@ export default function UserMenu({ user, profile, onSignOut, onSettings, onResum
           <MenuItem>
             <button
               type="button"
-              onClick={onResumes}
+              onClick={onSettings}
               className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-zinc-700 data-focus:bg-zinc-950/5 dark:text-zinc-300 dark:data-focus:bg-white/5 transition-colors"
             >
-              <DocumentCheckIcon className="size-4" />
-              Manage Resumes
+              <Cog6ToothIcon className="size-4" />
+              Settings
             </button>
           </MenuItem>
 
           <MenuItem>
             <button
               type="button"
-              onClick={onSettings}
+              onClick={onResumes}
               className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-zinc-700 data-focus:bg-zinc-950/5 dark:text-zinc-300 dark:data-focus:bg-white/5 transition-colors"
             >
-              <Cog6ToothIcon className="size-4" />
-              Settings
+              <DocumentCheckIcon className="size-4" />
+              Manage Resumes
             </button>
           </MenuItem>
 
@@ -104,22 +104,22 @@ export default function UserMenu({ user, profile, onSignOut, onSettings, onResum
           <MenuItem>
             <button
               type="button"
-              onClick={onResumes}
+              onClick={onSettings}
               className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-zinc-700 data-focus:bg-zinc-950/5 dark:text-zinc-300 dark:data-focus:bg-white/5 transition-colors"
             >
-              <DocumentCheckIcon className="size-4" />
-              Manage Resumes
+              <Cog6ToothIcon className="size-4" />
+              Settings
             </button>
           </MenuItem>
 
           <MenuItem>
             <button
               type="button"
-              onClick={onSettings}
+              onClick={onResumes}
               className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-zinc-700 data-focus:bg-zinc-950/5 dark:text-zinc-300 dark:data-focus:bg-white/5 transition-colors"
             >
-              <Cog6ToothIcon className="size-4" />
-              Settings
+              <DocumentCheckIcon className="size-4" />
+              Manage Resumes
             </button>
           </MenuItem>
 
