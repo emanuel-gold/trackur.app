@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/react';
-import { ArrowDownTrayIcon, ArrowUpTrayIcon, ArchiveBoxXMarkIcon, DocumentTextIcon, EllipsisVerticalIcon } from '@heroicons/react/24/outline';
+import { ArrowDownTrayIcon, ArrowUpTrayIcon, ArchiveBoxXMarkIcon, DocumentCheckIcon, EllipsisVerticalIcon } from '@heroicons/react/24/outline';
 import { Button } from './catalyst';
 import ResumeListbox from './ResumeListbox.jsx';
 
@@ -146,7 +146,7 @@ export default function ResumePickerSection({
                     onClick={gdriveConnected ? () => onPickFromDrive(onChange) : onConnectGdrive}
                     className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-zinc-700 data-focus:bg-zinc-950/5 dark:text-zinc-300 dark:data-focus:bg-white/5 transition-colors"
                   >
-                    <DocumentTextIcon className="size-4" />
+                    <DocumentCheckIcon className="size-4" />
                     {gdriveConnected ? 'Pick from Google Drive' : 'Connect Google Drive'}
                   </button>
                 </MenuItem>
@@ -166,7 +166,7 @@ export default function ResumePickerSection({
               {onManageResumes && (
                 <MenuItem>
                   <button type="button" onClick={onManageResumes} className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-zinc-700 data-focus:bg-zinc-950/5 dark:text-zinc-300 dark:data-focus:bg-white/5 transition-colors">
-                    <DocumentTextIcon className="size-4" />
+                    <DocumentCheckIcon className="size-4" />
                     Manage Resumes
                   </button>
                 </MenuItem>
