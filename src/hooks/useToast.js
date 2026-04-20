@@ -7,15 +7,16 @@ export default function useToast() {
 
   const showToast = useCallback((message, type = 'success') => {
     const id = ++toastId;
-    setToasts((prev) => [...prev, { id, message, type }]);
-    setTimeout(() => {
-      setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 3000);
+    setToasts((prev) => [...prev, { id, message, type, visible: true }]);
   }, []);
 
   const dismissToast = useCallback((id) => {
+    setToasts((prev) => prev.map((t) => (t.id === id ? { ...t, visible: false } : t)));
+  }, []);
+
+  const removeToast = useCallback((id) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
-  return { toasts, showToast, dismissToast };
+  return { toasts, showToast, dismissToast, removeToast };
 }

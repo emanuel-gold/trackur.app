@@ -1,7 +1,7 @@
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/react';
-import { ChevronDownIcon, ArrowRightStartOnRectangleIcon, Cog6ToothIcon, SunIcon, MoonIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
+import { ChevronDownIcon, ArrowRightStartOnRectangleIcon, Cog6ToothIcon, SunIcon, MoonIcon, DocumentCheckIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 
-export default function UserMenu({ user, profile, onSignOut, onSettings, onResumes, dark, onToggleDark }) {
+export default function UserMenu({ user, profile, onSignOut, onSettings, onResumes, dark, onToggleDark, showToast }) {
   const email = user?.email ?? '';
   const displayName = profile?.firstName || email.split('@')[0];
 
@@ -27,23 +27,35 @@ export default function UserMenu({ user, profile, onSignOut, onSettings, onResum
           <MenuItem>
             <button
               type="button"
-              onClick={onResumes}
-              className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-zinc-700 data-focus:bg-zinc-950/5 dark:text-zinc-300 dark:data-focus:bg-white/5 transition-colors"
-            >
-              <DocumentTextIcon className="size-4" />
-              Manage Resumes
-            </button>
-          </MenuItem>
-
-          <MenuItem>
-            <button
-              type="button"
               onClick={onSettings}
               className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-zinc-700 data-focus:bg-zinc-950/5 dark:text-zinc-300 dark:data-focus:bg-white/5 transition-colors"
             >
               <Cog6ToothIcon className="size-4" />
               Settings
             </button>
+          </MenuItem>
+
+          <MenuItem>
+            <button
+              type="button"
+              onClick={onResumes}
+              className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-zinc-700 data-focus:bg-zinc-950/5 dark:text-zinc-300 dark:data-focus:bg-white/5 transition-colors"
+            >
+              <DocumentCheckIcon className="size-4" />
+              Manage Resumes
+            </button>
+          </MenuItem>
+
+          <MenuItem>
+            <a
+              href="https://trackur.app/privacy-policy/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-zinc-700 data-focus:bg-zinc-950/5 dark:text-zinc-300 dark:data-focus:bg-white/5 transition-colors"
+            >
+              <DocumentTextIcon className="size-4" />
+              Privacy Policy
+            </a>
           </MenuItem>
 
           <MenuItem>
@@ -92,23 +104,35 @@ export default function UserMenu({ user, profile, onSignOut, onSettings, onResum
           <MenuItem>
             <button
               type="button"
-              onClick={onResumes}
-              className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-zinc-700 data-focus:bg-zinc-950/5 dark:text-zinc-300 dark:data-focus:bg-white/5 transition-colors"
-            >
-              <DocumentTextIcon className="size-4" />
-              Manage Resumes
-            </button>
-          </MenuItem>
-
-          <MenuItem>
-            <button
-              type="button"
               onClick={onSettings}
               className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-zinc-700 data-focus:bg-zinc-950/5 dark:text-zinc-300 dark:data-focus:bg-white/5 transition-colors"
             >
               <Cog6ToothIcon className="size-4" />
               Settings
             </button>
+          </MenuItem>
+
+          <MenuItem>
+            <button
+              type="button"
+              onClick={onResumes}
+              className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-zinc-700 data-focus:bg-zinc-950/5 dark:text-zinc-300 dark:data-focus:bg-white/5 transition-colors"
+            >
+              <DocumentCheckIcon className="size-4" />
+              Manage Resumes
+            </button>
+          </MenuItem>
+
+          <MenuItem>
+            <a
+              href="https://trackur.app/privacy-policy/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-zinc-700 data-focus:bg-zinc-950/5 dark:text-zinc-300 dark:data-focus:bg-white/5 transition-colors"
+            >
+              <DocumentTextIcon className="size-4" />
+              Privacy Policy
+            </a>
           </MenuItem>
 
           <MenuItem>

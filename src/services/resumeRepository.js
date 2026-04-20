@@ -7,7 +7,8 @@ const resumeRepository = {
   insert: (resume, file) => adapter.insert(resume, file),
   updateLabel: (id, label) => adapter.updateLabel(id, label),
   remove: (id) => adapter.remove(id),
-  getDownloadUrl: (path) => adapter.getDownloadUrl(path),
+  getDownloadUrl: (resumeOrPath) => adapter.getDownloadUrl(resumeOrPath),
+  linkDriveFile: (metadata) => adapter.linkDriveFile(metadata),
 };
 
 export default resumeRepository;

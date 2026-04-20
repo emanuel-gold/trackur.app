@@ -10,6 +10,10 @@ function toApp(row) {
     storagePath: row.storage_path,
     fileSize: row.file_size,
     createdAt: row.created_at,
+    source: row.source ?? 'trackur',
+    externalId: row.external_id ?? null,
+    externalMimeType: row.external_mime_type ?? null,
+    externalIconUrl: row.external_icon_url ?? null,
   };
 }
 
@@ -87,10 +91,10 @@ const resumeAdapter = {
   },
 
   async remove(id) {
-    // Get storage path before deleting the row
+    // Get storage path and source before deleting the row
     const { data: row, error: fetchError } = await supabase
       .from('resumes')
-      .select('storage_path')
+      .select('storage_path, source')
       .eq('id', id)
       .single();
     if (fetchError) throw fetchError;
@@ -102,20 +106,51 @@ const resumeAdapter = {
       .eq('id', id);
     if (deleteError) throw deleteError;
 
-    // Remove file from R2 (best-effort)
-    const token = await getAccessToken();
-    await fetch('/api/resume/delete', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ storagePath: row.storage_path }),
-    }).catch(() => {});
+    // Remove file from R2 (best-effort) — only for Trackur-hosted resumes
+    if (row.storage_path && (!row.source || row.source === 'trackur')) {
+      const token = await getAccessToken();
+      await fetch('/api/resume/delete', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ storagePath: row.storage_path }),
+      }).catch(() => {});
+    }
   },
 
-  async getDownloadUrl(storagePath) {
+  async getDownloadUrl(resumeOrPath) {
     const token = await getAccessToken();
+
+    // Support both legacy string path and full resume object
+    const isResume = typeof resumeOrPath === 'object' && resumeOrPath !== null;
+    const source = isResume ? (resumeOrPath.source ?? 'trackur') : 'trackur';
+
+    if (source === 'gdrive') {
+      // Proxy download through our API — returns the file blob directly
+      const res = await fetch('/api/gdrive/download', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ fileId: resumeOrPath.externalId }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        if (err.error === 'gdrive_disconnected') {
+          throw new GDriveDisconnectedError();
+        }
+        throw new Error(err.error || 'Failed to download from Google Drive');
+      }
+      // Return a blob URL for the downloaded file
+      const blob = await res.blob();
+      return URL.createObjectURL(blob);
+    }
+
+    // Trackur (R2) resume — existing presigned URL flow
+    const storagePath = isResume ? resumeOrPath.storagePath : resumeOrPath;
     const res = await fetch('/api/resume/download-url', {
       method: 'POST',
       headers: {
@@ -131,6 +166,55 @@ const resumeAdapter = {
     const { url } = await res.json();
     return url;
   },
+
+  async linkDriveFile(metadata) {
+    // If this Drive file is already linked for the current user, return the existing row.
+    // RLS scopes the select to the current user automatically.
+    const { data: existing } = await supabase
+      .from('resumes')
+      .select('*')
+      .eq('source', 'gdrive')
+      .eq('external_id', metadata.externalId)
+      .maybeSingle();
+    if (existing) return { ...toApp(existing), alreadyLinked: true };
+
+    const { data, error } = await supabase
+      .from('resumes')
+      .insert({
+        filename: metadata.filename,
+        label: metadata.label || null,
+        storage_path: null,
+        file_size: metadata.fileSize || null,
+        source: 'gdrive',
+        external_id: metadata.externalId,
+        external_mime_type: metadata.externalMimeType || null,
+        external_icon_url: metadata.externalIconUrl || null,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      // 23505 = unique_violation — race with another tab/session
+      if (error.code === '23505') {
+        const { data: race } = await supabase
+          .from('resumes')
+          .select('*')
+          .eq('source', 'gdrive')
+          .eq('external_id', metadata.externalId)
+          .single();
+        if (race) return { ...toApp(race), alreadyLinked: true };
+      }
+      throw error;
+    }
+    return { ...toApp(data), alreadyLinked: false };
+  },
 };
+
+export class GDriveDisconnectedError extends Error {
+  constructor() {
+    super('Google Drive is not connected');
+    this.name = 'GDriveDisconnectedError';
+  }
+}
 
 export default resumeAdapter;

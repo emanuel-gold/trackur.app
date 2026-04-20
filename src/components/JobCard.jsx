@@ -1,13 +1,14 @@
 import { memo, useMemo, useCallback } from 'react';
-import { TrashIcon, PencilSquareIcon, ChevronUpDownIcon, CalendarIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
+import { TrashIcon, PencilSquareIcon, ChevronUpDownIcon, CalendarIcon } from '@heroicons/react/24/outline';
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
 import { STAGES, STAGE_COLORS } from '../constants.js';
 import { Badge } from './catalyst';
 import useInlineEdit from '../hooks/useInlineEdit.js';
 import InlineEditableField from './InlineEditableField.jsx';
+import ResumeSourceIcon from './ResumeSourceIcon.jsx';
 import { formatDate } from '../utils/formatDate.js';
 
-export default memo(function JobCard({ job, onUpdate, onDelete, onEdit, onDragStart, compact, onStageChange, onViewResume, resumeName }) {
+export default memo(function JobCard({ job, onUpdate, onDelete, onEdit, onDragStart, compact, onStageChange, onViewResume, resumeName, resumeSource }) {
   const { editingField, draftValue, startEdit, updateDraft, cancel, save } = useInlineEdit();
 
   const handleSave = () => {
@@ -149,7 +150,7 @@ export default memo(function JobCard({ job, onUpdate, onDelete, onEdit, onDragSt
           onClick={() => onEdit(job.id)}
           className="mt-2 rounded -mx-1.5 px-1.5 py-1 text-xs text-zinc-500 dark:text-zinc-400 italic hover:bg-mauve-50 dark:hover:bg-mauve-950/30 transition-colors w-full text-left"
         >
-          Add next step...
+          Add next steps...
         </button>
       ) : (
         <div className="rounded mt-2 shadow-md -mx-1.5 px-1.5 py-1.5 text-xs border border-mauve-300 bg-mauve-200 dark:border-mauve-800 dark:bg-mauve-700">
@@ -249,7 +250,7 @@ export default memo(function JobCard({ job, onUpdate, onDelete, onEdit, onDragSt
           className="mt-1.5 inline-flex items-center gap-1 text-xs font-medium text-mauve-600 dark:text-mauve-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
           title="Download resume"
         >
-          <DocumentTextIcon className="size-3.5 shrink-0" />
+          <ResumeSourceIcon source={resumeSource} className="size-3.5 shrink-0" />
           <span className="truncate">{resumeName || 'Resume'}</span>
         </button>
       )}

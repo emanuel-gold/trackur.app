@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import { Button, Dialog, DialogTitle, DialogBody, DialogActions } from './catalyst';
+import { Button } from './catalyst';
 import JobFormFields from './JobFormFields.jsx';
+import SlideOutPanel from './SlideOutPanel.jsx';
 
 const EMPTY = {
   company: '',
@@ -14,7 +15,7 @@ const EMPTY = {
   resumeId: '',
 };
 
-export default function AddJobForm({ onAdd, open, onClose, resumes, onUploadResume }) {
+export default function AddJobForm({ onAdd, open, onClose, resumes, onUploadResume, gdriveEnabled, gdriveConnected, onConnectGdrive, onPickFromDrive }) {
   const [values, setValues] = useState({ ...EMPTY });
 
   const handleChange = (name, value) => {
@@ -40,29 +41,44 @@ export default function AddJobForm({ onAdd, open, onClose, resumes, onUploadResu
     onClose();
   };
 
-  const closeFab = (
-    <button
-      type="button"
-      onClick={onClose}
-      className="fixed bottom-6 right-6 z-50 md:hidden flex items-center justify-center size-14 rounded-full bg-zinc-600 text-white shadow-lg hover:bg-zinc-700 transition-colors"
-    >
-      <XMarkIcon className="size-7" />
-    </button>
+  const header = (
+    <div className="flex items-start justify-between gap-3">
+      <h2 className="text-base/7 font-semibold text-zinc-950 dark:text-white">
+        Add New Job
+      </h2>
+      <button
+        type="button"
+        onClick={onClose}
+        className="rounded-sm p-1.5 text-zinc-400 hover:text-zinc-600 hover:bg-zinc-950/5 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:bg-white/5 transition-colors"
+      >
+        <XMarkIcon className="size-5" />
+      </button>
+    </div>
+  );
+
+  const body = (
+    <form id="add-job-form" onSubmit={handleSubmit}>
+      <JobFormFields
+        values={values}
+        onChange={handleChange}
+        resumes={resumes}
+        onUploadResume={onUploadResume}
+        gdriveEnabled={gdriveEnabled}
+        gdriveConnected={gdriveConnected}
+        onConnectGdrive={onConnectGdrive}
+        onPickFromDrive={onPickFromDrive}
+      />
+    </form>
+  );
+
+  const footer = (
+    <div className="flex items-center justify-end gap-2">
+      <Button plain onClick={onClose}>Cancel</Button>
+      <Button color="violet" type="submit" form="add-job-form">Add Job</Button>
+    </div>
   );
 
   return (
-    <Dialog open={open} onClose={onClose} size="lg" fixedContent={closeFab}
-      className="flex flex-col max-h-[90dvh] sm:max-h-[80dvh]">
-      <DialogTitle className="shrink-0">Add New Job</DialogTitle>
-      <DialogBody className="flex-1 overflow-y-auto min-h-0">
-        <form id="add-job-form" onSubmit={handleSubmit}>
-          <JobFormFields values={values} onChange={handleChange} resumes={resumes} onUploadResume={onUploadResume} />
-        </form>
-      </DialogBody>
-      <DialogActions>
-        <Button plain onClick={onClose}>Cancel</Button>
-        <Button color="violet" type="submit" form="add-job-form">Add Job</Button>
-      </DialogActions>
-    </Dialog>
+    <SlideOutPanel open={open} onClose={onClose} header={header} body={body} footer={footer} />
   );
 }
