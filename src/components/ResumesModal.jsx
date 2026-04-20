@@ -259,95 +259,106 @@ export default function ResumesModal({ open, onClose, resumes = [], onUploadResu
                       )}
 
                       {/* Google Drive section */}
-                      {gdriveEnabled && (
-                        <div className="mt-6 pt-6 border-t border-zinc-950/5 dark:border-white/5">
-                          <div className="flex items-center justify-between mb-3">
-                            <h3 className="text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-                              Google Drive
-                            </h3>
-                            {gdriveConnected === false && (
-                              <Button plain onClick={onConnectGdrive} className="text-xs">
-                                Connect
-                              </Button>
-                            )}
-                          </div>
-
-                          {gdriveConnected === false ? (
-                            <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                              Connect your Google Drive to link resumes from there.
-                            </p>
-                          ) : (
-                            <>
-                              {resumes.filter((r) => r.source === 'gdrive').length > 0 && (
-                                <div className="space-y-2 mb-3">
-                                  {resumes.filter((r) => r.source === 'gdrive').map((r) => (
-                                    <div
-                                      key={r.id}
-                                      className="rounded-lg bg-zinc-50 dark:bg-zinc-800/50 ring-1 ring-zinc-950/5 dark:ring-white/5 px-3 py-2.5"
-                                    >
-                                      <div className="flex items-start gap-2.5">
-                                        <ResumeSourceIcon source="gdrive" className="size-4 shrink-0 mt-0.5" />
-                                        <div className="flex-1 min-w-0">
-                                          <p className="text-sm font-medium text-zinc-950 dark:text-white truncate">
-                                            {r.label || r.filename}
-                                          </p>
-                                          <div className="flex items-center gap-2 mt-0.5">
-                                            {r.label && (
-                                              <span className="text-xs text-zinc-500 dark:text-zinc-400 truncate">
-                                                {r.filename}
-                                              </span>
-                                            )}
-                                            <span className="text-xs text-zinc-400 dark:text-zinc-500">
-                                              Google Drive
-                                            </span>
-                                          </div>
-                                        </div>
-                                        <Menu as="div" className="relative shrink-0">
-                                          <MenuButton
-                                            className="rounded-md p-1.5 text-zinc-400 hover:text-zinc-600 hover:bg-zinc-950/5 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:bg-white/5 transition-colors"
-                                            title="Resume actions"
-                                          >
-                                            <EllipsisVerticalIcon className="size-5" />
-                                          </MenuButton>
-                                          <MenuItems
-                                            anchor="bottom end"
-                                            transition
-                                            className="z-50 mt-1.5 w-44 origin-top-right rounded-lg bg-white p-1.5 shadow-lg ring-1 ring-zinc-950/10 transition duration-100 data-closed:scale-95 data-closed:opacity-0 dark:bg-zinc-800 dark:ring-white/10"
-                                          >
-                                            <MenuItem>
-                                              <button
-                                                type="button"
-                                                onClick={() => handleDownload(r)}
-                                                className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-zinc-700 data-focus:bg-zinc-950/5 dark:text-zinc-300 dark:data-focus:bg-white/5 transition-colors"
-                                              >
-                                                <ArrowDownTrayIcon className="size-4" />
-                                                Download
-                                              </button>
-                                            </MenuItem>
-                                            <MenuItem>
-                                              <button
-                                                type="button"
-                                                onClick={() => handleDeleteResumeClick(r.id)}
-                                                className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-red-600 data-focus:bg-red-50 dark:text-red-400 dark:data-focus:bg-red-950/30 transition-colors"
-                                              >
-                                                <TrashIcon className="size-4" />
-                                                Remove
-                                              </button>
-                                            </MenuItem>
-                                          </MenuItems>
-                                        </Menu>
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
+                      {gdriveEnabled && (() => {
+                        const driveResumes = resumes.filter((r) => r.source === 'gdrive');
+                        const isDisconnected = gdriveConnected === false;
+                        return (
+                          <div className="mt-6 pt-6 border-t border-zinc-950/5 dark:border-white/5">
+                            <div className="flex items-center justify-between mb-3">
+                              <h3 className="text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                                Google Drive
+                              </h3>
+                              {isDisconnected && (
+                                <Button plain onClick={onConnectGdrive} className="text-xs">
+                                  Connect
+                                </Button>
                               )}
+                            </div>
+
+                            {isDisconnected && driveResumes.length === 0 && (
+                              <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                                Connect your Google Drive to link resumes from there.
+                              </p>
+                            )}
+
+                            {isDisconnected && driveResumes.length > 0 && (
+                              <p className="text-xs text-amber-700 dark:text-amber-400 mb-3">
+                                Reconnect Google Drive to download or pick files.
+                              </p>
+                            )}
+
+                            {driveResumes.length > 0 && (
+                              <div className={`space-y-2 mb-3 ${isDisconnected ? 'opacity-60' : ''}`}>
+                                {driveResumes.map((r) => (
+                                  <div
+                                    key={r.id}
+                                    className="rounded-lg bg-zinc-50 dark:bg-zinc-800/50 ring-1 ring-zinc-950/5 dark:ring-white/5 px-3 py-2.5"
+                                  >
+                                    <div className="flex items-start gap-2.5">
+                                      <ResumeSourceIcon source="gdrive" className="size-4 shrink-0 mt-0.5" />
+                                      <div className="flex-1 min-w-0">
+                                        <p className="text-sm font-medium text-zinc-950 dark:text-white truncate">
+                                          {r.label || r.filename}
+                                        </p>
+                                        <div className="flex items-center gap-2 mt-0.5">
+                                          {r.label && (
+                                            <span className="text-xs text-zinc-500 dark:text-zinc-400 truncate">
+                                              {r.filename}
+                                            </span>
+                                          )}
+                                          <span className="text-xs text-zinc-400 dark:text-zinc-500">
+                                            Google Drive
+                                          </span>
+                                        </div>
+                                      </div>
+                                      <Menu as="div" className="relative shrink-0">
+                                        <MenuButton
+                                          className="rounded-md p-1.5 text-zinc-400 hover:text-zinc-600 hover:bg-zinc-950/5 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:bg-white/5 transition-colors"
+                                          title="Resume actions"
+                                        >
+                                          <EllipsisVerticalIcon className="size-5" />
+                                        </MenuButton>
+                                        <MenuItems
+                                          anchor="bottom end"
+                                          transition
+                                          className="z-50 mt-1.5 w-44 origin-top-right rounded-lg bg-white p-1.5 shadow-lg ring-1 ring-zinc-950/10 transition duration-100 data-closed:scale-95 data-closed:opacity-0 dark:bg-zinc-800 dark:ring-white/10"
+                                        >
+                                          <MenuItem>
+                                            <button
+                                              type="button"
+                                              onClick={() => handleDownload(r)}
+                                              className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-zinc-700 data-focus:bg-zinc-950/5 dark:text-zinc-300 dark:data-focus:bg-white/5 transition-colors"
+                                            >
+                                              <ArrowDownTrayIcon className="size-4" />
+                                              Download
+                                            </button>
+                                          </MenuItem>
+                                          <MenuItem>
+                                            <button
+                                              type="button"
+                                              onClick={() => handleDeleteResumeClick(r.id)}
+                                              className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-red-600 data-focus:bg-red-50 dark:text-red-400 dark:data-focus:bg-red-950/30 transition-colors"
+                                            >
+                                              <TrashIcon className="size-4" />
+                                              Remove
+                                            </button>
+                                          </MenuItem>
+                                        </MenuItems>
+                                      </Menu>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+
+                            {!isDisconnected && (
                               <Button outline onClick={onPickFromDrive} className="w-full">
                                 Pick from Google Drive
                               </Button>
-                            </>
-                          )}
-                        </div>
-                      )}
+                            )}
+                          </div>
+                        );
+                      })()}
                     </div>
                   </div>
                 </div>

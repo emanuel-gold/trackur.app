@@ -76,19 +76,36 @@ export default function useGoogleDrive() {
     return () => { cancelled = true; };
   }, []);
 
+  const refreshStatus = useCallback(async () => {
+    try {
+      const token = await getAccessToken();
+      const res = await fetch('/api/gdrive/status', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const { connected: c } = await res.json();
+        setConnected(c);
+      }
+    } catch {
+      // Ignore
+    }
+  }, []);
+
   // Listen for postMessage from OAuth popup
   useEffect(() => {
     function handleMessage(e) {
+      if (e.origin !== window.location.origin) return;
+      if (popupRef.current && e.source !== popupRef.current) return;
       if (e.data?.type === 'gdrive-connected') {
-        setConnected(true);
         popupRef.current = null;
+        refreshStatus();
       } else if (e.data?.type === 'gdrive-error') {
         popupRef.current = null;
       }
     }
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
-  }, []);
+  }, [refreshStatus]);
 
   const connect = useCallback(async () => {
     try {
@@ -172,21 +189,6 @@ export default function useGoogleDrive() {
       .build();
 
     picker.setVisible(true);
-  }, []);
-
-  const refreshStatus = useCallback(async () => {
-    try {
-      const token = await getAccessToken();
-      const res = await fetch('/api/gdrive/status', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (res.ok) {
-        const { connected: c } = await res.json();
-        setConnected(c);
-      }
-    } catch {
-      // Ignore
-    }
   }, []);
 
   return {
