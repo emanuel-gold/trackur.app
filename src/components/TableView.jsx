@@ -198,10 +198,10 @@ export default function TableView({ jobs, onUpdate, onDelete, onEdit, sortKey, s
           <tbody className="divide-y divide-zinc-950/5 dark:divide-white/5">
             {sorted.map((job) => (
               <tr key={job.id} className="hover:bg-zinc-950/2.5 dark:hover:bg-white/2.5 transition-colors">
-                <td className="px-4 py-3 text-sm font-medium text-zinc-950 dark:text-white whitespace-nowrap">
+                <td className="px-4 py-3 text-sm font-medium text-zinc-950 dark:text-white max-w-56">
                   {renderCell(job, 'role')}
                 </td>
-                <td className="px-4 py-3 text-sm text-zinc-500 dark:text-zinc-400 whitespace-nowrap">
+                <td className="px-4 py-3 text-sm text-zinc-500 dark:text-zinc-400 max-w-56">
                   {renderCell(job, 'company')}
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap">
