@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/emanuel-gold/trackur.app/compare/trackur-v1.1.0...trackur-v1.2.0) (2026-04-24)
+
+
+### Features
+
+* adding app version number to Settings Modal via Vite define ([ab6fb18](https://github.com/emanuel-gold/trackur.app/commit/ab6fb18145d6a7a46b532cff216016acd2587c00))
+
 ## [1.1.0](https://github.com/emanuel-gold/trackur.app/compare/trackur-v1.0.0...trackur-v1.1.0) (2026-04-24)
 
 
