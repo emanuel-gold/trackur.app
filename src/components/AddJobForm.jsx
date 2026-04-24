@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { Button } from './catalyst';
 import JobFormFields from './JobFormFields.jsx';
@@ -15,8 +15,16 @@ const EMPTY = {
   resumeId: '',
 };
 
-export default function AddJobForm({ onAdd, open, onClose, resumes, onUploadResume, gdriveEnabled, gdriveConnected, onConnectGdrive, onPickFromDrive }) {
+export default function AddJobForm({ onAdd, open, onClose, initialStage, resumes, onUploadResume, gdriveEnabled, gdriveConnected, onConnectGdrive, onPickFromDrive }) {
   const [values, setValues] = useState({ ...EMPTY });
+  const prevOpenRef = useRef(false);
+
+  useEffect(() => {
+    if (open && !prevOpenRef.current && initialStage) {
+      setValues((prev) => ({ ...prev, stage: initialStage }));
+    }
+    prevOpenRef.current = open;
+  }, [open, initialStage]);
 
   const handleChange = (name, value) => {
     setValues((prev) => ({ ...prev, [name]: value }));

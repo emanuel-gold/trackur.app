@@ -62,6 +62,7 @@ function App() {
     });
   }, [sortDir]);
   const [addJobOpen, setAddJobOpen] = useState(false);
+  const [addJobInitialStage, setAddJobInitialStage] = useState(null);
   const [importOpen, setImportOpen] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [editingJobId, setEditingJobId] = useState(null);
@@ -242,6 +243,11 @@ function App() {
     }
   }, [gdrive, showToast]);
 
+  const openAddJob = useCallback((stage) => {
+    setAddJobInitialStage(stage || null);
+    setAddJobOpen(true);
+  }, []);
+
   const handleDisconnectGdrive = useCallback(async () => {
     try {
       await gdrive.disconnect();
@@ -375,7 +381,7 @@ function App() {
           <Button plain onClick={() => setImportOpen(true)} title="Import CSV">
             <ArrowUpTrayIcon data-slot="icon" />
           </Button>
-          <Button color="violet" onClick={() => setAddJobOpen(true)}>
+          <Button color="violet" onClick={() => openAddJob()}>
             <PlusIcon data-slot="icon" />
             Add Job
           </Button>
@@ -386,7 +392,7 @@ function App() {
       {!addJobOpen && (
         <button
           type="button"
-          onClick={() => setAddJobOpen(true)}
+          onClick={() => openAddJob()}
           aria-label="Add job"
           className="fixed bottom-6 right-6 z-40 md:hidden flex items-center justify-center size-14 rounded-full bg-violet-600 text-white shadow-lg hover:bg-violet-700 active:bg-violet-800 dark:bg-violet-400 dark:text-violet-950 dark:hover:bg-violet-300 dark:active:bg-violet-500 transition-colors"
         >
@@ -399,13 +405,13 @@ function App() {
           <p className="text-zinc-500 dark:text-zinc-400 text-lg">Click "Add Job" to get started.</p>
         </div>
       ) : view === 'board' ? (
-        <KanbanBoard jobs={filteredJobs} onUpdate={handleUpdate} onDelete={handleDeleteRequest} onEdit={handleEditRequest} onUpdateStage={handleUpdateStage} onViewResume={handleViewResumeForJob} resumes={resumes} />
+        <KanbanBoard jobs={filteredJobs} onUpdate={handleUpdate} onDelete={handleDeleteRequest} onEdit={handleEditRequest} onUpdateStage={handleUpdateStage} onViewResume={handleViewResumeForJob} resumes={resumes} onAddJob={openAddJob} />
       ) : (
         <TableView jobs={filteredJobs} onUpdate={handleUpdate} onDelete={handleDeleteRequest} onEdit={handleEditRequest} sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
       )}
 
       <Suspense fallback={null}>
-        <AddJobForm open={addJobOpen} onClose={() => setAddJobOpen(false)} onAdd={handleAdd} resumes={resumes} onUploadResume={uploadResume} gdriveEnabled={gdrive.enabled} gdriveConnected={gdrive.connected} onConnectGdrive={handleConnectGdrive} onPickFromDrive={handlePickFromDrive} />
+        <AddJobForm open={addJobOpen} onClose={() => setAddJobOpen(false)} onAdd={handleAdd} initialStage={addJobInitialStage} resumes={resumes} onUploadResume={uploadResume} gdriveEnabled={gdrive.enabled} gdriveConnected={gdrive.connected} onConnectGdrive={handleConnectGdrive} onPickFromDrive={handlePickFromDrive} />
 
         {editingJob && (
           <EditJobModal
