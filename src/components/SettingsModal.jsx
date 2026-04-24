@@ -1,12 +1,66 @@
-import { Fragment, useState, useCallback } from 'react';
+import { Fragment, useState, useCallback, useEffect } from 'react';
 import { Dialog, DialogBackdrop, Transition, TransitionChild } from '@headlessui/react';
-import { XMarkIcon, BellIcon, BellSlashIcon } from '@heroicons/react/24/outline';
-import { Switch, SwitchField } from './catalyst';
+import { XMarkIcon, BellIcon, BellSlashIcon, PencilIcon } from '@heroicons/react/24/outline';
+import { Switch, SwitchField, Input, Field, Label, ErrorMessage } from './catalyst';
 import { Button } from './catalyst';
+import { CHAR_LIMITS } from '../constants.js';
 import profileService from '../services/profileService.js';
 
 export default function SettingsModal({ open, onClose, user, profile, refreshProfile, notificationsSupported, permissionState, requestPermission, gdriveEnabled, gdriveConnected, onConnectGdrive, onDisconnectGdrive }) {
   const [saving, setSaving] = useState(false);
+
+  const profileNameValid = !!(profile?.firstName?.trim() && profile?.lastName?.trim());
+  const [editingName, setEditingName] = useState(!profileNameValid);
+  const [draftFirst, setDraftFirst] = useState(profile?.firstName ?? '');
+  const [draftLast, setDraftLast] = useState(profile?.lastName ?? '');
+  const [nameSaving, setNameSaving] = useState(false);
+
+  useEffect(() => {
+    const nameIsValid = !!(profile?.firstName?.trim() && profile?.lastName?.trim());
+    if (!editingName) {
+      setDraftFirst(profile?.firstName ?? '');
+      setDraftLast(profile?.lastName ?? '');
+    }
+    if (!nameIsValid) setEditingName(true);
+  }, [profile?.firstName, profile?.lastName]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const firstEmpty = !draftFirst.trim();
+  const lastEmpty = !draftLast.trim();
+  const canSaveName = !firstEmpty && !lastEmpty && !nameSaving;
+
+  const handleGuardedClose = () => {
+    if (!profileNameValid) return;
+    setDraftFirst(profile?.firstName ?? '');
+    setDraftLast(profile?.lastName ?? '');
+    setEditingName(false);
+    onClose();
+  };
+
+  const handleSaveName = async () => {
+    if (!canSaveName) return;
+    const trimmedFirst = draftFirst.trim();
+    const trimmedLast = draftLast.trim();
+    setNameSaving(true);
+    try {
+      await profileService.updateProfile({
+        id: profile.id,
+        firstName: trimmedFirst,
+        lastName: trimmedLast,
+      });
+      await refreshProfile();
+      setDraftFirst(trimmedFirst);
+      setDraftLast(trimmedLast);
+      setEditingName(false);
+    } finally {
+      setNameSaving(false);
+    }
+  };
+
+  const handleCancelName = () => {
+    setDraftFirst(profile?.firstName ?? '');
+    setDraftLast(profile?.lastName ?? '');
+    setEditingName(false);
+  };
 
   const updatePref = useCallback(async (key, value) => {
     if (!profile) return;
@@ -39,7 +93,7 @@ export default function SettingsModal({ open, onClose, user, profile, refreshPro
 
   return (
     <Transition show={open} as={Fragment}>
-      <Dialog onClose={onClose} className="relative z-50">
+      <Dialog onClose={handleGuardedClose} className="relative z-50">
         <TransitionChild
           as={Fragment}
           enter="ease-out duration-300"
@@ -74,7 +128,7 @@ export default function SettingsModal({ open, onClose, user, profile, refreshPro
                         </h2>
                         <button
                           type="button"
-                          onClick={onClose}
+                          onClick={handleGuardedClose}
                           className="rounded-sm p-1.5 text-zinc-400 hover:text-zinc-600 hover:bg-zinc-950/5 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:bg-white/5 transition-colors"
                         >
                           <XMarkIcon className="size-5" />
@@ -89,15 +143,67 @@ export default function SettingsModal({ open, onClose, user, profile, refreshPro
                         <h3 className="text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3">
                           Account
                         </h3>
-                        <div className="space-y-2">
-                          {profile?.firstName && (
-                            <div>
-                              <p className="text-xs text-zinc-500 dark:text-zinc-400">Name</p>
-                              <p className="text-sm text-zinc-950 dark:text-white">
-                                {profile.firstName}{profile.lastName ? ` ${profile.lastName}` : ''}
-                              </p>
-                            </div>
-                          )}
+                        <div className="space-y-3">
+                          <div>
+                            <p className="text-xs text-zinc-500 dark:text-zinc-400">Name</p>
+                            {!editingName ? (
+                              <div
+                                className="group/field flex items-center gap-1 min-w-0 cursor-pointer border-b border-transparent hover:border-mauve-400 dark:hover:border-mauve-500 transition-colors"
+                                onClick={() => setEditingName(true)}
+                                title="Edit Name"
+                              >
+                                <span className="min-w-0 flex-1 truncate text-sm text-zinc-950 dark:text-white">
+                                  {profile?.firstName} {profile?.lastName}
+                                </span>
+                                <PencilIcon className="h-3 w-3 shrink-0 text-zinc-400 opacity-0 group-hover/field:opacity-100 dark:text-zinc-500 transition-opacity" />
+                              </div>
+                            ) : (
+                              <div className="mt-1 space-y-3">
+                                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                  <Field>
+                                    <Label>First Name</Label>
+                                    <Input
+                                      type="text"
+                                      name="firstName"
+                                      required
+                                      maxLength={CHAR_LIMITS.firstName}
+                                      value={draftFirst}
+                                      onChange={(e) => setDraftFirst(e.target.value)}
+                                      placeholder="First name"
+                                    />
+                                    {firstEmpty && <ErrorMessage>First name is required</ErrorMessage>}
+                                  </Field>
+                                  <Field>
+                                    <Label>Last Name</Label>
+                                    <Input
+                                      type="text"
+                                      name="lastName"
+                                      required
+                                      maxLength={CHAR_LIMITS.lastName}
+                                      value={draftLast}
+                                      onChange={(e) => setDraftLast(e.target.value)}
+                                      placeholder="Last name"
+                                    />
+                                    {lastEmpty && <ErrorMessage>Last name is required</ErrorMessage>}
+                                  </Field>
+                                </div>
+                                <div className="flex items-center justify-end gap-2">
+                                  {profileNameValid && (
+                                    <Button plain onClick={handleCancelName} disabled={nameSaving}>
+                                      Cancel
+                                    </Button>
+                                  )}
+                                  <Button
+                                    color="violet"
+                                    onClick={handleSaveName}
+                                    disabled={!canSaveName}
+                                  >
+                                    Save
+                                  </Button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
                           <div>
                             <p className="text-xs text-zinc-500 dark:text-zinc-400">Email</p>
                             <p className="text-sm text-zinc-950 dark:text-white">{user?.email}</p>
