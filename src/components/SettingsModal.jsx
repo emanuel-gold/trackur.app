@@ -155,7 +155,7 @@ export default function SettingsModal({ open, onClose, user, profile, refreshPro
                                 <span className="min-w-0 flex-1 truncate text-sm text-zinc-950 dark:text-white">
                                   {profile?.firstName} {profile?.lastName}
                                 </span>
-                                <PencilIcon className="h-3 w-3 shrink-0 text-zinc-400 opacity-0 group-hover/field:opacity-100 dark:text-zinc-500 transition-opacity" />
+                                <PencilIcon className="h-4 w-4 shrink-0 text-zinc-400 opacity-0 group-hover/field:opacity-100 dark:text-zinc-500 transition-opacity" />
                               </div>
                             ) : (
                               <div className="mt-1 space-y-3">

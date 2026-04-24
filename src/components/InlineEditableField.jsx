@@ -170,7 +170,7 @@ export default memo(function InlineEditableField({
       title={`Edit ${displayLabel}`}
     >
       <span className={`min-w-0 flex-1 ${multiline ? '' : 'truncate'}`}>{displayContent}</span>
-      <PencilIcon className="h-3 w-3 shrink-0 text-zinc-400 opacity-0 group-hover/field:opacity-100 dark:text-zinc-500 transition-opacity" />
+      <PencilIcon className="h-4 w-4 shrink-0 text-zinc-400 opacity-0 group-hover/field:opacity-100 dark:text-zinc-500 transition-opacity" />
     </div>
   );
 });
