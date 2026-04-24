@@ -86,6 +86,7 @@ export default memo(function JobCard({ job, onUpdate, onDelete, onEdit, onDragSt
               value={job.stage}
               onChange={(e) => onStageChange(job.id, e.target.value)}
               aria-label="Change stage"
+              name="Change stage"
               className="absolute inset-0 opacity-0 cursor-pointer"
             >
               {STAGES.map((s) => (
