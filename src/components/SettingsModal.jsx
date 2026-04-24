@@ -247,6 +247,13 @@ export default function SettingsModal({ open, onClose, user, profile, refreshPro
                           </div>
                         )}
                       </section>
+
+                      {/* Version footer */}
+                      <div className="pt-4 border-t border-zinc-950/5 dark:border-white/5">
+                        <p className="text-xs text-zinc-400 dark:text-zinc-500" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                          Trackur v{__APP_VERSION__}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
