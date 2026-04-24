@@ -1,0 +1,9 @@
+{
+  "packages": {
+    ".": {
+      "release-type": "node",
+      "package-name": "trackur",
+      "pull-request-header": "Automated Release"
+    }
+  }
+}
