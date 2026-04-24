@@ -1,7 +1,7 @@
 import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { STAGES, STAGE_COLORS } from '../constants.js';
-import { Badge } from './catalyst';
+import { Badge, TouchTarget } from './catalyst';
 import JobCard from './JobCard.jsx';
 
 const COLLAPSED_KEY = 'kanbanCollapsedStages';
@@ -75,8 +75,9 @@ function MobileStageRow({ stage, stageJobs, onUpdate, onDelete, onEdit, onUpdate
             onClick={() => onAddJob(stage)}
             title={`Add job to ${stage}`}
             aria-label={`Add job to ${stage}`}
-            className="rounded-md p-1 text-zinc-600 dark:text-zinc-300 hover:bg-white dark:hover:bg-zinc-800 hover:text-mauve-600 dark:hover:text-mauve-400 hover:shadow-xs transition-all"
+            className="relative rounded-md p-1 text-zinc-600 dark:text-zinc-300 hover:bg-white dark:hover:bg-zinc-800 hover:text-mauve-600 dark:hover:text-mauve-400 hover:shadow-xs transition-all"
           >
+            <TouchTarget />
             <PlusIcon className="size-5" />
           </button>
         </div>
@@ -250,8 +251,9 @@ export default function KanbanBoard({ jobs, onUpdate, onDelete, onEdit, onUpdate
                     onClick={() => onAddJob(stage)}
                     title={`Add job to ${stage}`}
                     aria-label={`Add job to ${stage}`}
-                    className="rounded-md p-1 text-zinc-600 dark:text-zinc-300 hover:bg-white dark:hover:bg-zinc-800 hover:text-mauve-600 dark:hover:text-mauve-400 hover:shadow-xs transition-all"
+                    className="relative rounded-md p-1 text-zinc-600 dark:text-zinc-300 hover:bg-white dark:hover:bg-zinc-800 hover:text-mauve-600 dark:hover:text-mauve-400 hover:shadow-xs transition-all"
                   >
+                    <TouchTarget />
                     <PlusIcon className="size-4" />
                   </button>
                 </div>
