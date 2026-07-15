@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.3.0](https://github.com/emanuel-gold/trackur.app/compare/trackur-v1.2.0...trackur-v1.3.0) (2026-07-15)
+
+
+### Features
+
+* security hardening + UX quick wins ([db49bc7](https://github.com/emanuel-gold/trackur.app/commit/db49bc7ce632e2762820f57b17ffe486627a30a9))
+* structural refactors + stage history, stats, posting URL, archive ([45726a8](https://github.com/emanuel-gold/trackur.app/commit/45726a866c12430635e2d784374aa65430035fce))
+
+
+### Bug Fixes
+
+* merge-import toast reports actual inserted and skipped counts. ([0be18bc](https://github.com/emanuel-gold/trackur.app/commit/0be18bc5b231da08e88ceb024091427f4fa2a49c))
+
 ## [1.2.0](https://github.com/emanuel-gold/trackur.app/compare/trackur-v1.1.0...trackur-v1.2.0) (2026-07-12)
 
 
